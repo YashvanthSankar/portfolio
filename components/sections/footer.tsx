@@ -1,6 +1,7 @@
 "use client";
 
 import { Github, Linkedin, Instagram, Mail, ArrowUp } from "lucide-react";
+import Image from "next/image";
 
 const socialLinks = [
   {
@@ -36,7 +37,14 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo & Copyright */}
           <div className="flex flex-col items-center md:items-start gap-2">
-            <span className="text-xl font-bold text-white">YS.</span>
+            <div className="relative h-10 w-10 rounded-full overflow-hidden shadow-lg shadow-black/20 hover:shadow-zinc-500/20 transition-shadow duration-300">
+              <Image
+                src="/ys.png"
+                alt="YS Logo"
+                fill
+                className="object-cover"
+              />
+            </div>
             <p className="text-sm text-zinc-500">
               © {new Date().getFullYear()} Yashvanth. All rights reserved.
             </p>

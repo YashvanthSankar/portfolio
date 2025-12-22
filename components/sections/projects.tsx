@@ -47,7 +47,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
       {/* Subtle Glowing Effect */}
       <GlowingEffect
         spread={40}
-        glow={false}
+        glow={true}
         disabled={false}
         proximity={64}
         inactiveZone={0.01}

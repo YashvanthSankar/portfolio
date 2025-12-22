@@ -54,9 +54,34 @@ html {
 
 body {
   background: #09090b;
+  color: #ffffff;
   font-family: 'Inter', 'Geist', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Light mode styling */
+.light body {
+  background: #fafaf9;
+  color: #09090b;
+}
+
+.light::selection {
+  background: rgba(0, 0, 0, 0.1);
+  color: #09090b;
+}
+
+/* Light mode scrollbar */
+.light ::-webkit-scrollbar-track {
+  background: #fafaf9;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #e4e4e7;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #d4d4d8;
 }
 
 /* Selection styling */

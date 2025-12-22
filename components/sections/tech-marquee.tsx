@@ -21,7 +21,11 @@ export function TechMarquee() {
   const duplicatedTech = [...technologies, ...technologies];
 
   return (
-    <section className="py-16 bg-zinc-950 border-y border-zinc-900">
+    <section className="py-16 bg-zinc-950 border-y border-zinc-900 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-40 bg-zinc-800/30 rounded-full blur-3xl" />
+      </div>
       <div className="max-w-6xl mx-auto px-6 mb-10">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
