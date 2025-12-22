@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Spotlight } from "@/components/ui/spotlight";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { Button } from "@/components/ui/moving-border";
+import { Boxes } from "@/components/ui/background-boxes";
 
 export function SpotlightHero() {
   return (
@@ -18,15 +19,17 @@ export function SpotlightHero() {
         fill="white"
       />
 
-      {/* Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      {/* Aceternity Background Boxes - Interactive */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-[5] opacity-60">
+        <Boxes />
+      </div>
 
       {/* Gradient Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center pointer-events-none">
         {/* Profile Picture - Professional circular frame with glow */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -62,7 +65,7 @@ export function SpotlightHero() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm"
         >
-          <span className="text-sm text-zinc-400">Available for new projects</span>
+          <span className="text-sm text-zinc-400">Available for freelance & full-time opportunities</span>
         </motion.div>
 
         {/* Headline with Text Generate Effect */}
@@ -95,7 +98,7 @@ export function SpotlightHero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto"
         >
           <Button
             as="a"

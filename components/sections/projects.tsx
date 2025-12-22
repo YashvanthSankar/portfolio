@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ExternalLink, Github } from "lucide-react";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 const projects = [
   {
@@ -11,7 +12,7 @@ const projects = [
       "A comprehensive platform for BTech students with personalized prep modules, curated YouTube resources, and real-time analytics. Features dynamic learning paths and progress tracking.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "MongoDB", "Prisma"],
     image: "/projects/preploot.png",
-    github: "https://github.com/yashvanth",
+    github: "https://github.com/YashvanthSankar",
     live: "https://preploot.vercel.app",
   },
   {
@@ -20,7 +21,7 @@ const projects = [
       "An AI-powered research assistant that summarizes documents and generates insights using LangChain and RAG architecture. Supports multiple document formats with intelligent query processing.",
     tags: ["Python", "LangChain", "RAG", "FastAPI", "React"],
     image: "/projects/qwikread.png",
-    github: "https://github.com/yashvanth",
+    github: "https://github.com/YashvanthSankar",
     live: "https://qwikread.vercel.app",
   },
   {
@@ -29,7 +30,7 @@ const projects = [
       "Enterprise-grade emergency room system that reduced wait times by 40% through intelligent triage, automated patient prioritization, and real-time bed management.",
     tags: ["React", "Node.js", "PostgreSQL", "Docker", "Socket.io"],
     image: "/projects/hospital.png",
-    github: "https://github.com/yashvanth",
+    github: "https://github.com/YashvanthSankar",
     live: null,
   },
 ];
@@ -41,9 +42,19 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 }}
+      className="relative rounded-2xl"
     >
+      {/* Subtle Glowing Effect */}
+      <GlowingEffect
+        spread={40}
+        glow={false}
+        disabled={false}
+        proximity={64}
+        inactiveZone={0.01}
+        borderWidth={2}
+      />
       <CardSpotlight
-        className="h-full p-6 bg-zinc-950 border-zinc-800"
+        className="h-full p-6 bg-zinc-950 border-zinc-800 rounded-2xl"
         radius={250}
         color="#1f1f1f"
       >
@@ -132,7 +143,7 @@ export function ProjectsSection() {
           className="mt-12 text-center"
         >
           <a
-            href="https://github.com/yashvanth"
+            href="https://github.com/YashvanthSankar"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group"

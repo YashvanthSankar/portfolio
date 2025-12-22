@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Briefcase, GraduationCap } from "lucide-react";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 const experiences = [
   {
@@ -90,7 +91,15 @@ export function ExperienceTimeline() {
                 </div>
 
                 {/* Content Card */}
-                <div className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                <div className="relative p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                  <GlowingEffect
+                    spread={40}
+                    glow={false}
+                    disabled={false}
+                    proximity={64}
+                    inactiveZone={0.01}
+                    borderWidth={2}
+                  />
                   {/* Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                     <div>

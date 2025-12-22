@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, Mail, MapPin, Loader2, Check } from "lucide-react";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 export function ContactSection() {
   const [formState, setFormState] = useState({
@@ -16,8 +17,16 @@ export function ContactSection() {
     e.preventDefault();
     setStatus("sending");
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Create mailto link with form data
+    const subject = encodeURIComponent(`Portfolio Contact from ${formState.name}`);
+    const body = encodeURIComponent(
+      `Name: ${formState.name}\nEmail: ${formState.email}\n\nMessage:\n${formState.message}`
+    );
+    const mailtoLink = `mailto:yashvanthsankar@gmail.com?subject=${subject}&body=${body}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
     setStatus("sent");
 
     setTimeout(() => {
@@ -65,7 +74,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <p className="text-sm text-zinc-500">Email</p>
-                  <p className="text-white font-medium">yashvanth@email.com</p>
+                  <p className="text-white font-medium">yashvanthsankar@gmail.com</p>
                 </div>
               </div>
 
@@ -81,19 +90,24 @@ export function ContactSection() {
             </div>
 
             {/* Availability */}
-            <div className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <div className="relative p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
+              <GlowingEffect
+                spread={40}
+                glow={false}
+                disabled={false}
+                proximity={64}
+                inactiveZone={0.01}
+                borderWidth={2}
+              />
               <div className="flex items-center gap-2 mb-2">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                 </span>
                 <span className="text-sm font-medium text-emerald-400">
-                  Available for new projects
+                  Available for freelance & full-time opportunities
                 </span>
               </div>
-              <p className="text-sm text-zinc-500">
-                Currently accepting freelance and full-time opportunities.
-              </p>
             </div>
           </motion.div>
 

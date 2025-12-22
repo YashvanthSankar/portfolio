@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Mail, Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -67,8 +68,16 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="md:col-span-2 p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="relative md:col-span-2 p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
           >
+            <GlowingEffect
+              spread={40}
+              glow={false}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <div className="flex flex-col md:flex-row gap-6">
               {/* Avatar */}
               <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-zinc-700 to-zinc-800 shrink-0 flex items-center justify-center">
@@ -96,8 +105,16 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="relative p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
           >
+            <GlowingEffect
+              spread={40}
+              glow={false}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-zinc-800">
                 <MapPin className="w-5 h-5 text-zinc-400" />
@@ -116,8 +133,16 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="relative p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
           >
+            <GlowingEffect
+              spread={40}
+              glow={false}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-zinc-800">
                 <Mail className="w-5 h-5 text-zinc-400" />
@@ -126,8 +151,8 @@ export function AboutBento() {
                 Contact
               </span>
             </div>
-            <p className="text-white font-medium mb-2">yashvanth@email.com</p>
-            <CopyButton text="yashvanth@email.com" />
+            <p className="text-white font-medium mb-2">yashvanthsankar@gmail.com</p>
+            <CopyButton text="yashvanthsankar@gmail.com" />
           </motion.div>
 
           {/* Stats Card - Wide */}
@@ -136,8 +161,16 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="md:col-span-2 p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="relative md:col-span-2 p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
           >
+            <GlowingEffect
+              spread={40}
+              glow={false}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+              borderWidth={2}
+            />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">

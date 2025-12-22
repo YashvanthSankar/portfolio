@@ -1,26 +1,26 @@
 "use client";
 
-import { Github, Linkedin, Twitter, Mail, ArrowUp } from "lucide-react";
+import { Github, Linkedin, Instagram, Mail, ArrowUp } from "lucide-react";
 
 const socialLinks = [
   {
     name: "GitHub",
-    href: "https://github.com/yashvanth",
+    href: "https://github.com/YashvanthSankar",
     icon: Github,
   },
   {
     name: "LinkedIn",
-    href: "https://linkedin.com/in/yashvanth",
+    href: "https://linkedin.com/in/yashvanths",
     icon: Linkedin,
   },
   {
-    name: "Twitter",
-    href: "https://twitter.com/yashvanth",
-    icon: Twitter,
+    name: "Instagram",
+    href: "https://instagram.com/yashavnth191206",
+    icon: Instagram,
   },
   {
     name: "Email",
-    href: "mailto:yashvanth@email.com",
+    href: "mailto:yashvanthsankar@gmail.com",
     icon: Mail,
   },
 ];
