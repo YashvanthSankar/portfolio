@@ -1,0 +1,127 @@
+"use client";
+
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { Spotlight } from "@/components/ui/spotlight";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import { Button } from "@/components/ui/moving-border";
+
+export function SpotlightHero() {
+  return (
+    <section
+      id="home"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-zinc-950"
+    >
+      {/* Aceternity Spotlight Effect */}
+      <Spotlight
+        className="-top-40 left-0 md:left-60 md:-top-20"
+        fill="white"
+      />
+
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+
+      {/* Gradient Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        {/* Profile Picture - Professional circular frame with glow */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mb-6 flex justify-center"
+        >
+          <div className="relative">
+            {/* Subtle glow behind photo */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-violet-500/20 blur-xl scale-110" />
+            
+            {/* Photo container */}
+            <div className="relative w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-2 border-zinc-700/50 shadow-2xl shadow-black/50">
+              <Image
+                src="/yashvanths.jpeg"
+                alt="Yashvanth S"
+                fill
+                className="object-cover object-center"
+                priority
+                sizes="(max-width: 768px) 128px, 144px"
+              />
+            </div>
+            
+            {/* Online indicator */}
+            <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-4 border-zinc-950" />
+          </div>
+        </motion.div>
+
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm"
+        >
+          <span className="text-sm text-zinc-400">Available for new projects</span>
+        </motion.div>
+
+        {/* Headline with Text Generate Effect */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-6"
+        >
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+            <span className="text-white">Building digital</span>
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 to-zinc-500">
+              experiences that matter
+            </span>
+          </h1>
+        </motion.div>
+
+        {/* Subtext with Text Generate Effect */}
+        <div className="max-w-2xl mx-auto mb-10">
+          <TextGenerateEffect
+            words="I'm Yashvanth, a full-stack developer crafting high-performance web applications and AI-powered solutions. Currently studying at IIITDM Kancheepuram."
+            className="text-lg md:text-xl text-zinc-400 leading-relaxed font-normal"
+            duration={0.3}
+          />
+        </div>
+
+        {/* CTAs with Moving Border */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <Button
+            as="a"
+            href="#projects"
+            borderRadius="9999px"
+            containerClassName="h-14 w-44"
+            borderClassName="bg-[radial-gradient(#3b82f6_40%,transparent_60%)]"
+            className="bg-zinc-950 border-zinc-800 hover:bg-zinc-900 transition-colors"
+            duration={3000}
+          >
+            <span className="flex items-center gap-2">
+              View My Work
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </span>
+          </Button>
+
+          <a
+            href="#contact"
+            className="px-8 py-4 rounded-full font-medium text-zinc-400 border border-zinc-800 hover:bg-zinc-900 hover:text-white transition-colors"
+          >
+            Get in Touch
+          </a>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
