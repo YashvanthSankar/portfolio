@@ -23,7 +23,7 @@ const navItems = [
   { id: "contact", label: "Contact", icon: Mail },
 ];
 
-export default function Navbar() {
+export function Navbar() {
   const [active, setActive] = useState("home");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
