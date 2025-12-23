@@ -149,17 +149,17 @@ export function Navbar() {
               }}
               className="fixed inset-x-0 bottom-0 z-30"
             >
-              <div className="relative h-[85vh] rounded-t-3xl overflow-hidden">
+              <div className="relative h-[75svh] mt-16 rounded-t-3xl overflow-hidden">
                 {/* GLASS PANEL */}
                 <div className="absolute inset-0 bg-white/5 backdrop-blur-3xl border-t border-white/20 shadow-inner" />
 
                 {/* CONTENT */}
-                <div className="relative z-10 p-6 text-white flex flex-col h-full">
+                <div className="relative z-10 p-6 pt-10 text-white flex flex-col h-full">
                   {/* Drag Handle */}
                   <div className="mx-auto mb-6 h-1.5 w-14 rounded-full bg-white/30" />
 
                   {/* Menu Items */}
-                  <div className="space-y-4 flex-1">
+                  <div className="space-y-4 flex-1 overflow-y-auto">
                     {navItems.map((item) => (
                       <button
                         key={item.id}
@@ -173,25 +173,13 @@ export function Navbar() {
                   </div>
 
                   {/* CTAs */}
-                  <div className="mt-auto space-y-4">
-                    <button
-                      onClick={() => scrollTo("contact")}
-                      className="w-full py-4 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition-transform"
-                    >
-                      Let’s Talk
-                    </button>
-                    <a
-                      href="/YashvanthS_Resume.pdf"
-                      download
-                      className="w-full py-4 rounded-2xl bg-white/10 border border-white/20 text-white flex items-center justify-center gap-2 hover:bg-white/20 transition"
-                    >
-                      <Download className="w-5 h-5" />
-                      Download Resume
-                    </a>
+                  <div className="mt-4 space-y-4">
+                    ...
                   </div>
                 </div>
               </div>
             </motion.div>
+
           </>
         )}
       </AnimatePresence>

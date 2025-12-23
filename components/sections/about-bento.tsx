@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Mail, Check, Copy } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 function CopyButton({ text }: { text: string }) {
@@ -86,9 +87,17 @@ export function AboutBento() {
               borderWidth={2}
             />
             <div className="flex flex-col md:flex-row gap-6">
-              {/* Avatar */}
-              <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-zinc-700 to-zinc-800 shrink-0 flex items-center justify-center">
-                <span className="text-3xl font-bold text-white">YS</span>
+              {/* Avatar (replace initials with your photo at /public/profile.jpg) */}
+              <div className="relative w-24 h-24 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center mx-auto md:mx-0 ring-1 ring-white/5 shadow-sm">
+                <Image
+                  src="/yashvanths.jpeg"
+                  alt="Yashvanth S"
+                  width={96}
+                  height={96}
+                  unoptimized
+                  className="object-cover w-full h-full"
+                  priority
+                />
               </div>
 
               <div>
