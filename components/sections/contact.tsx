@@ -45,7 +45,6 @@ export function ContactSection() {
         {/* Radial gradient overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(9,9,11,0.8)_70%)]" />
       </div>
-
       <div className="relative z-10 max-w-4xl mx-auto px-6">
         {/* Section Header */}
         <motion.div

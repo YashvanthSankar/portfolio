@@ -12,7 +12,7 @@ export function SpotlightHero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-zinc-950"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-zinc-950 pt-20 md:pt-24"
     >
       {/* Aceternity Spotlight Effect */}
       <Spotlight
@@ -60,14 +60,14 @@ export function SpotlightHero() {
         </motion.div>
 
         {/* Badge */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 mb-6 rounded-full bg-zinc-900/80 border border-zinc-800 backdrop-blur-sm"
         >
           <span className="text-xs sm:text-sm text-zinc-400">Available for freelance & full-time opportunities</span>
-        </motion.div>
+        </motion.div> */}
 
         {/* Headline with FlipWords */}
         <motion.div
