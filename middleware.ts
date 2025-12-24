@@ -12,8 +12,7 @@ export function middleware(req: NextRequest) {
   // This catches the path specifically on the main domain
   if (hostname === mainDomain || hostname === `www.${mainDomain}`) {
     if (url.pathname === '/work') {
-      const redirectUrl = `https://${workSubdomain}${url.pathname}${url.search}`
-      return NextResponse.redirect(redirectUrl, 301)
+      return NextResponse.redirect(new URL(`https://${workSubdomain}`, req.url), 301)
     }
   }
 

@@ -65,7 +65,10 @@ function WorkNavbar() {
             <motion.button
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => router.push("/")}
+              onClick={() => {
+                const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
+                window.location.href = mainDomain;
+              }}
               className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-white/50 transition-all"
             >
               <Image src="/ys.png" alt="YS" fill className="object-cover" />
