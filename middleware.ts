@@ -5,18 +5,21 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone()
   const hostname = req.headers.get('host')
 
-  // 1. FORCE REDIRECT: yashvanth.com/work -> work.yashvanth.com
+  const mainDomain = process.env.MAIN_DOMAIN || 'yashvanth.com'
+  const workSubdomain = process.env.WORK_SUBDOMAIN || 'work.yashvanth.com'
+
+  // 1. FORCE REDIRECT: maindomain.com/work -> work.subdomain
   // This catches the path specifically on the main domain
-  if (hostname === 'yashvanth.com' || hostname === 'www.yashvanth.com') {
+  if (hostname === mainDomain || hostname === `www.${mainDomain}`) {
     if (url.pathname === '/work') {
-      return NextResponse.redirect(new URL('https://work.yashvanth.com', req.url), 301)
+      const redirectUrl = `https://${workSubdomain}${url.pathname}${url.search}`
+      return NextResponse.redirect(redirectUrl, 301)
     }
   }
 
-  // 2. INTERNAL REWRITE: work.yashvanth.com -> show content from /work folder
-  if (hostname === 'work.yashvanth.com') {
-    // Prevent infinite loops: if they are already on the subdomain, 
-    // we only rewrite if they are at the root
+  // 2. INTERNAL REWRITE: work.subdomain -> show content from /work folder
+  if (hostname === workSubdomain) {
+    // Prevent infinite loops: only rewrite root path to /work
     if (url.pathname === '/') {
       url.pathname = '/work'
       return NextResponse.rewrite(url)
@@ -26,7 +29,7 @@ export function middleware(req: NextRequest) {
   return NextResponse.next()
 }
 
-// 3. IMPORTANT: Matcher ensures the middleware runs on these specific paths
+// 3. Matcher ensures the middleware runs on these specific paths
 export const config = {
   matcher: ['/work', '/'],
 }

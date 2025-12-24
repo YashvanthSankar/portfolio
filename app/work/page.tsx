@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Footer } from "@/components/sections/footer";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const workNavItems = [
@@ -73,23 +74,46 @@ function WorkNavbar() {
 
             {/* Desktop Nav with enhanced styling */}
             <div className="hidden md:flex items-center gap-2 relative">
-              {workNavItems.map((item) => (
-                <motion.button
-                  key={item.id}
-                  onClick={() => handleNavClick(item.action)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={cn(
-                    "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden",
-                    "text-zinc-400 hover:text-white"
-                  )}
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <item.icon className="w-4 h-4" />
-                    {item.label}
-                  </span>
-                </motion.button>
-              ))}
+              {workNavItems.map((item) => {
+                if (item.id === "back") {
+                  const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
+                  return (
+                    <Link key={item.id} href={mainDomain}>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={cn(
+                          "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden",
+                          "text-zinc-400 hover:text-white"
+                        )}
+                      >
+                        <span className="relative z-10 flex items-center gap-2">
+                          <item.icon className="w-4 h-4" />
+                          {item.label}
+                        </span>
+                      </motion.div>
+                    </Link>
+                  );
+                } else {
+                  return (
+                    <motion.button
+                      key={item.id}
+                      onClick={() => handleNavClick(item.action)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={cn(
+                        "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden",
+                        "text-zinc-400 hover:text-white"
+                      )}
+                    >
+                      <span className="relative z-10 flex items-center gap-2">
+                        <item.icon className="w-4 h-4" />
+                        {item.label}
+                      </span>
+                    </motion.button>
+                  );
+                }
+              })}
             </div>
 
             {/* Mobile Toggle with animation */}
@@ -164,24 +188,48 @@ function WorkNavbar() {
 
                 {/* Enhanced Menu Items */}
                 <div className="space-y-2 flex-1 overflow-y-auto">
-                  {workNavItems.map((item, index) => (
-                    <motion.button
-                      key={item.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => handleNavClick(item.action)}
-                      className={cn(
-                        "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-all group",
-                        "hover:bg-white/10 text-zinc-300"
-                      )}
-                    >
-                      <div className="p-2 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                        <item.icon className="w-5 h-5" />
-                      </div>
-                      <span className="font-medium">{item.label}</span>
-                    </motion.button>
-                  ))}
+                  {workNavItems.map((item, index) => {
+                    if (item.id === "back") {
+                      const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
+                      return (
+                        <Link key={item.id} href={mainDomain}>
+                          <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className={cn(
+                              "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-all group",
+                              "hover:bg-white/10 text-zinc-300"
+                            )}
+                          >
+                            <div className="p-2 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
+                              <item.icon className="w-5 h-5" />
+                            </div>
+                            <span className="font-medium">{item.label}</span>
+                          </motion.div>
+                        </Link>
+                      );
+                    } else {
+                      return (
+                        <motion.button
+                          key={item.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          onClick={() => handleNavClick(item.action)}
+                          className={cn(
+                            "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-all group",
+                            "hover:bg-white/10 text-zinc-300"
+                          )}
+                        >
+                          <div className="p-2 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
+                            <item.icon className="w-5 h-5" />
+                          </div>
+                          <span className="font-medium">{item.label}</span>
+                        </motion.button>
+                      );
+                    }
+                  })}
                 </div>
               </div>
             </motion.div>
