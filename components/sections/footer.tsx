@@ -43,6 +43,9 @@ export function Footer() {
                 alt="YS Logo"
                 fill
                 className="object-cover"
+                quality={85}
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
               />
             </div>
             <p className="text-sm text-zinc-500">

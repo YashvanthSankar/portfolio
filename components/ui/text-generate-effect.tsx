@@ -1,9 +1,9 @@
 "use client";
-import { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { motion, stagger, useAnimate } from "motion/react";
-import { cn } from "@/lib/utils";
+import { cn, shouldAnimate } from "@/lib/utils";
 
-export const TextGenerateEffect = ({
+export const TextGenerateEffect = React.memo(({
   words,
   className,
   filter = true,
@@ -14,9 +14,12 @@ export const TextGenerateEffect = ({
   filter?: boolean;
   duration?: number;
 }) => {
+  const animateEnabled = shouldAnimate();
   const [scope, animate] = useAnimate();
-  const wordsArray = words.split(" ");
+  const wordsArray = useMemo(() => words.split(" "), [words]);
+
   useEffect(() => {
+    if (!animateEnabled) return;
     animate(
       "span",
       {
@@ -28,10 +31,10 @@ export const TextGenerateEffect = ({
         delay: stagger(0.2),
       }
     );
-  }, [animate, duration, filter, words]);
+  }, [animate, duration, filter, words, animateEnabled]);
 
   const renderWords = () => {
-    return (
+    return animateEnabled ? (
       <motion.div ref={scope}>
         {wordsArray.map((word, idx) => {
           return (
@@ -47,6 +50,19 @@ export const TextGenerateEffect = ({
           );
         })}
       </motion.div>
+    ) : (
+      <div>
+        {wordsArray.map((word, idx) => {
+          return (
+            <span
+              key={word + idx}
+              className="text-zinc-400"
+            >
+              {word}{" "}
+            </span>
+          );
+        })}
+      </div>
     );
   };
 
@@ -59,4 +75,4 @@ export const TextGenerateEffect = ({
       </div>
     </div>
   );
-};
+});

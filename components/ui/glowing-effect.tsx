@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback, useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn, shouldAnimate, throttle } from "@/lib/utils";
 import { animate } from "motion/react";
 
 interface GlowingEffectProps {
@@ -85,13 +85,17 @@ const GlowingEffect = memo(
           const angleDiff = ((targetAngle - currentAngle + 180) % 360) - 180;
           const newAngle = currentAngle + angleDiff;
 
-          animate(currentAngle, newAngle, {
-            duration: movementDuration,
-            ease: [0.16, 1, 0.3, 1],
-            onUpdate: (value) => {
-              element.style.setProperty("--start", String(value));
-            },
-          });
+          if (shouldAnimate()) {
+            animate(currentAngle, newAngle, {
+              duration: movementDuration,
+              ease: [0.16, 1, 0.3, 1],
+              onUpdate: (value) => {
+                element.style.setProperty("--start", String(value));
+              },
+            });
+          } else {
+            element.style.setProperty("--start", String(newAngle));
+          }
         });
       },
       [inactiveZone, proximity, movementDuration]
@@ -100,7 +104,7 @@ const GlowingEffect = memo(
     useEffect(() => {
       if (disabled) return;
 
-      const handleScroll = () => handleMove();
+      const handleScroll = throttle(() => handleMove(), 16);
       const handlePointerMove = (e: PointerEvent) => handleMove(e);
 
       window.addEventListener("scroll", handleScroll, { passive: true });

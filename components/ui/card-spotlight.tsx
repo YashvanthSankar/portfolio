@@ -4,7 +4,7 @@ import { useMotionValue, motion, useMotionTemplate } from "motion/react";
 import React, { MouseEvent as ReactMouseEvent } from "react";
 import { cn } from "@/lib/utils";
 
-export const CardSpotlight = ({
+export const CardSpotlight = React.memo(({
   children,
   radius = 350,
   color = "#262626",
@@ -17,6 +17,16 @@ export const CardSpotlight = ({
 } & React.HTMLAttributes<HTMLDivElement>) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  // FIX: Move the template hook to the top level, not inside the return style prop
+  const maskImage = useMotionTemplate`
+    radial-gradient(
+      ${radius}px circle at ${mouseX}px ${mouseY}px,
+      white,
+      transparent 80%
+    )
+  `;
+
   function handleMouseMove({
     currentTarget,
     clientX,
@@ -31,7 +41,7 @@ export const CardSpotlight = ({
   return (
     <div
       className={cn(
-        "group/spotlight p-10 rounded-md relative border border-neutral-800 bg-black dark:border-neutral-800",
+        "group/spotlight p-10 rounded-md relative border border-neutral-800 bg-black dark:border-neutral-800 overflow-hidden",
         className
       )}
       onMouseMove={handleMouseMove}
@@ -41,16 +51,14 @@ export const CardSpotlight = ({
         className="pointer-events-none absolute z-0 -inset-px rounded-md opacity-0 transition duration-300 group-hover/spotlight:opacity-100"
         style={{
           backgroundColor: color,
-          maskImage: useMotionTemplate`
-            radial-gradient(
-              ${radius}px circle at ${mouseX}px ${mouseY}px,
-              white,
-              transparent 80%
-            )
-          `,
+          maskImage: maskImage,
+          WebkitMaskImage: maskImage, // Added for Safari support
         }}
       />
-      {children}
+      {/* Ensure children are above the spotlight */}
+      <div className="relative z-10">{children}</div>
     </div>
   );
-};
+});
+
+CardSpotlight.displayName = "CardSpotlight";

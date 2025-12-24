@@ -1,9 +1,9 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import { cn, shouldAnimate } from "@/lib/utils";
 
-export const FlipWords = ({
+export const FlipWords = React.memo(({
   words,
   duration = 3000,
   className,
@@ -14,6 +14,8 @@ export const FlipWords = ({
 }) => {
   const [currentWord, setCurrentWord] = useState(words[0]);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const animate = shouldAnimate();
+  const wordsArray = useMemo(() => words, [words]);
 
   // thanks for the fix Julian - https://github.com/Julian-AT
   const startAnimation = useCallback(() => {
@@ -29,7 +31,7 @@ export const FlipWords = ({
       }, duration);
   }, [isAnimating, duration, startAnimation]);
 
-  return (
+  return animate ? (
     <AnimatePresence
       onExitComplete={() => {
         setIsAnimating(false);
@@ -94,5 +96,14 @@ export const FlipWords = ({
         ))}
       </motion.div>
     </AnimatePresence>
+  ) : (
+    <div
+      className={cn(
+        "z-10 inline-block relative text-left text-neutral-900 dark:text-neutral-100 px-2",
+        className
+      )}
+    >
+      {currentWord}
+    </div>
   );
-};
+});

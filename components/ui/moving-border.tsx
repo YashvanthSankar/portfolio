@@ -8,7 +8,7 @@ import {
   useTransform,
 } from "motion/react";
 import { useRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn, shouldAnimate } from "@/lib/utils";
 
 export function Button({
   borderRadius = "1.75rem",
@@ -57,7 +57,7 @@ export function Button({
 
     <div
       className={cn(
-        "relative flex h-full w-full items-center justify-center border border-slate-800 bg-slate-900/[0.8] text-sm text-white antialiased backdrop-blur-xl",
+        "relative flex h-full w-full items-center justify-center border border-slate-800 bg-slate-900/[0.8] text-sm text-white antialiased backdrop-blur-lg",
         className,
       )}
       style={{
@@ -69,7 +69,7 @@ export function Button({
   );
 }
 
-export const MovingBorder = ({
+export const MovingBorder = React.memo(({
   children,
   duration = 3000,
   rx,
@@ -82,10 +82,12 @@ export const MovingBorder = ({
   ry?: string;
   [key: string]: unknown;
 }) => {
+  const animate = shouldAnimate();
   const pathRef = useRef<SVGRectElement>(null);
   const progress = useMotionValue<number>(0);
 
   useAnimationFrame((time) => {
+    if (!animate) return;
     const length = pathRef.current?.getTotalLength();
     if (length) {
       const pxPerMillisecond = length / duration;
@@ -123,17 +125,31 @@ export const MovingBorder = ({
           ref={pathRef}
         />
       </svg>
-      <motion.div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          display: "inline-block",
-          transform,
-        }}
-      >
-        {children}
-      </motion.div>
+      {animate ? (
+        <motion.div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            display: "inline-block",
+            transform,
+          }}
+        >
+          {children}
+        </motion.div>
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            display: "inline-block",
+            transform: "translateX(-50%) translateY(-50%)",
+          }}
+        >
+          {children}
+        </div>
+      )}
     </>
   );
-};
+});

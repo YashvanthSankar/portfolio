@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { throttle } from "@/lib/utils";
 import {
   Home,
   Folder,
@@ -30,7 +31,7 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
+    const onScroll = throttle(() => {
       setScrolled(window.scrollY > 20);
       for (const item of navItems) {
         const el = document.getElementById(item.id);
@@ -41,7 +42,7 @@ export function Navbar() {
           break;
         }
       }
-    };
+    }, 16);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -78,68 +79,66 @@ export function Navbar() {
             )}
           >
             {/* Logo with hover effect */}
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={() => scrollTo("home")}
-              className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-white/50 transition-all"
+              className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-white/50 transition-all hover:scale-110 hover:rotate-[5deg] active:scale-95"
             >
-              <Image src="/ys.png" alt="YS" fill className="object-cover" />
+              <Image 
+                src="/ys.png" 
+                alt="YS" 
+                fill 
+                className="object-cover"
+                quality={85}
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+              />
               <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10" />
-            </motion.button>
+            </button>
 
             {/* Desktop Nav with enhanced styling */}
             <div className="hidden md:flex items-center gap-2 relative">
               {navItems.map((item) => (
-                <motion.button
+                <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   className={cn(
-                    "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden",
+                    "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden hover:scale-105 active:scale-95",
                     active === item.id
                       ? "text-white"
                       : "text-zinc-400 hover:text-white"
                   )}
                 >
                   {active === item.id && (
-                    <motion.div
-                      layoutId="navbar-active"
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    <div
+                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm transition-all duration-300 ease-out"
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
-                </motion.button>
+                </button>
               ))}
             </div>
 
             {/* Desktop CTA with enhanced effects */}
             <div className="hidden md:flex gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(255,255,255,0.3)" }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={() => scrollTo("contact")}
-                className="relative px-5 py-2 rounded-full bg-white text-black font-semibold overflow-hidden group"
+                className="relative px-5 py-2 rounded-full bg-white text-black font-semibold overflow-hidden group hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all duration-300"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   Let&apos;s Talk
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-zinc-100 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              </motion.button>
+              </button>
               
-              <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <a
                 href="/YashvanthS_Resume.pdf"
                 download
-                className="px-4 py-2 rounded-full border border-white/20 text-sm flex items-center gap-2 hover:bg-white/10 hover:border-white/30 transition-all backdrop-blur-sm"
+                className="px-4 py-2 rounded-full border border-white/20 text-sm flex items-center gap-2 hover:bg-white/10 hover:border-white/30 transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
               >
                 <Download className="w-4 h-4" />
                 Resume
-              </motion.a>
+              </a>
             </div>
 
             {/* Mobile Toggle with animation */}
@@ -187,7 +186,7 @@ export function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md"
+              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
             />
 
             {/* Enhanced Bottom Sheet */}
@@ -206,7 +205,7 @@ export function Navbar() {
             >
               <div className="relative h-[75svh] mt-16 rounded-t-3xl overflow-hidden">
                 {/* Enhanced Glass Panel with gradient */}
-                <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/95 to-black/95 backdrop-blur-3xl border-t border-white/20 shadow-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/95 to-black/95 backdrop-blur-xl border-t border-white/20 shadow-2xl" />
                 
                 {/* Subtle glow effect */}
                 <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Footer } from "@/components/sections/footer";
+import { throttle } from "@/lib/utils";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -22,9 +23,9 @@ function WorkNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
+    const onScroll = throttle(() => {
       setScrolled(window.scrollY > 20);
-    };
+    }, 16);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -42,9 +43,9 @@ function WorkNavbar() {
     <>
       {/* ================= HEADER ================= */}
       <motion.header
-        initial={{ y: -100 }}
+        initial={false}
         animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        transition={{ duration: 0.2 }}
         className="fixed inset-x-0 top-0 z-50"
       >
         <nav className="mx-auto max-w-screen-lg px-6 py-4">
@@ -62,18 +63,24 @@ function WorkNavbar() {
             )}
           >
             {/* Logo with hover effect */}
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={() => {
                 const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
                 window.location.href = mainDomain;
               }}
-              className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-white/50 transition-all"
+              className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-white/50 transition-all hover:scale-110 hover:rotate-[5deg] active:scale-95"
             >
-              <Image src="/ys.png" alt="YS" fill className="object-cover" />
+              <Image 
+                src="/ys.png" 
+                alt="YS" 
+                fill 
+                className="object-cover"
+                quality={85}
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+              />
               <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10" />
-            </motion.button>
+            </button>
 
             {/* Desktop Nav with enhanced styling */}
             <div className="hidden md:flex items-center gap-2 relative">
@@ -82,11 +89,9 @@ function WorkNavbar() {
                   const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
                   return (
                     <Link key={item.id} href={mainDomain}>
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                      <div
                         className={cn(
-                          "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden",
+                          "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden hover:scale-105 active:scale-95",
                           "text-zinc-400 hover:text-white"
                         )}
                       >
@@ -94,18 +99,16 @@ function WorkNavbar() {
                           <item.icon className="w-4 h-4" />
                           {item.label}
                         </span>
-                      </motion.div>
+                      </div>
                     </Link>
                   );
                 } else {
                   return (
-                    <motion.button
+                    <button
                       key={item.id}
                       onClick={() => handleNavClick(item.action)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                       className={cn(
-                        "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden",
+                        "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden hover:scale-105 active:scale-95",
                         "text-zinc-400 hover:text-white"
                       )}
                     >
@@ -113,7 +116,7 @@ function WorkNavbar() {
                         <item.icon className="w-4 h-4" />
                         {item.label}
                       </span>
-                    </motion.button>
+                    </button>
                   );
                 }
               })}
@@ -164,7 +167,7 @@ function WorkNavbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md"
+              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
             />
 
             {/* Enhanced Bottom Sheet */}

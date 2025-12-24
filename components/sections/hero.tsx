@@ -8,8 +8,11 @@ import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { FlipWords } from "@/components/ui/flip-words";
 import { Button } from "@/components/ui/moving-border";
 import { Boxes } from "@/components/ui/background-boxes";
+import { shouldAnimate } from "@/lib/utils";
 
 export function SpotlightHero() {
+  const animate = shouldAnimate();
+
   return (
     <section
       id="home"
@@ -39,26 +42,29 @@ export function SpotlightHero() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="mb-6 flex justify-center"
         >
-          <div className="relative">
-            {/* Subtle glow behind photo */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-violet-500/20 blur-xl scale-110" />
-            
-            {/* Photo container */}
-            <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-2 border-zinc-700/50 shadow-2xl shadow-black/50">
-              <Image
-                src="/yashvanths.jpeg"
-                alt="Yashvanth S"
-                fill
-                className="object-cover object-center"
-                priority
-                sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 144px"
-              />
+            <div className="relative">
+              {/* Subtle glow behind photo */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-violet-500/20 blur-xl scale-110" />
+              
+              {/* Photo container */}
+              <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-2 border-zinc-700/50 shadow-2xl shadow-black/50">
+                <Image
+                  src="/yashvanths.jpeg"
+                  alt="Yashvanth S"
+                  fill
+                  className="object-cover object-center"
+                  priority
+                  quality={85}
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+IRjWjBqO6O2mhP//Z"
+                  sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 144px"
+                />
+              </div>
+              
+              {/* Online indicator */}
+              <div className="absolute bottom-1 right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-500 border-4 border-zinc-950" />
             </div>
-            
-            {/* Online indicator */}
-            <div className="absolute bottom-1 right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-500 border-4 border-zinc-950" />
-          </div>
-        </motion.div>
+          </motion.div>
 
         {/* Badge */}
         {/* <motion.div
@@ -72,25 +78,25 @@ export function SpotlightHero() {
 
         {/* Headline with FlipWords */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
           className="mb-6"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white">
-            <span className="block">I build</span>
-            <span className="block h-[1.2em] overflow-hidden">
-              <FlipWords 
-                words={["stunning websites", "web apps", "AI solutions", "digital products"]} 
-                duration={2500}
-                className="text-white bg-clip-text backdrop-blur-sm mix-blend-screen drop-shadow-[0_8px_32px_rgba(255,255,255,0.10)]"
-              />
-            </span>
-            <span className="block text-zinc-400">
-              that make an impact
-            </span>
-          </h1>
-        </motion.div>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white">
+              <span className="block">I build</span>
+              <span className="block h-[1.2em] overflow-hidden">
+                <FlipWords 
+                  words={["stunning websites", "web apps", "AI solutions", "digital products"]} 
+                  duration={2500}
+                  className="text-white bg-clip-text backdrop-blur-sm mix-blend-screen drop-shadow-[0_8px_32px_rgba(255,255,255,0.10)]"
+                />
+              </span>
+              <span className="block text-zinc-400">
+                that make an impact
+              </span>
+            </h1>
+          </motion.div>
 
         {/* Subtext with Text Generate Effect */}
         <div className="max-w-2xl mx-auto mb-8 sm:mb-10 px-2">
@@ -103,35 +109,35 @@ export function SpotlightHero() {
 
         {/* CTAs with Moving Border */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pointer-events-auto px-2"
         >
-          <Link href="/work">
-            <Button
-              borderRadius="9999px"
-              containerClassName="h-12 sm:h-14 w-40 sm:w-44"
-              borderClassName="bg-[radial-gradient(#3b82f6_40%,transparent_60%)]"
-              className="bg-zinc-950 border-zinc-800 hover:bg-zinc-900 transition-colors text-sm sm:text-base"
-              duration={3000}
-            >
-              <span className="flex items-center gap-2">
-                View My Work
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </span>
-            </Button>
-          </Link>
+            <Link href="/work">
+              <Button
+                borderRadius="9999px"
+                containerClassName="h-12 sm:h-14 w-40 sm:w-44"
+                borderClassName="bg-[radial-gradient(#3b82f6_40%,transparent_60%)]"
+                className="bg-zinc-950 border-zinc-800 hover:bg-zinc-900 transition-colors text-sm sm:text-base"
+                duration={3000}
+              >
+                <span className="flex items-center gap-2">
+                  View My Work
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </Button>
+            </Link>
 
-          <a
-            href="#contact"
-            className="px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium text-sm sm:text-base text-zinc-400 border border-zinc-800 hover:bg-zinc-900 hover:text-white transition-colors"
-          >
-            Get in Touch
-          </a>
-        </motion.div>
+            <a
+              href="#contact"
+              className="px-6 sm:px-8 py-3 sm:py-4 rounded-full font-medium text-sm sm:text-base text-zinc-400 border border-zinc-800 hover:bg-zinc-900 hover:text-white transition-colors"
+            >
+              Get in Touch
+            </a>
+          </motion.div>
       </div>
     </section>
   );

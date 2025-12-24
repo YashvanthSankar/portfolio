@@ -38,10 +38,10 @@ const projects = [
 function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={false}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
+      transition={{ duration: 0.2, delay: index * 0.1 }}
       className="relative rounded-2xl"
     >
       {/* Subtle Glowing Effect */}
@@ -114,9 +114,10 @@ export function ProjectsSection() {
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.2 }}
           className="mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -137,9 +138,10 @@ export function ProjectsSection() {
 
         {/* View All Link */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.2 }}
           className="mt-12 text-center"
         >
           <a
