@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Yashvanth S | Full-Stack Developer & AI Engineer",
+    default: "Yashvanth S | Developer Portfolio",
     template: "%s | Yashvanth S"
   },
   description: "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning. Explore my portfolio of innovative web applications and open-source projects.",
@@ -42,14 +42,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://yashvanths.com'),
+  metadataBase: new URL('https://yashvanth.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://yashvanths.com',
+    url: 'https://yashvanth.com',
     title: 'Yashvanth S | Full-Stack Developer & AI Engineer',
     description: 'Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning. Explore my portfolio of innovative web applications.',
     siteName: 'Yashvanth S Portfolio',
@@ -103,7 +103,7 @@ export default function RootLayout({
               "name": "Yashvanth S",
               "jobTitle": "Full-Stack Developer & AI Engineer",
               "description": "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.",
-              "url": "https://yashvanths.com",
+              "url": "https://yashvanth.com",
               "sameAs": [
                 "https://github.com/YashvanthSankar",
                 "https://linkedin.com/in/yashvanths",

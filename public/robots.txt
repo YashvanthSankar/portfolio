@@ -18,4 +18,4 @@ User-agent: Slurp
 Allow: /
 
 # Sitemap
-Sitemap: https://yashvanths.com/sitemap.xml
+Sitemap: https://yashvanth.com/sitemap.xml

@@ -15,7 +15,7 @@ export const metadata = {
   openGraph: {
     title: "My Work | Yashvanth S - GitHub Repositories",
     description: "Explore my comprehensive collection of GitHub repositories showcasing full-stack development, AI projects, and open-source contributions.",
-    url: 'https://yashvanths.com/work',
+    url: 'https://yashvanth.com/work',
     images: [
       {
         url: '/og-work.png',
@@ -48,7 +48,7 @@ export default function WorkLayout({
             "@type": "CollectionPage",
             "name": "Portfolio Projects - Yashvanth S",
             "description": "Explore my portfolio of full-stack development projects, AI applications, and web development work.",
-            "url": "https://yashvanths.com/work",
+            "url": "https://yashvanth.com/work",
             "mainEntity": {
               "@type": "ItemList",
               "name": "Portfolio Projects",
@@ -57,7 +57,7 @@ export default function WorkLayout({
             "author": {
               "@type": "Person",
               "name": "Yashvanth S",
-              "url": "https://yashvanths.com"
+              "url": "https://yashvanth.com"
             }
           })
         }}
