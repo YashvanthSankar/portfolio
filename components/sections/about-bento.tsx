@@ -5,6 +5,7 @@ import { MapPin, Mail, Check, Copy } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { CardSpotlight } from "@/components/ui/card-spotlight";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -76,43 +77,49 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="relative md:col-span-2 p-8 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="md:col-span-2 relative rounded-2xl"
           >
             <GlowingEffect
               spread={40}
-              glow={false}
+              glow={true}
               disabled={false}
               proximity={64}
               inactiveZone={0.01}
               borderWidth={2}
             />
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Avatar (replace initials with your photo at /public/profile.jpg) */}
-              <div className="relative w-24 h-24 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center mx-auto md:mx-0 ring-1 ring-white/5 shadow-sm">
-                <Image
-                  src="/yashvanths.jpeg"
-                  alt="Yashvanth S"
-                  width={96}
-                  height={96}
-                  unoptimized
-                  className="object-cover w-full h-full"
-                  priority
-                />
-              </div>
+            <CardSpotlight
+              className="h-full p-8 bg-zinc-950 border-zinc-800 rounded-2xl"
+              radius={790}
+              color="#3a3a3a"
+            >
+              <div className="relative z-30 flex flex-col md:flex-row gap-6">
+                {/* Avatar (replace initials with your photo at /public/profile.jpg) */}
+                <div className="relative w-24 h-24 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center mx-auto md:mx-0 ring-1 ring-white/5 shadow-sm">
+                  <Image
+                    src="/yashvanths.jpeg"
+                    alt="Yashvanth S"
+                    width={96}
+                    height={96}
+                    unoptimized
+                    className="object-cover w-full h-full"
+                    priority
+                  />
+                </div>
 
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  Yashvanth S
-                </h3>
-                <p className="text-zinc-400 leading-relaxed">
-                  I&apos;m a Computer Science student at IIITDM Kancheepuram pursuing 
-                  an integrated BTech + MTech degree. I specialize in building 
-                  full-stack web applications and AI-powered solutions that solve 
-                  real-world problems. When I&apos;m not coding, you&apos;ll find me 
-                  exploring new technologies and contributing to open-source projects.
-                </p>
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Yashvanth S
+                  </h3>
+                  <p className="text-zinc-400 leading-relaxed">
+                    I&apos;m a Computer Science student at IIITDM Kancheepuram pursuing 
+                    an integrated BTech + MTech degree. I specialize in building 
+                    full-stack web applications and AI-powered solutions that solve 
+                    real-world problems. When I&apos;m not coding, you&apos;ll find me 
+                    exploring new technologies and contributing to open-source projects.
+                  </p>
+                </div>
               </div>
-            </div>
+            </CardSpotlight>
           </motion.div>
 
           {/* Location Card */}
@@ -121,26 +128,32 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="relative p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="relative rounded-2xl"
           >
             <GlowingEffect
               spread={40}
-              glow={false}
+              glow={true}
               disabled={false}
               proximity={64}
               inactiveZone={0.01}
               borderWidth={2}
             />
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-zinc-800">
-                <MapPin className="w-5 h-5 text-zinc-400" />
+            <CardSpotlight
+              className="h-full p-6 bg-zinc-950 border-zinc-800 rounded-2xl"
+              radius={280}
+              color="#3a3a3a"
+            >
+              <div className="relative z-30 flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-zinc-800">
+                  <MapPin className="w-5 h-5 text-zinc-400" />
+                </div>
+                <span className="text-sm text-zinc-500 uppercase tracking-wide">
+                  Location
+                </span>
               </div>
-              <span className="text-sm text-zinc-500 uppercase tracking-wide">
-                Location
-              </span>
-            </div>
-            <p className="text-xl font-semibold text-white">Chennai, India</p>
-            <p className="text-zinc-500 text-sm mt-1">IIITDM Kancheepuram</p>
+              <p className="text-xl font-semibold text-white relative z-30">Chennai, India</p>
+              <p className="text-zinc-500 text-sm mt-1 relative z-30">IIITDM Kancheepuram</p>
+            </CardSpotlight>
           </motion.div>
 
           {/* Email Card */}
@@ -149,26 +162,34 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="relative p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="relative rounded-2xl"
           >
             <GlowingEffect
               spread={40}
-              glow={false}
+              glow={true}
               disabled={false}
               proximity={64}
               inactiveZone={0.01}
               borderWidth={2}
             />
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-zinc-800">
-                <Mail className="w-5 h-5 text-zinc-400" />
+            <CardSpotlight
+              className="h-full p-6 bg-zinc-950 border-zinc-800 rounded-2xl"
+              radius={400}
+              color="#3a3a3a"
+            >
+              <div className="relative z-30 flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-zinc-800">
+                  <Mail className="w-5 h-5 text-zinc-400" />
+                </div>
+                <span className="text-sm text-zinc-500 uppercase tracking-wide">
+                  Contact
+                </span>
               </div>
-              <span className="text-sm text-zinc-500 uppercase tracking-wide">
-                Contact
-              </span>
-            </div>
-            <p className="text-white font-medium mb-2">yashvanthsankar@gmail.com</p>
-            <CopyButton text="yashvanthsankar@gmail.com" />
+              <p className="text-white font-medium mb-2 relative z-30">yashvanthsankar@gmail.com</p>
+              <div className="relative z-30">
+                <CopyButton text="yashvanthsankar@gmail.com" />
+              </div>
+            </CardSpotlight>
           </motion.div>
 
           {/* Stats Card - Wide */}
@@ -177,26 +198,32 @@ export function AboutBento() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="relative md:col-span-2 p-6 rounded-2xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+            className="md:col-span-2 relative rounded-2xl"
           >
             <GlowingEffect
               spread={40}
-              glow={false}
+              glow={true}
               disabled={false}
               proximity={64}
               inactiveZone={0.01}
               borderWidth={2}
             />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">
-                    {stat.value}
+            <CardSpotlight
+              className="h-full p-6 bg-zinc-950 border-zinc-800 rounded-2xl"
+              radius={650}
+              color="#3a3a3a"
+            >
+              <div className="relative z-30 grid grid-cols-2 md:grid-cols-4 gap-6">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="text-center">
+                    <div className="text-3xl font-bold text-white mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-zinc-500">{stat.label}</div>
                   </div>
-                  <div className="text-sm text-zinc-500">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </CardSpotlight>
           </motion.div>
         </div>
       </div>

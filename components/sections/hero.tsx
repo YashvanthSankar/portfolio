@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { Spotlight } from "@/components/ui/spotlight";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { FlipWords } from "@/components/ui/flip-words";
@@ -107,22 +108,22 @@ export function SpotlightHero() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pointer-events-auto px-2"
         >
-          <Button
-            as="a"
-            href="#projects"
-            borderRadius="9999px"
-            containerClassName="h-12 sm:h-14 w-40 sm:w-44"
-            borderClassName="bg-[radial-gradient(#3b82f6_40%,transparent_60%)]"
-            className="bg-zinc-950 border-zinc-800 hover:bg-zinc-900 transition-colors text-sm sm:text-base"
-            duration={3000}
-          >
-            <span className="flex items-center gap-2">
-              View My Work
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </span>
-          </Button>
+          <Link href="/work">
+            <Button
+              borderRadius="9999px"
+              containerClassName="h-12 sm:h-14 w-40 sm:w-44"
+              borderClassName="bg-[radial-gradient(#3b82f6_40%,transparent_60%)]"
+              className="bg-zinc-950 border-zinc-800 hover:bg-zinc-900 transition-colors text-sm sm:text-base"
+              duration={3000}
+            >
+              <span className="flex items-center gap-2">
+                View My Work
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </span>
+            </Button>
+          </Link>
 
           <a
             href="#contact"

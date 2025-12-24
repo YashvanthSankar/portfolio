@@ -143,12 +143,10 @@ export function ProjectsSection() {
           className="mt-12 text-center"
         >
           <a
-            href="https://github.com/YashvanthSankar"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/work"
             className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group"
           >
-            <span>View all projects on GitHub</span>
+            <span>Explore All Projects →</span>
             <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
         </motion.div>

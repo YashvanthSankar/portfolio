@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send, Mail, MapPin, Loader2, Check } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { CardSpotlight } from "@/components/ui/card-spotlight";
 
 export function ContactSection() {
   const [formState, setFormState] = useState({
@@ -93,24 +94,30 @@ export function ContactSection() {
             </div>
 
             {/* Availability */}
-            <div className="relative p-4 rounded-xl bg-zinc-900/50 border border-zinc-800">
+            <div className="relative rounded-2xl">
               <GlowingEffect
                 spread={40}
-                glow={false}
+                glow={true}
                 disabled={false}
                 proximity={64}
                 inactiveZone={0.01}
                 borderWidth={2}
               />
-              <div className="flex items-center gap-2 mb-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-                <span className="text-sm font-medium text-emerald-400">
-                  Available for freelance & full-time opportunities
-                </span>
-              </div>
+              <CardSpotlight
+                className="p-4 bg-zinc-950 border-zinc-800 rounded-2xl"
+                radius={250}
+                color="#1f1f1f"
+              >
+                <div className="relative z-20 flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  <span className="text-sm font-medium text-emerald-400">
+                    Available for freelance & full-time opportunities
+                  </span>
+                </div>
+              </CardSpotlight>
             </div>
           </motion.div>
 

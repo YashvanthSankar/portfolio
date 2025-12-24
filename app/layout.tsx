@@ -14,8 +14,75 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yashvanth S | Developer Portfolio",
-  description: "Full-stack developer and open-source contributor passionate about building scalable web applications and AI-powered solutions.",
+  title: {
+    default: "Yashvanth S | Full-Stack Developer & AI Engineer",
+    template: "%s | Yashvanth S"
+  },
+  description: "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning. Explore my portfolio of innovative web applications and open-source projects.",
+  keywords: [
+    "Yashvanth S",
+    "full-stack developer",
+    "AI engineer",
+    "React developer",
+    "Next.js developer",
+    "Node.js developer",
+    "machine learning",
+    "web development",
+    "portfolio",
+    "JavaScript",
+    "TypeScript",
+    "Python",
+    "open source"
+  ],
+  authors: [{ name: "Yashvanth S" }],
+  creator: "Yashvanth S",
+  publisher: "Yashvanth S",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://yashvanths.com'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://yashvanths.com',
+    title: 'Yashvanth S | Full-Stack Developer & AI Engineer',
+    description: 'Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning. Explore my portfolio of innovative web applications.',
+    siteName: 'Yashvanth S Portfolio',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Yashvanth S - Full-Stack Developer & AI Engineer',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Yashvanth S | Full-Stack Developer & AI Engineer',
+    description: 'Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.',
+    images: ['/og-image.png'],
+    creator: '@yashvanths',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-site-verification-code', 
+  },
 };
 
 export default function RootLayout({
@@ -27,6 +94,40 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/ys.png" type="image/png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              "name": "Yashvanth S",
+              "jobTitle": "Full-Stack Developer & AI Engineer",
+              "description": "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.",
+              "url": "https://yashvanths.com",
+              "sameAs": [
+                "https://github.com/YashvanthSankar",
+                "https://linkedin.com/in/yashvanths",
+                "https://instagram.com/yashavnth191206"
+              ],
+              "knowsAbout": [
+                "JavaScript",
+                "TypeScript",
+                "React",
+                "Next.js",
+                "Node.js",
+                "Python",
+                "Machine Learning",
+                "AI",
+                "Web Development",
+                "Full-Stack Development"
+              ],
+              "alumniOf": {
+                "@type": "EducationalOrganization",
+                "name": "IIITDM Kancheepuram"
+              }
+            }),
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
