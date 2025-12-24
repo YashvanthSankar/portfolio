@@ -388,7 +388,7 @@ export default function WorkPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-16 text-center"
+            className="mt-16 mb-16 text-center"
           >
             <a
               href="https://github.com/YashvanthSankar"
