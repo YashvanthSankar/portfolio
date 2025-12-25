@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin, Instagram, Mail, ArrowUp } from "lucide-react";
+import { Github, Linkedin, Mail, ArrowUp } from "lucide-react";
 import Image from "next/image";
 
 const socialLinks = [
@@ -13,11 +13,6 @@ const socialLinks = [
     name: "LinkedIn",
     href: "https://linkedin.com/in/yashvanths",
     icon: Linkedin,
-  },
-  {
-    name: "Instagram",
-    href: "https://instagram.com/yashavnth191206",
-    icon: Instagram,
   },
   {
     name: "Email",
