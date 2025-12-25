@@ -7,30 +7,29 @@ import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 const projects = [
   {
-    title: "Preploot",
+    title: "PrepLoot",
     description:
-      "A comprehensive platform for BTech students with personalized prep modules, curated YouTube resources, and real-time analytics. Features dynamic learning paths and progress tracking.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "MongoDB", "Prisma"],
+    "An AI-powered learning platform that recommends top YouTube videos for any subject and automatically generates quizzes, notes, and interactive games from the content—enabling students to watch and learn simultaneously while preparing for competitive exams like JEE, NEET, GATE, and UPSC.",    tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL", "Prisma"],
     image: "/projects/preploot.png",
-    github: "https://github.com/YashvanthSankar",
+    github: "https://github.com/YashvanthSankar/preploot",
     live: "https://preploot.vercel.app",
   },
   {
     title: "QwikRead AI",
     description:
-      "An AI-powered research assistant that summarizes documents and generates insights using LangChain and RAG architecture. Supports multiple document formats with intelligent query processing.",
-    tags: ["Python", "LangChain", "RAG", "FastAPI", "React"],
+    "A lightweight, AI-powered Chrome extension that instantly summarizes articles with a single click",
+    tags: ["Chrome Extensions API", "Google Gemini", "HTML", "CSS", "JavaScript"],
     image: "/projects/qwikread.png",
-    github: "https://github.com/YashvanthSankar",
+    github: "https://github.com/YashvanthSankar/qwikread-ai-extension",
     live: "https://qwikread.vercel.app",
   },
   {
-    title: "Hospital ER Automation",
+    title: "Hospital ER Forms Autofiller",
     description:
-      "Enterprise-grade emergency room system that reduced wait times by 40% through intelligent triage, automated patient prioritization, and real-time bed management.",
-    tags: ["React", "Node.js", "PostgreSQL", "Docker", "Socket.io"],
+      "A Python tool to auto-fill government-mandated patient admission Google Forms from hospital records (CSV). ",
+    tags: ["Python", "Selenium", "Pandas", "Webdriver manager"],
     image: "/projects/hospital.png",
-    github: "https://github.com/YashvanthSankar",
+    github: "https://github.com/YashvanthSankar/hospital-er-forms-autofiller",
     live: null,
   },
 ];
