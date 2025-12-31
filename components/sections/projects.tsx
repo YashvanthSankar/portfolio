@@ -5,34 +5,7 @@ import { ExternalLink, Github } from "lucide-react";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 
-const projects = [
-  {
-    title: "PrepLoot",
-    description:
-    "An AI-powered learning platform that recommends top YouTube videos for any subject and automatically generates quizzes, notes, and interactive games from the content—enabling students to watch and learn simultaneously while preparing for competitive exams like JEE, NEET, GATE, and UPSC.",    tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL", "Prisma"],
-    image: "/projects/preploot.png",
-    github: "https://github.com/YashvanthSankar/preploot",
-    live: "https://preploot.vercel.app",
-  },
-  {
-    title: "QwikRead AI",
-    description:
-    "A lightweight, AI-powered Chrome extension that instantly summarizes articles with a single click",
-    tags: ["Chrome Extensions API", "Google Gemini", "HTML", "CSS", "JavaScript"],
-    image: "/projects/qwikread.png",
-    github: "https://github.com/YashvanthSankar/qwikread-ai-extension",
-    live: "https://qwikread.vercel.app",
-  },
-  {
-    title: "Hospital ER Forms Autofiller",
-    description:
-      "A Python tool to auto-fill government-mandated patient admission Google Forms from hospital records (CSV). ",
-    tags: ["Python", "Selenium", "Pandas", "Webdriver manager"],
-    image: "/projects/hospital.png",
-    github: "https://github.com/YashvanthSankar/hospital-er-forms-autofiller",
-    live: null,
-  },
-];
+import { projects } from "@/data/projects";
 
 function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
   return (
@@ -123,7 +96,7 @@ export function ProjectsSection() {
             Featured Projects
           </h2>
           <p className="text-zinc-400 max-w-xl">
-            A selection of projects that showcase my expertise in building 
+            A selection of projects that showcase my expertise in building
             modern web applications and solving complex problems.
           </p>
         </motion.div>
