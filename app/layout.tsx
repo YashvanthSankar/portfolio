@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,7 +82,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'ZR-1eKynBhaBA8AmLJvdzCX-OQybiFhgC6EjoXwbGoc', 
+    google: 'ZR-1eKynBhaBA8AmLJvdzCX-OQybiFhgC6EjoXwbGoc',
   },
 };
 
@@ -140,6 +141,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
