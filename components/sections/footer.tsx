@@ -16,7 +16,7 @@ const socialLinks = [
   },
   {
     name: "Instagram",
-    href: "https://instagram.com/yashavnth191206",
+    href: "https://instagram.com/yashvanth191206",
     icon: Instagram,
   },
   {

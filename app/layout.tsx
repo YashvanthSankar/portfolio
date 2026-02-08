@@ -103,7 +103,7 @@ export default function RootLayout({
               "sameAs": [
                 "https://github.com/YashvanthSankar",
                 "https://linkedin.com/in/yashvanths",
-                "https://instagram.com/yashavnth191206"
+                "https://instagram.com/yashvanth191206"
               ],
               "knowsAbout": [
                 "JavaScript",
