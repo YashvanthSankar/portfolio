@@ -76,3 +76,5 @@ export const TextGenerateEffect = React.memo(({
     </div>
   );
 });
+
+TextGenerateEffect.displayName = 'TextGenerateEffect';

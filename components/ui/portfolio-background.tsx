@@ -2,28 +2,20 @@ import React from "react";
 
 export function PortfolioBackground() {
     return (
-        <div className="absolute inset-0 pointer-events-none">
-            {/* Multiple Animated gradient orbs - strategically placed */}
-            <div className="absolute top-[5%] right-1/4 w-[600px] h-[600px] bg-blue-500/12 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute inset-0 pointer-events-none will-change-auto">
+            {/* Animated gradient orbs - reduced for better performance */}
+            <div className="absolute top-[5%] right-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
             <div
-                className="absolute top-[20%] left-1/4 w-[500px] h-[500px] bg-violet-500/10 rounded-full blur-3xl animate-pulse"
+                className="absolute top-[25%] left-1/4 w-[500px] h-[500px] bg-violet-500/8 rounded-full blur-3xl animate-pulse"
                 style={{ animationDelay: "1.2s" }}
             />
             <div
-                className="absolute top-[40%] right-1/3 w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-3xl animate-pulse"
+                className="absolute top-[50%] right-1/3 w-[450px] h-[450px] bg-cyan-500/8 rounded-full blur-3xl animate-pulse"
                 style={{ animationDelay: "0.6s" }}
             />
             <div
-                className="absolute top-[55%] left-1/3 w-[550px] h-[550px] bg-emerald-500/10 rounded-full blur-3xl animate-pulse"
+                className="absolute top-[75%] left-1/3 w-[500px] h-[500px] bg-emerald-500/8 rounded-full blur-3xl animate-pulse"
                 style={{ animationDelay: "1.8s" }}
-            />
-            <div
-                className="absolute top-[75%] right-1/4 w-[480px] h-[480px] bg-blue-500/10 rounded-full blur-3xl animate-pulse"
-                style={{ animationDelay: "2.4s" }}
-            />
-            <div
-                className="absolute top-[90%] left-1/4 w-[400px] h-[400px] bg-violet-500/8 rounded-full blur-3xl animate-pulse"
-                style={{ animationDelay: "3s" }}
             />
 
             {/* Layered Radial gradients for depth */}

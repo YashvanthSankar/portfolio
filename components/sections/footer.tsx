@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin, Mail, ArrowUp } from "lucide-react";
+import { Github, Linkedin, Mail, ArrowUp, Instagram } from "lucide-react";
 import Image from "next/image";
 
 const socialLinks = [
@@ -13,6 +13,11 @@ const socialLinks = [
     name: "LinkedIn",
     href: "https://linkedin.com/in/yashvanths",
     icon: Linkedin,
+  },
+  {
+    name: "Instagram",
+    href: "https://instagram.com/yashavnth191206",
+    icon: Instagram,
   },
   {
     name: "Email",
@@ -44,7 +49,7 @@ export function Footer() {
               />
             </div>
             <p className="text-sm text-zinc-500">
-              © {new Date().getFullYear()} Yashvanth. All rights reserved.
+              © {new Date().getFullYear()} Yashvanth S. All rights reserved.
             </p>
           </div>
 

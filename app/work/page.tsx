@@ -299,6 +299,7 @@ function RepoCard({ repo, index }: { repo: Repo; index: number }) {
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors shrink-0"
+              aria-label={`View ${repo.name} on GitHub`}
             >
               <ExternalLink className="w-4 h-4 text-zinc-400" />
             </a>
@@ -392,22 +393,62 @@ export default function WorkPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="text-white">Loading repositories...</div>
+      <div className="min-h-screen bg-zinc-950">
+        <WorkNavbar />
+        <div className="pt-24">
+          <div className="max-w-6xl mx-auto px-6">
+            {/* Skeleton header */}
+            <div className="mb-16">
+              <div className="h-12 w-48 bg-zinc-800 rounded-lg animate-pulse mb-4" />
+              <div className="h-6 w-96 max-w-full bg-zinc-800/60 rounded-lg animate-pulse mb-2" />
+              <div className="h-6 w-64 bg-zinc-800/40 rounded-lg animate-pulse" />
+            </div>
+            {/* Skeleton grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6 space-y-4">
+                  <div className="flex justify-between">
+                    <div className="h-6 w-32 bg-zinc-800 rounded animate-pulse" />
+                    <div className="h-8 w-8 bg-zinc-800 rounded-lg animate-pulse" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-4 w-full bg-zinc-800/60 rounded animate-pulse" />
+                    <div className="h-4 w-3/4 bg-zinc-800/40 rounded animate-pulse" />
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="h-6 w-16 bg-zinc-800/50 rounded-full animate-pulse" />
+                    <div className="h-6 w-12 bg-zinc-800/50 rounded-full animate-pulse" />
+                    <div className="h-6 w-14 bg-zinc-800/50 rounded-full animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="text-red-400">Error: {error}</div>
+      <div className="min-h-screen bg-zinc-950">
+        <WorkNavbar />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <div className="text-red-400 text-lg">Failed to load repositories</div>
+          <p className="text-zinc-500 text-sm">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition-colors text-sm"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div id="main-content" className="min-h-screen bg-zinc-950">
       <WorkNavbar />
 
       <div className="pt-24">

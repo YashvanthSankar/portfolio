@@ -5,8 +5,9 @@ import { cn, shouldAnimate } from "@/lib/utils";
 
 export const BoxesCore = ({ className, ...rest }: { className?: string }) => {
   const animate = shouldAnimate();
-  const rows = useMemo(() => new Array(150).fill(1), []);
-  const cols = useMemo(() => new Array(100).fill(1), []);
+  // Reduced from 150×100 (15,000 nodes) to 25×15 (375 nodes) for dramatically better performance
+  const rows = useMemo(() => new Array(25).fill(1), []);
+  const cols = useMemo(() => new Array(15).fill(1), []);
 
   return (
     <div

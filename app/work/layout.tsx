@@ -12,24 +12,18 @@ export const metadata = {
     "web development portfolio",
     "code portfolio"
   ],
+  alternates: {
+    canonical: '/work',
+  },
   openGraph: {
     title: "My Work | Yashvanth S - GitHub Repositories",
     description: "Explore my comprehensive collection of GitHub repositories showcasing full-stack development, AI projects, and open-source contributions.",
     url: 'https://yashvanth.com/work',
-    images: [
-      {
-        url: '/og-work.png',
-        width: 1200,
-        height: 630,
-        alt: 'Yashvanth S - GitHub Repositories & Projects',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'My Work | Yashvanth S - GitHub Repositories',
     description: 'Explore my comprehensive collection of GitHub repositories showcasing full-stack development projects.',
-    images: ['/og-work.png'],
   },
 };
 

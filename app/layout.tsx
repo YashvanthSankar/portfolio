@@ -54,20 +54,11 @@ export const metadata: Metadata = {
     title: 'Yashvanth S | Full-Stack Developer & AI Engineer',
     description: 'Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning. Explore my portfolio of innovative web applications.',
     siteName: 'Yashvanth S Portfolio',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Yashvanth S - Full-Stack Developer & AI Engineer',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Yashvanth S | Full-Stack Developer & AI Engineer',
     description: 'Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.',
-    images: ['/og-image.png'],
     creator: '@yashvanths',
   },
   robots: {
@@ -95,6 +86,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/ys.png" type="image/png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#09090b" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -139,6 +134,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-lg focus:text-sm focus:font-medium"
+          >
+            Skip to main content
+          </a>
           {children}
         </ThemeProvider>
         <Analytics />

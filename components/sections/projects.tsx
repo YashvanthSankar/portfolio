@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ExternalLink, Github } from "lucide-react";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import Link from "next/link";
 
 import { projects } from "@/data/projects";
 
@@ -42,6 +43,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+                aria-label={`View ${project.title} source code on GitHub`}
               >
                 <Github className="w-4 h-4 text-zinc-400" />
               </a>
@@ -52,6 +54,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+                aria-label={`View ${project.title} live demo`}
               >
                 <ExternalLink className="w-4 h-4 text-zinc-400" />
               </a>
@@ -116,13 +119,13 @@ export function ProjectsSection() {
           transition={{ duration: 0.2 }}
           className="mt-12 text-center"
         >
-          <a
+          <Link
             href="/work"
             className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group"
           >
             <span>Explore All Projects →</span>
             <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

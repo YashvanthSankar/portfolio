@@ -31,7 +31,7 @@ const Footer = dynamic(() => import("@/components/sections/footer").then(mod => 
 
 export function Portfolio() {
   return (
-    <main className="min-h-screen bg-zinc-950 text-white antialiased">
+    <main id="main-content" className="min-h-screen bg-zinc-950 text-white antialiased">
       <Navbar />
       <SpotlightHero />
 
