@@ -1,242 +1,158 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Star, GitFork, Calendar, Code, ArrowLeft, Github, Menu, X } from "lucide-react";
-import { CardSpotlight } from "@/components/ui/card-spotlight";
-import { GlowingEffect } from "@/components/ui/glowing-effect";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { ExternalLink, Star, GitFork, Code2, ArrowLeft, Sun, Moon, Download, Menu, X } from "lucide-react";
+
+const GithubIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className ?? "w-3.5 h-3.5"} fill="currentColor">
+    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+  </svg>
+);
+import { useEffect, useState, startTransition } from "react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 import Image from "next/image";
 import { Footer } from "@/components/sections/footer";
-import { throttle } from "@/lib/utils";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { SectionHeader } from "@/components/ui/section-header";
+import { SectionBorder } from "@/components/ui/section-border";
+import { cn, throttle } from "@/lib/utils";
 
-const workNavItems = [
-  { id: "back", label: "Back to Main", icon: ArrowLeft, action: "back" },
-  { id: "github", label: "GitHub Profile", icon: Github, action: "github" },
-];
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { startTransition(() => setMounted(true)); }, []);
+  if (!mounted) return <div className="w-9 h-9" />;
+  return (
+    <button
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+      aria-label="Toggle theme"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {theme === "dark" ? (
+          <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+            <Sun className="w-4 h-4" />
+          </motion.div>
+        ) : (
+          <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+            <Moon className="w-4 h-4" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </button>
+  );
+}
 
 function WorkNavbar() {
-  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = throttle(() => {
-      setScrolled(window.scrollY > 20);
-    }, 16);
+    const onScroll = throttle(() => setScrolled(window.scrollY > 20), 16);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNavClick = (action: string) => {
-    setMenuOpen(false);
-    if (action === "back") {
-      router.push("/");
-    } else if (action === "github") {
-      window.open("https://github.com/YashvanthSankar", "_blank");
-    }
-  };
-
   return (
     <>
-      {/* ================= HEADER ================= */}
       <motion.header
-        initial={false}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.2 }}
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="fixed inset-x-0 top-0 z-50"
       >
-        <nav className="mx-auto max-w-screen-lg px-6 py-4">
-          <motion.div
-            animate={{
-              backgroundColor: scrolled ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0)",
-              backdropFilter: scrolled ? "blur(20px)" : "blur(0px)",
-            }}
-            transition={{ duration: 0.3 }}
-            className={cn(
-              "flex items-center justify-between rounded-full transition-all duration-300",
-              scrolled
-                ? "border border-white/10 px-6 py-3 shadow-2xl shadow-black/50"
-                : "px-3 py-2"
-            )}
-          >
-            {/* Logo with hover effect */}
-            <button
-              onClick={() => {
-                const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
-                window.location.href = mainDomain;
-              }}
-              className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-white/50 transition-all hover:scale-110 hover:rotate-[5deg] active:scale-95"
-            >
-              <Image 
-                src="/ys.png" 
-                alt="YS" 
-                fill 
-                className="object-cover"
-                quality={85}
-                placeholder="blur"
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10" />
-            </button>
+        <div className={cn("mx-auto max-w-4xl px-4 py-3 transition-all duration-300", scrolled ? "px-4 py-2" : "")}>
+          <div className={cn(
+            "flex items-center justify-between px-4 py-2.5 transition-all duration-300",
+            scrolled
+              ? "bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm"
+              : "bg-transparent"
+          )}>
+            {/* Logo */}
+            <Link href="/" className="relative h-8 w-8 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800 hover:ring-violet-400 transition-all">
+              <Image src="/ys.png" alt="YS" fill className="object-cover" quality={85} />
+            </Link>
 
-            {/* Desktop Nav with enhanced styling */}
-            <div className="hidden md:flex items-center gap-2 relative">
-              {workNavItems.map((item) => {
-                if (item.id === "back") {
-                  const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
-                  return (
-                    <Link key={item.id} href={mainDomain}>
-                      <div
-                        className={cn(
-                          "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden hover:scale-105 active:scale-95",
-                          "text-zinc-400 hover:text-white"
-                        )}
-                      >
-                        <span className="relative z-10 flex items-center gap-2">
-                          <item.icon className="w-4 h-4" />
-                          {item.label}
-                        </span>
-                      </div>
-                    </Link>
-                  );
-                } else {
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNavClick(item.action)}
-                      className={cn(
-                        "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden hover:scale-105 active:scale-95",
-                        "text-zinc-400 hover:text-white"
-                      )}
-                    >
-                      <span className="relative z-10 flex items-center gap-2">
-                        <item.icon className="w-4 h-4" />
-                        {item.label}
-                      </span>
-                    </button>
-                  );
-                }
-              })}
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-1">
+              <Link
+                href="/"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                home
+              </Link>
+              <a
+                href="https://github.com/YashvanthSankar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all"
+              >
+                <GithubIcon className="w-3.5 h-3.5" />
+                github
+              </a>
+            </nav>
+
+            {/* Right */}
+            <div className="hidden md:flex items-center gap-2">
+              <ThemeToggle />
+              <a
+                href="/YashvanthS_Resume.pdf"
+                download
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+              >
+                <Download className="w-3.5 h-3.5" />
+                resume
+              </a>
             </div>
 
-            {/* Mobile Toggle with animation */}
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setMenuOpen((p) => !p)}
-              className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition"
-              aria-label="Toggle menu"
-            >
-              <AnimatePresence mode="wait">
-                {menuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          </motion.div>
-        </nav>
+            {/* Mobile */}
+            <div className="md:hidden flex items-center gap-2">
+              <ThemeToggle />
+              <button
+                onClick={() => setMenuOpen((p) => !p)}
+                className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
       </motion.header>
 
-      {/* ================= MOBILE MENU ================= */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Enhanced Backdrop */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             />
-
-            {/* Enhanced Bottom Sheet */}
             <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              drag="y"
-              dragConstraints={{ top: 0 }}
-              onDragEnd={(_, { offset, velocity }) => {
-                if (offset.y > 100 || velocity.y > 500) {
-                  setMenuOpen(false);
-                }
-              }}
-              className="fixed bottom-0 left-0 right-0 z-50 bg-zinc-950 border-t border-white/10 rounded-t-3xl overflow-hidden"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 p-6 pb-8"
             >
-              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-
-              {/* CONTENT */}
-              <div className="relative z-10 p-6 pt-8 text-white flex flex-col h-full">
-                {/* Enhanced Drag Handle */}
-                <div className="mx-auto mb-8 h-1.5 w-16 rounded-full bg-white/40 shadow-lg shadow-white/20" />
-
-                {/* Enhanced Menu Items */}
-                <div className="space-y-2 flex-1 overflow-y-auto">
-                  {workNavItems.map((item, index) => {
-                    if (item.id === "back") {
-                      const mainDomain = process.env.NEXT_PUBLIC_MAIN_DOMAIN || '/';
-                      return (
-                        <Link key={item.id} href={mainDomain}>
-                          <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className={cn(
-                              "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-all group",
-                              "hover:bg-white/10 text-zinc-300"
-                            )}
-                          >
-                            <div className="p-2 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                              <item.icon className="w-5 h-5" />
-                            </div>
-                            <span className="font-medium">{item.label}</span>
-                          </motion.div>
-                        </Link>
-                      );
-                    } else {
-                      return (
-                        <motion.button
-                          key={item.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          onClick={() => handleNavClick(item.action)}
-                          className={cn(
-                            "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-all group",
-                            "hover:bg-white/10 text-zinc-300"
-                          )}
-                        >
-                          <div className="p-2 rounded-xl bg-white/10 group-hover:bg-white/20 transition-colors">
-                            <item.icon className="w-5 h-5" />
-                          </div>
-                          <span className="font-medium">{item.label}</span>
-                        </motion.button>
-                      );
-                    }
-                  })}
-                </div>
+              <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-zinc-200 dark:bg-zinc-700" />
+              <div className="space-y-1 mb-4">
+                <Link href="/" onClick={() => setMenuOpen(false)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                  <ArrowLeft className="w-4 h-4 shrink-0" />
+                  <span className="text-sm">back to home</span>
+                </Link>
+                <a href="https://github.com/YashvanthSankar" target="_blank" rel="noopener noreferrer"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                  <GithubIcon className="w-4 h-4 shrink-0" />
+                  <span className="text-sm">github profile</span>
+                </a>
+              </div>
+              <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4">
+                <a href="/YashvanthS_Resume.pdf" download
+                  className="w-full py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-sm flex items-center justify-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+                  <Download className="w-4 h-4" />
+                  download resume
+                </a>
               </div>
             </motion.div>
           </>
@@ -254,109 +170,84 @@ interface Repo {
   stars: number;
   forks: number;
   topics: string[];
-  created_at: string;
   updated_at: string;
 }
 
 function RepoCard({ repo, index }: { repo: Repo; index: number }) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
+    <motion.a
+      href={repo.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.05 }}
-      className="relative rounded-2xl"
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="group flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300 overflow-hidden"
     >
-      <GlowingEffect
-        spread={40}
-        glow={true}
-        disabled={false}
-        proximity={64}
-        inactiveZone={0.01}
-        borderWidth={2}
-      />
-      <CardSpotlight
-        className="h-full p-6 bg-zinc-950 border-zinc-800 rounded-2xl"
-        radius={250}
-        color="#1f1f1f"
-      >
-        <div className="relative z-20">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-3">
-            <h3 className="text-lg font-bold text-white line-clamp-1">
-              {repo.name}
-            </h3>
-            <a
-              href={repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors shrink-0"
-              aria-label={`View ${repo.name} on GitHub`}
-            >
-              <ExternalLink className="w-4 h-4 text-zinc-400" />
-            </a>
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xs text-zinc-400 dark:text-zinc-500 select-none shrink-0">~/</span>
+          <span className="text-sm font-semibold text-zinc-900 dark:text-white truncate">{repo.name}</span>
+        </div>
+        <ExternalLink className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-600 group-hover:text-violet-500 transition-colors shrink-0 ml-2" />
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-5 gap-4">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed flex-1 line-clamp-3">
+          {repo.description || "no description"}
+        </p>
+
+        {/* Topics */}
+        {repo.topics.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {repo.topics.slice(0, 3).map((topic) => (
+              <span key={topic} className="px-2 py-0.5 text-[11px] rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+                {topic}
+              </span>
+            ))}
           </div>
+        )}
 
-          {/* Description */}
-          <p className="text-zinc-400 text-sm leading-relaxed mb-4 line-clamp-3">
-            {repo.description || "No description available"}
-          </p>
-
-          {/* Language & Stats */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              {repo.language && (
-                <div className="flex items-center gap-1">
-                  <Code className="w-3 h-3 text-zinc-500" />
-                  <span className="text-xs text-zinc-500">{repo.language}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-zinc-500" />
-                <span className="text-xs text-zinc-500">{repo.stars}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <GitFork className="w-3 h-3 text-zinc-500" />
-                <span className="text-xs text-zinc-500">{repo.forks}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Topics */}
-          {repo.topics.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {repo.topics.slice(0, 3).map((topic) => (
-                <span
-                  key={topic}
-                  className="px-2 py-1 text-xs rounded-full bg-zinc-800/50 text-zinc-400 border border-zinc-700/50"
-                >
-                  {topic}
-                </span>
-              ))}
+        {/* Stats */}
+        <div className="flex items-center gap-3 text-xs text-zinc-400 dark:text-zinc-500">
+          {repo.language && (
+            <div className="flex items-center gap-1">
+              <Code2 className="w-3 h-3" />
+              <span>{repo.language}</span>
             </div>
           )}
-
-          {/* Dates */}
-          <div className="flex items-center justify-between text-xs text-zinc-600">
-            <div className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
-              <span>Created {formatDate(repo.created_at)}</span>
-            </div>
-            <div className="text-zinc-600">
-              Updated {formatDate(repo.updated_at)}
-            </div>
+          <div className="flex items-center gap-1">
+            <Star className="w-3 h-3" />
+            <span>{repo.stars}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <GitFork className="w-3 h-3" />
+            <span>{repo.forks}</span>
           </div>
         </div>
-      </CardSpotlight>
-    </motion.div>
+      </div>
+    </motion.a>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
+      <div className="px-5 py-4 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="h-4 w-32 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+      </div>
+      <div className="p-5 space-y-3">
+        <div className="h-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+        <div className="h-3 w-3/4 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+        <div className="flex gap-1.5 pt-1">
+          <div className="h-5 w-14 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+          <div className="h-5 w-10 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -366,139 +257,76 @@ export default function WorkPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchRepos = async () => {
-      try {
-        const response = await fetch('/repos.json');
-        if (!response.ok) {
-          throw new Error('Failed to load repositories');
-        }
-        const data = await response.json();
-        // Sort by stars (descending) and then by updated date (descending)
-        const sortedRepos = data.sort((a: Repo, b: Repo) => {
-          if (a.stars !== b.stars) {
-            return b.stars - a.stars;
-          }
-          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-        });
-        setRepos(sortedRepos);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRepos();
+    fetch("/repos.json")
+      .then((r) => { if (!r.ok) throw new Error("failed to load"); return r.json(); })
+      .then((data: Repo[]) => {
+        setRepos(data.sort((a, b) => b.stars - a.stars || new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()));
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-zinc-950">
-        <WorkNavbar />
-        <div className="pt-24">
-          <div className="max-w-6xl mx-auto px-6">
-            {/* Skeleton header */}
-            <div className="mb-16">
-              <div className="h-12 w-48 bg-zinc-800 rounded-lg animate-pulse mb-4" />
-              <div className="h-6 w-96 max-w-full bg-zinc-800/60 rounded-lg animate-pulse mb-2" />
-              <div className="h-6 w-64 bg-zinc-800/40 rounded-lg animate-pulse" />
-            </div>
-            {/* Skeleton grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6 space-y-4">
-                  <div className="flex justify-between">
-                    <div className="h-6 w-32 bg-zinc-800 rounded animate-pulse" />
-                    <div className="h-8 w-8 bg-zinc-800 rounded-lg animate-pulse" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-4 w-full bg-zinc-800/60 rounded animate-pulse" />
-                    <div className="h-4 w-3/4 bg-zinc-800/40 rounded animate-pulse" />
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="h-6 w-16 bg-zinc-800/50 rounded-full animate-pulse" />
-                    <div className="h-6 w-12 bg-zinc-800/50 rounded-full animate-pulse" />
-                    <div className="h-6 w-14 bg-zinc-800/50 rounded-full animate-pulse" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-zinc-950">
-        <WorkNavbar />
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <div className="text-red-400 text-lg">Failed to load repositories</div>
-          <p className="text-zinc-500 text-sm">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition-colors text-sm"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div id="main-content" className="min-h-screen bg-zinc-950">
+    <div className="relative min-h-screen antialiased">
+      {/* Global grid background */}
+      <div className="fixed inset-0 -z-10 bg-white dark:bg-zinc-950
+        [background-image:linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)]
+        dark:[background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)]
+        [background-size:48px_48px]" />
+
       <WorkNavbar />
 
-      <div className="pt-24">
-        <div className="max-w-6xl mx-auto px-6 py-0">
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-16"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              My Work
-            </h1>
-            <p className="text-zinc-400 text-lg max-w-2xl">
-              A comprehensive collection of my GitHub repositories, showcasing projects
-              across various technologies and domains.
-            </p>
-            <div className="mt-4 text-zinc-500">
-              Total repositories: {repos.length}
-            </div>
-          </motion.div>
+      <div className="divide-y divide-zinc-200 dark:divide-zinc-800 border-y border-zinc-200 dark:border-zinc-800 mt-16 sm:mt-[72px]">
+        {/* Header section */}
+        <SectionBorder innerClassName="px-4 sm:px-6 py-10 md:py-16">
+          <SectionHeader
+            label="all projects"
+            title={<>my <span className="text-violet-600 dark:text-violet-400">work</span></>}
+            description="All my public GitHub repositories — sorted by stars."
+          />
+          {!loading && !error && (
+            <p className="text-xs text-zinc-400 dark:text-zinc-500 -mt-8">{repos.length} repositories</p>
+          )}
+        </SectionBorder>
 
-          {/* Repositories Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {repos.map((repo, index) => (
-              <RepoCard key={repo.name} repo={repo} index={index} />
-            ))}
-          </div>
+        {/* Grid section */}
+        <SectionBorder innerClassName="px-4 sm:px-6 py-8 md:py-12">
+            {error ? (
+              <div className="flex flex-col items-center justify-center py-24 gap-4">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">failed to load repositories</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+                >
+                  try again
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {loading
+                  ? Array.from({ length: 9 }).map((_, i) => <SkeletonCard key={i} />)
+                  : repos.map((repo, i) => <RepoCard key={repo.name} repo={repo} index={i} />)
+                }
+              </div>
+            )}
 
-          {/* GitHub Link */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-16 mb-16 text-center"
-          >
-            <a
-              href="https://github.com/YashvanthSankar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group"
-            >
-              <span>View all on GitHub</span>
-              <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-          </motion.div>
-        </div>
+            {!loading && !error && (
+              <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="mt-10 flex justify-center">
+                <a
+                  href="https://github.com/YashvanthSankar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-white dark:hover:bg-zinc-900 transition-all"
+                >
+                  <GithubIcon className="w-3.5 h-3.5" />
+                  view all on github →
+                </a>
+              </motion.div>
+            )}
+        </SectionBorder>
+
+        <Footer />
       </div>
-
-      <Footer />
     </div>
   );
 }

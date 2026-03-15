@@ -1,56 +1,40 @@
 "use client";
 
 import { motion } from "framer-motion";
-
 import { technologies } from "@/data/technologies";
 
 export function TechMarquee() {
-  const duplicatedTech = [...technologies, ...technologies];
+  const duplicated = [...technologies, ...technologies];
 
   return (
-    <section className="py-16 bg-zinc-950 border-y border-zinc-900 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-40 bg-zinc-800/30 rounded-full blur-3xl" />
-      </div>
-      <div className="max-w-6xl mx-auto px-6 mb-10">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+    <section className="py-12 relative overflow-hidden">
+      <div className="max-w-6xl mx-auto px-6 mb-8">
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center text-sm uppercase tracking-widest text-zinc-500 font-medium"
+          className="text-center text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500"
         >
-          Technologies I Work With
-        </motion.h2>
+          {"// technologies i work with"}
+        </motion.p>
       </div>
 
-      {/* Marquee Container */}
       <div className="relative overflow-hidden">
-        {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-zinc-950 to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-zinc-950 to-transparent z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-r from-white/90 dark:from-zinc-950/90 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-20 bg-gradient-to-l from-white/90 dark:from-zinc-950/90 to-transparent z-10 pointer-events-none" />
 
-        {/* Marquee Track */}
         <motion.div
-          className="flex gap-8 py-4"
+          className="flex gap-3 py-2"
           animate={{ x: ["0%", "-50%"] }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear",
-          }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
         >
-          {duplicatedTech.map((tech, index) => (
+          {duplicated.map((tech, i) => (
             <div
-              key={`${tech.name}-${index}`}
-              className="flex items-center gap-3 shrink-0 px-5 py-3 rounded-full bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors"
+              key={`${tech.name}-${i}`}
+              className="flex items-center gap-2 shrink-0 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
             >
-              <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">
-                {tech.abbr}
-              </div>
-              <span className="text-zinc-300 font-medium whitespace-nowrap">
-                {tech.name}
-              </span>
+              <span className="text-[10px] font-bold text-violet-600 dark:text-violet-400 w-6 text-center shrink-0">{tech.abbr}</span>
+              <span className="text-xs text-zinc-600 dark:text-zinc-400 whitespace-nowrap">{tech.name}</span>
             </div>
           ))}
         </motion.div>

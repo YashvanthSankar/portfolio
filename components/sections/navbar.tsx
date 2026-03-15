@@ -1,29 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { throttle } from "@/lib/utils";
-import {
-  Home,
-  Folder,
-  User,
-  Briefcase,
-  Mail,
-  Download,
-  Menu,
-  X,
-  ArrowRight,
-} from "lucide-react";
+import { Home, Folder, User, Briefcase, Mail, Download, Menu, X, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "about", label: "About", icon: User },
-  { id: "projects", label: "Work", icon: Folder },
-  { id: "experience", label: "Experience", icon: Briefcase },
-  { id: "contact", label: "Contact", icon: Mail },
+  { id: "home",       label: "home",       icon: Home },
+  { id: "about",      label: "about",      icon: User },
+  { id: "projects",   label: "work",       icon: Folder },
+  { id: "experience", label: "experience", icon: Briefcase },
+  { id: "contact",    label: "contact",    icon: Mail },
 ];
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { startTransition(() => setMounted(true)); }, []);
+  if (!mounted) return <div className="w-9 h-9" />;
+  return (
+    <button
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+      aria-label="Toggle theme"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {theme === "dark" ? (
+          <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+            <Sun className="w-4 h-4" />
+          </motion.div>
+        ) : (
+          <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+            <Moon className="w-4 h-4" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </button>
+  );
+}
 
 export function Navbar() {
   const [active, setActive] = useState("home");
@@ -37,10 +54,7 @@ export function Navbar() {
         const el = document.getElementById(item.id);
         if (!el) continue;
         const rect = el.getBoundingClientRect();
-        if (rect.top <= 120 && rect.bottom >= 120) {
-          setActive(item.id);
-          break;
-        }
+        if (rect.top <= 120 && rect.bottom >= 120) { setActive(item.id); break; }
       }
     }, 16);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -49,230 +63,141 @@ export function Navbar() {
 
   const scrollTo = (id: string) => {
     setMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <>
-      {/* ================= HEADER ================= */}
       <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="fixed inset-x-0 top-0 z-50"
       >
-        <nav className="mx-auto max-w-screen-lg px-6 py-4">
-          <motion.div
-            animate={{
-              backgroundColor: scrolled ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0)",
-              backdropFilter: scrolled ? "blur(20px)" : "blur(0px)",
-            }}
-            transition={{ duration: 0.3 }}
-            className={cn(
-              "flex items-center justify-between rounded-full transition-all duration-300",
-              scrolled
-                ? "border border-white/10 px-6 py-3 shadow-2xl shadow-black/50"
-                : "px-3 py-2"
-            )}
-          >
-            {/* Logo with hover effect */}
+        <div className={cn(
+          "mx-auto max-w-4xl px-4 py-3 transition-all duration-300",
+          scrolled ? "px-4 py-2" : ""
+        )}>
+          <div className={cn(
+            "flex items-center justify-between px-4 py-2.5 transition-all duration-300",
+            scrolled
+              ? "bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm"
+              : "bg-transparent"
+          )}>
+            {/* Logo */}
             <button
               onClick={() => scrollTo("home")}
-              className="relative h-12 w-12 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-white/50 transition-all hover:scale-110 hover:rotate-[5deg] active:scale-95"
+              className="relative h-8 w-8 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800 hover:ring-violet-400 transition-all"
             >
-              <Image 
-                src="/ys.png" 
-                alt="YS" 
-                fill 
-                className="object-cover"
-                quality={85}
-                placeholder="blur"
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/10" />
+              <Image src="/ys.png" alt="YS" fill className="object-cover" quality={85} />
             </button>
 
-            {/* Desktop Nav with enhanced styling */}
-            <div className="hidden md:flex items-center gap-2 relative">
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
                   className={cn(
-                    "relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 overflow-hidden hover:scale-105 active:scale-95",
+                    "px-3 py-1.5 rounded-lg text-sm transition-all",
                     active === item.id
-                      ? "text-white"
-                      : "text-zinc-400 hover:text-white"
+                      ? "text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800"
+                      : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
                   )}
                 >
-                  {active === item.id && (
-                    <div
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm transition-all duration-300 ease-out"
-                    />
-                  )}
-                  <span className="relative z-10">{item.label}</span>
+                  {item.label}
                 </button>
               ))}
-            </div>
+            </nav>
 
-            {/* Desktop CTA with enhanced effects */}
-            <div className="hidden md:flex gap-3">
-              <button
-                onClick={() => scrollTo("contact")}
-                className="relative px-5 py-2 rounded-full bg-white text-black font-semibold overflow-hidden group hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all duration-300"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  Let&apos;s Talk
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-zinc-100 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-              
+            {/* Right: theme + CTA + resume */}
+            <div className="hidden md:flex items-center gap-2">
+              <ThemeToggle />
               <a
                 href="/YashvanthS_Resume.pdf"
                 download
-                className="px-4 py-2 rounded-full border border-white/20 text-sm flex items-center gap-2 hover:bg-white/10 hover:border-white/30 transition-all backdrop-blur-sm hover:scale-105 active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
               >
-                <Download className="w-4 h-4" />
-                Resume
+                <Download className="w-3.5 h-3.5" />
+                resume
               </a>
+              <button
+                onClick={() => scrollTo("contact")}
+                className="px-4 py-1.5 text-sm rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-medium transition-colors"
+              >
+                let&apos;s talk
+              </button>
             </div>
 
-            {/* Mobile Toggle with animation */}
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setMenuOpen((p) => !p)}
-              className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition"
-              aria-label="Toggle menu"
-            >
-              <AnimatePresence mode="wait">
-                {menuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Menu />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          </motion.div>
-        </nav>
+            {/* Mobile toggle */}
+            <div className="md:hidden flex items-center gap-2">
+              <ThemeToggle />
+              <button
+                onClick={() => setMenuOpen((p) => !p)}
+                className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
       </motion.header>
 
-      {/* ================= MOBILE MENU ================= */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Enhanced Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             />
-
-            {/* Enhanced Bottom Sheet */}
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              drag="y"
-              dragConstraints={{ top: 0 }}
-              dragElastic={0.2}
-              onDragEnd={(_, info) => {
-                if (info.offset.y > 120) setMenuOpen(false);
-              }}
-              className="fixed inset-x-0 bottom-0 z-50"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 p-6 pb-8"
             >
-              <div className="relative h-[75svh] mt-16 rounded-t-3xl overflow-hidden">
-                {/* Enhanced Glass Panel with gradient */}
-                <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/95 to-black/95 backdrop-blur-xl border-t border-white/20 shadow-2xl" />
-                
-                {/* Subtle glow effect */}
-                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+              {/* Handle */}
+              <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-zinc-200 dark:bg-zinc-700" />
 
-                {/* CONTENT */}
-                <div className="relative z-10 p-6 pt-8 text-white flex flex-col h-full">
-                  {/* Enhanced Drag Handle */}
-                  <div className="mx-auto mb-8 h-1.5 w-16 rounded-full bg-white/40 shadow-lg shadow-white/20" />
-
-                  {/* Enhanced Menu Items */}
-                  <div className="space-y-2 flex-1 overflow-y-auto">
-                    {navItems.map((item, index) => (
-                      <motion.button
-                        key={item.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        onClick={() => scrollTo(item.id)}
-                        className={cn(
-                          "w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-left transition-all group",
-                          active === item.id
-                            ? "bg-white/10 text-white"
-                            : "hover:bg-white/5 text-zinc-300"
-                        )}
-                      >
-                        <div className={cn(
-                          "p-2 rounded-xl transition-all",
-                          active === item.id
-                            ? "bg-white/20 text-white"
-                            : "bg-white/5 text-zinc-400 group-hover:bg-white/10 group-hover:text-white"
-                        )}>
-                          <item.icon className="w-5 h-5" />
-                        </div>
-                        <span className="text-lg font-medium">{item.label}</span>
-                        <ArrowRight className={cn(
-                          "w-5 h-5 ml-auto opacity-0 -translate-x-2 transition-all",
-                          "group-hover:opacity-100 group-hover:translate-x-0"
-                        )} />
-                      </motion.button>
-                    ))}
-                  </div>
-
-                  {/* Enhanced CTAs */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="mt-6 space-y-3 pt-6 border-t border-white/10"
+              <div className="space-y-1 mb-6">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollTo(item.id)}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all",
+                      active === item.id
+                        ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
+                        : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    )}
                   >
-                    <button
-                      onClick={() => scrollTo("contact")}
-                      className="w-full px-6 py-4 rounded-2xl bg-white text-black font-semibold flex items-center justify-center gap-2 hover:bg-zinc-100 transition-all shadow-lg shadow-white/20"
-                    >
-                      Let&apos;s Talk
-                      <ArrowRight className="w-5 h-5" />
-                    </button>
-                    
-                    <a
-                      href="/YashvanthS_Resume.pdf"
-                      download
-                      className="w-full px-6 py-4 rounded-2xl border border-white/20 flex items-center justify-center gap-2 hover:bg-white/5 transition-all backdrop-blur-sm"
-                    >
-                      <Download className="w-5 h-5" />
-                      Download Resume
-                    </a>
-                  </motion.div>
-                </div>
+                    <item.icon className="w-4 h-4 shrink-0" />
+                    <span className="text-sm">{item.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="space-y-2 border-t border-zinc-100 dark:border-zinc-800 pt-4">
+                <button
+                  onClick={() => scrollTo("contact")}
+                  className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors"
+                >
+                  let&apos;s talk
+                </button>
+                <a
+                  href="/YashvanthS_Resume.pdf"
+                  download
+                  className="w-full py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-sm flex items-center justify-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                >
+                  <Download className="w-4 h-4" />
+                  download resume
+                </a>
               </div>
             </motion.div>
           </>

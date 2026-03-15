@@ -2,132 +2,77 @@
 
 import { motion } from "framer-motion";
 import { ExternalLink, Github } from "lucide-react";
-import { CardSpotlight } from "@/components/ui/card-spotlight";
-import { GlowingEffect } from "@/components/ui/glowing-effect";
 import Link from "next/link";
-
 import { projects } from "@/data/projects";
+import { SectionHeader } from "@/components/ui/section-header";
+import { SectionBorder } from "@/components/ui/section-border";
 
 function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
   return (
     <motion.div
-      initial={false}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.2, delay: index * 0.1 }}
-      className="relative rounded-2xl"
+      transition={{ duration: 0.4, delay: index * 0.08 }}
+      className="group flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-violet-300 dark:hover:border-violet-700 transition-all duration-300 overflow-hidden"
     >
-      {/* Subtle Glowing Effect */}
-      <GlowingEffect
-        spread={40}
-        glow={true}
-        disabled={false}
-        proximity={64}
-        inactiveZone={0.01}
-        borderWidth={2}
-      />
-      <CardSpotlight
-        className="h-full p-6 bg-zinc-950 border-zinc-800 rounded-2xl"
-        radius={250}
-        color="#1f1f1f"
-      >
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4 relative z-20">
-          <h3 className="text-xl font-bold text-white">
-            {project.title}
-          </h3>
-          <div className="flex items-center gap-2">
-            {project.github && (
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
-                aria-label={`View ${project.title} source code on GitHub`}
-              >
-                <Github className="w-4 h-4 text-zinc-400" />
-              </a>
-            )}
-            {project.live && (
-              <a
-                href={project.live}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
-                aria-label={`View ${project.title} live demo`}
-              >
-                <ExternalLink className="w-4 h-4 text-zinc-400" />
-              </a>
-            )}
-          </div>
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-zinc-400 dark:text-zinc-500 select-none shrink-0">~/projects/</span>
+          <span className="text-sm font-semibold text-zinc-900 dark:text-white truncate">{project.title}</span>
         </div>
+        <div className="flex items-center gap-1.5">
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} source`}
+              className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+              <Github className="w-3.5 h-3.5" />
+            </a>
+          )}
+          {project.live && (
+            <a href={project.live} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} live`}
+              className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all">
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
+        </div>
+      </div>
 
-        {/* Description */}
-        <p className="text-zinc-400 text-sm leading-relaxed mb-6 relative z-20">
-          {project.description}
-        </p>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 relative z-20">
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-5 gap-4">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed flex-1">{project.description}</p>
+        <div className="flex flex-wrap gap-1.5">
           {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-3 py-1 text-xs font-medium text-zinc-400 bg-zinc-800/50 rounded-full border border-zinc-700/50"
-            >
+            <span key={tag} className="px-2 py-0.5 text-[11px] rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
               {tag}
             </span>
           ))}
         </div>
-      </CardSpotlight>
+      </div>
     </motion.div>
   );
 }
 
 export function ProjectsSection() {
   return (
-    <section id="projects" className="py-24 bg-zinc-950">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
-        <motion.div
-          initial={false}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.2 }}
-          className="mb-16"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Featured Projects
-          </h2>
-          <p className="text-zinc-400 max-w-xl">
-            A selection of projects that showcase my expertise in building
-            modern web applications and solving complex problems.
-          </p>
-        </motion.div>
+    <SectionBorder id="projects" innerClassName="px-4 sm:px-6 py-12 md:py-20">
+        <SectionHeader
+          label="selected work"
+          title={<>featured <span className="text-violet-600 dark:text-violet-400">projects</span></>}
+          description="A selection of projects that showcase my expertise in building modern web applications and solving complex problems."
+        />
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project, index) => (
             <ProjectCard key={project.title} project={project} index={index} />
           ))}
         </div>
 
-        {/* View All Link */}
-        <motion.div
-          initial={false}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.2 }}
-          className="mt-12 text-center"
-        >
-          <Link
-            href="/work"
-            className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group"
-          >
-            <span>Explore All Projects →</span>
-            <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="mt-10 flex justify-center">
+          <Link href="/work" className="px-5 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-white dark:hover:bg-zinc-900 transition-all">
+            explore all projects →
           </Link>
         </motion.div>
-      </div>
-    </section>
+    </SectionBorder>
   );
 }

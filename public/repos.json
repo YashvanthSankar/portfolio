@@ -44,17 +44,6 @@
     "updated_at": "2025-12-16T18:09:52Z"
   },
   {
-    "name": "contest_onlinejudge",
-    "description": "CodeArena is a web platform for coding challenges with multi-language support and secure Docker-based execution. It features AI-driven insights to analyze your skills and suggest personalized practice.",
-    "url": "https://github.com/YashvanthSankar/contest_onlinejudge",
-    "language": "JavaScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-07-27T17:01:25Z",
-    "updated_at": "2025-08-10T04:34:59Z"
-  },
-  {
     "name": "DAA_practice_cs2004",
     "description": "Implementations for Design & Analysis of Algorithms (CS2004) course using C++",
     "url": "https://github.com/YashvanthSankar/DAA_practice_cs2004",
@@ -64,17 +53,6 @@
     "topics": [],
     "created_at": "2025-12-19T16:14:42Z",
     "updated_at": "2025-12-19T16:18:38Z"
-  },
-  {
-    "name": "deloitte-virtual-internship",
-    "description": "My submission for Deloitte Australia's Virtual Experience Program via Forage",
-    "url": "https://github.com/YashvanthSankar/deloitte-virtual-internship",
-    "language": "Python",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-07-01T13:34:44Z",
-    "updated_at": "2025-07-01T13:50:01Z"
   },
   {
     "name": "DSA_practice_cs1006",
@@ -110,6 +88,17 @@
     "updated_at": "2025-08-09T16:53:37Z"
   },
   {
+    "name": "esummit26",
+    "description": "Official Website of E-Summit '26 IIITDM Kancheepuram",
+    "url": "https://github.com/YashvanthSankar/esummit26",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2026-01-08T14:29:23Z",
+    "updated_at": "2026-02-01T11:34:03Z"
+  },
+  {
     "name": "ganesh-chaturthi-chatbot",
     "description": null,
     "url": "https://github.com/YashvanthSankar/ganesh-chaturthi-chatbot",
@@ -118,7 +107,7 @@
     "forks": 0,
     "topics": [],
     "created_at": "2025-08-20T01:49:50Z",
-    "updated_at": "2025-08-30T06:48:48Z"
+    "updated_at": "2025-12-25T05:12:47Z"
   },
   {
     "name": "hospital-er-forms-autofiller",
@@ -162,7 +151,7 @@
     "forks": 0,
     "topics": [],
     "created_at": "2025-08-15T14:54:31Z",
-    "updated_at": "2025-08-17T15:21:32Z"
+    "updated_at": "2025-12-25T05:15:10Z"
   },
   {
     "name": "maze-engine-and-path-analyzer",
@@ -195,18 +184,7 @@
     "forks": 0,
     "topics": [],
     "created_at": "2025-08-08T17:20:50Z",
-    "updated_at": "2025-08-12T15:44:00Z"
-  },
-  {
-    "name": "nodejs-crash-bradtraversy",
-    "description": "Code examples from the crash course on YouTube",
-    "url": "https://github.com/YashvanthSankar/nodejs-crash-bradtraversy",
-    "language": null,
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-06-26T16:58:14Z",
-    "updated_at": "2025-06-26T16:58:14Z"
+    "updated_at": "2025-12-31T15:18:53Z"
   },
   {
     "name": "OOP_cs2000",
@@ -228,7 +206,7 @@
     "forks": 2,
     "topics": [],
     "created_at": "2025-10-05T13:58:52Z",
-    "updated_at": "2025-10-15T17:37:42Z"
+    "updated_at": "2025-12-25T05:07:29Z"
   },
   {
     "name": "quiz-generation-for-preploot",
@@ -286,15 +264,26 @@
     "updated_at": "2025-10-29T13:16:09Z"
   },
   {
-    "name": "skills-introduction-to-github",
-    "description": "My clone repository",
-    "url": "https://github.com/YashvanthSankar/skills-introduction-to-github",
-    "language": null,
+    "name": "remotion-overlay",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/remotion-overlay",
+    "language": "Python",
     "stars": 0,
     "forks": 0,
     "topics": [],
-    "created_at": "2025-07-01T06:38:36Z",
-    "updated_at": "2025-07-01T06:58:20Z"
+    "created_at": "2025-12-27T15:57:50Z",
+    "updated_at": "2026-01-07T11:09:20Z"
+  },
+  {
+    "name": "scan2save",
+    "description": "Walk into any store, scan the QR, and unlock personalized offers designed just for you.",
+    "url": "https://github.com/YashvanthSankar/scan2save",
+    "language": "TypeScript",
+    "stars": 1,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-12-28T05:38:33Z",
+    "updated_at": "2026-01-07T12:51:01Z"
   },
   {
     "name": "static-multipage-cloudhosting-site",
@@ -308,17 +297,6 @@
     "updated_at": "2025-06-19T15:33:53Z"
   },
   {
-    "name": "subtrackr-api",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/subtrackr-api",
-    "language": "JavaScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-07-12T14:28:02Z",
-    "updated_at": "2025-07-19T18:34:27Z"
-  },
-  {
     "name": "tech-affairs-iiitdm-landingpage",
     "description": null,
     "url": "https://github.com/YashvanthSankar/tech-affairs-iiitdm-landingpage",
@@ -328,5 +306,27 @@
     "topics": [],
     "created_at": "2025-05-26T16:07:48Z",
     "updated_at": "2025-07-12T14:25:34Z"
+  },
+  {
+    "name": "Technical-Affairs-IIITDM",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/Technical-Affairs-IIITDM",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-06-25T14:42:23Z",
+    "updated_at": "2025-08-11T17:35:39Z"
+  },
+  {
+    "name": "tic-tac-toe",
+    "description": "Tic Tac Toe game made using JavaScript",
+    "url": "https://github.com/YashvanthSankar/tic-tac-toe",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-06-11T15:09:30Z",
+    "updated_at": "2025-06-19T15:26:15Z"
   }
 ]
