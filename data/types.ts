@@ -7,9 +7,14 @@ export interface Project {
     live?: string;
 }
 
-export interface Technology {
+export interface TechItem {
     name: string;
-    abbr: string;
+    icon: string;
+}
+
+export interface TechCategory {
+    title: string;
+    items: TechItem[];
 }
 
 export interface Experience {
