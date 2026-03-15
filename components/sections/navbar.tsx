@@ -16,6 +16,15 @@ const navItems = [
   { id: "contact",    label: "contact",    icon: Mail },
 ];
 
+function Crosshair({ className }: { className: string }) {
+  return (
+    <span className={cn("absolute w-3 h-3 pointer-events-none z-20", className)}>
+      <span className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-px bg-violet-500/70" />
+      <span className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-violet-500/70" />
+    </span>
+  );
+}
+
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -24,7 +33,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+      className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all"
       aria-label="Toggle theme"
     >
       <AnimatePresence mode="wait" initial={false}>
@@ -72,37 +81,40 @@ export function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="fixed inset-x-0 top-0 z-50"
+        className="sticky inset-x-0 top-0 z-50"
       >
-        <div className={cn(
-          "mx-auto max-w-4xl px-4 py-3 transition-all duration-300",
-          scrolled ? "px-4 py-2" : ""
-        )}>
-          <div className={cn(
-            "flex items-center justify-between px-4 py-2.5 transition-all duration-300",
-            scrolled
-              ? "bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm"
-              : "bg-transparent"
-          )}>
+        <div className={cn("mx-auto max-w-6xl px-4 sm:px-6 transition-all duration-300", scrolled ? "pt-2" : "pt-0")}>
+          <div className="relative border-x border-zinc-200 dark:border-zinc-700 px-2 sm:px-3">
+            <Crosshair className="-top-1.5 -left-1.5" />
+            <Crosshair className="-top-1.5 -right-1.5" />
+            <Crosshair className="-bottom-1.5 -left-1.5" />
+            <Crosshair className="-bottom-1.5 -right-1.5" />
+
+            <div className={cn(
+              "relative flex items-center justify-between px-4 py-2.5 transition-all duration-300",
+              scrolled
+                ? "rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_10px_28px_rgba(0,0,0,0.45)]"
+                : "border-y border-zinc-200/85 dark:border-zinc-700/85 bg-transparent"
+            )}>
             {/* Logo */}
             <button
               onClick={() => scrollTo("home")}
-              className="relative h-8 w-8 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800 hover:ring-violet-400 transition-all"
+              className="relative h-8 w-8 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-700 hover:ring-violet-400 transition-all z-10"
             >
               <Image src="/ys.png" alt="YS" fill className="object-cover" quality={85} />
             </button>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1 z-10">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg text-sm transition-all",
+                    "px-3 py-1.5 rounded-lg text-sm border transition-all",
                     active === item.id
-                      ? "text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800"
-                      : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+                      ? "text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-600"
+                      : "text-zinc-500 dark:text-zinc-300 border-transparent hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:border-zinc-200 dark:hover:border-zinc-600"
                   )}
                 >
                   {item.label}
@@ -111,12 +123,12 @@ export function Navbar() {
             </nav>
 
             {/* Right: theme + CTA + resume */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2 z-10">
               <ThemeToggle />
               <a
                 href="/YashvanthS_Resume.pdf"
                 download
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all"
               >
                 <Download className="w-3.5 h-3.5" />
                 resume
@@ -130,15 +142,16 @@ export function Navbar() {
             </div>
 
             {/* Mobile toggle */}
-            <div className="md:hidden flex items-center gap-2">
+            <div className="md:hidden flex items-center gap-2 z-10">
               <ThemeToggle />
               <button
                 onClick={() => setMenuOpen((p) => !p)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
+                className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/80 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all"
                 aria-label="Toggle menu"
               >
                 {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
               </button>
+            </div>
             </div>
           </div>
         </div>
@@ -153,51 +166,52 @@ export function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-black/25 backdrop-blur-[2px]"
             />
             <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 p-6 pb-10"
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="fixed top-[4.65rem] inset-x-0 z-50 px-4 sm:px-6 md:hidden"
             >
-              {/* Handle */}
-              <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-zinc-200 dark:bg-zinc-700" />
+              <div className="mx-auto max-w-6xl relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-3 shadow-[0_14px_34px_rgba(0,0,0,0.12)] dark:shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
+                <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.08)_1px,transparent_1px)] [background-size:18px_18px] dark:[background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]" />
 
-              <div className="space-y-1 mb-6">
-                {navItems.map((item) => (
+                <div className="relative space-y-1 mb-3">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollTo(item.id)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-left border transition-all",
+                        active === item.id
+                          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-200 dark:border-zinc-600"
+                          : "text-zinc-600 dark:text-zinc-300 border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-600"
+                      )}
+                    >
+                      <item.icon className="w-4 h-4 shrink-0" />
+                      <span className="text-sm">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="relative grid grid-cols-2 gap-2 pt-2 border-t border-zinc-200/80 dark:border-zinc-700/80">
                   <button
-                    key={item.id}
-                    onClick={() => scrollTo(item.id)}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all",
-                      active === item.id
-                        ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white"
-                        : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                    )}
+                    onClick={() => scrollTo("contact")}
+                    className="w-full py-2.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors"
                   >
-                    <item.icon className="w-4 h-4 shrink-0" />
-                    <span className="text-sm">{item.label}</span>
+                    let&apos;s talk
                   </button>
-                ))}
-              </div>
-
-              <div className="space-y-2 border-t border-zinc-100 dark:border-zinc-800 pt-4">
-                <button
-                  onClick={() => scrollTo("contact")}
-                  className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors"
-                >
-                  let&apos;s talk
-                </button>
-                <a
-                  href="/YashvanthS_Resume.pdf"
-                  download
-                  className="w-full py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-sm flex items-center justify-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
-                >
-                  <Download className="w-4 h-4" />
-                  download resume
-                </a>
+                  <a
+                    href="/YashvanthS_Resume.pdf"
+                    download
+                    className="w-full py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-sm flex items-center justify-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                  >
+                    <Download className="w-4 h-4" />
+                    resume
+                  </a>
+                </div>
               </div>
             </motion.div>
           </>

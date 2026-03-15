@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Spotlight } from "@/components/ui/spotlight";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { FlipWords } from "@/components/ui/flip-words";
 import { Download } from "lucide-react";
@@ -14,8 +13,6 @@ export function SpotlightHero() {
       id="home"
       className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-20 border-b border-zinc-200 dark:border-zinc-800"
     >
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
-
       {/* Subtle violet glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(600px,90vw)] h-[min(400px,60vw)] bg-violet-500/5 dark:bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
 
