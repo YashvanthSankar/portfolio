@@ -8,7 +8,7 @@ export function TechMarquee() {
 
   return (
     <section className="py-12 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6 mb-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mb-8">
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

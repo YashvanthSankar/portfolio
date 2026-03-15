@@ -12,7 +12,7 @@ export function SpotlightHero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 border-b border-zinc-200 dark:border-zinc-800"
+      className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-20 border-b border-zinc-200 dark:border-zinc-800"
     >
       <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
 
@@ -62,7 +62,7 @@ export function SpotlightHero() {
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
           className="mb-6"
         >
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.15] text-zinc-900 dark:text-white">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.15] text-zinc-900 dark:text-white">
             <span className="block">I build</span>
             <span className="flex justify-center min-h-[1.2em] overflow-visible">
               <FlipWords
@@ -93,13 +93,13 @@ export function SpotlightHero() {
         >
           <Link
             href="/work"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-700 dark:hover:bg-zinc-100 transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-medium hover:bg-zinc-700 dark:hover:bg-zinc-100 transition-colors text-center"
           >
             view my work →
           </Link>
           <a
             href="#contact"
-            className="w-full sm:w-auto px-6 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-sm hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-sm hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all text-center"
           >
             get in touch
           </a>

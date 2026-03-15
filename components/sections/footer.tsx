@@ -81,7 +81,7 @@ export function Footer() {
           </div>
 
           {/* Social */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             {socialLinks.map((link) => (
               <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name}
                 className="p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-white dark:hover:bg-zinc-900 transition-all">
