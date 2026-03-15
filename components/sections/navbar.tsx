@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, startTransition } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { throttle } from "@/lib/utils";
-import { Home, Folder, User, Briefcase, Mail, Download, Menu, X, Sun, Moon } from "lucide-react";
+import { Home, Folder, User, Briefcase, Mail, Download, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const navItems = [
   { id: "home",       label: "home",       icon: Home },
@@ -22,32 +22,6 @@ function Crosshair({ className }: { className: string }) {
       <span className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-px bg-violet-500/70" />
       <span className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-violet-500/70" />
     </span>
-  );
-}
-
-function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { startTransition(() => setMounted(true)); }, []);
-  if (!mounted) return <div className="w-9 h-9" />;
-  return (
-    <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all"
-      aria-label="Toggle theme"
-    >
-      <AnimatePresence mode="wait" initial={false}>
-        {theme === "dark" ? (
-          <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-            <Sun className="w-4 h-4" />
-          </motion.div>
-        ) : (
-          <motion.div key="moon" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-            <Moon className="w-4 h-4" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </button>
   );
 }
 
@@ -124,7 +98,7 @@ export function Navbar() {
 
             {/* Right: theme + CTA + resume */}
             <div className="hidden md:flex items-center gap-2 z-10">
-              <ThemeToggle />
+              <ThemeToggle className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all" />
               <a
                 href="/YashvanthS_Resume.pdf"
                 download
@@ -143,7 +117,7 @@ export function Navbar() {
 
             {/* Mobile toggle */}
             <div className="md:hidden flex items-center gap-2 z-10">
-              <ThemeToggle />
+              <ThemeToggle className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all" />
               <button
                 onClick={() => setMenuOpen((p) => !p)}
                 className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/80 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all"

@@ -130,6 +130,7 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
+          storageKey="portfolio-theme"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
