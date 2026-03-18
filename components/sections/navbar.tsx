@@ -57,7 +57,10 @@ export function Navbar() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="sticky inset-x-0 top-0 z-50"
       >
-        <div className={cn("mx-auto max-w-6xl px-4 sm:px-6 transition-all duration-300", scrolled ? "pt-2" : "pt-0")}>
+        <div
+          className={cn("mx-auto max-w-6xl px-4 sm:px-6 transition-all duration-300", scrolled ? "pt-2" : "pt-2 sm:pt-0")}
+          style={{ paddingTop: scrolled ? undefined : 'max(0.5rem, env(safe-area-inset-top))' }}
+        >
           <div className="relative border-x border-zinc-200 dark:border-zinc-700 px-2 sm:px-3">
             <Crosshair className="-top-1.5 -left-1.5" />
             <Crosshair className="-top-1.5 -right-1.5" />
