@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { MapPin, Mail, Check, Copy } from "lucide-react";
 import { useState } from "react";
-import Image from "next/image";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SectionBorder } from "@/components/ui/section-border";
 
@@ -43,19 +42,12 @@ export function AboutBento() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Bio card */}
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.05 }} className={`md:col-span-2 ${card}`}>
-            <div className="flex flex-col sm:flex-row gap-5">
-              <div className="w-16 h-16 rounded-xl overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800 shrink-0 mx-auto sm:mx-0">
-                <Image src="/yashvanths.jpeg" alt="Yashvanth S" width={64} height={64} className="object-cover w-full h-full" quality={85} placeholder="blur" blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+IRjWjBqO6O2mhP//Z" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-1">Yashvanth S</h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                  CS student at IIITDM Kancheepuram (BTech + MTech). I specialize in full-stack web
-                  applications and AI-powered solutions that solve real-world problems. When not coding,
-                  you&apos;ll find me exploring new technologies and contributing to open-source.
-                </p>
-              </div>
-            </div>
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-1">Yashvanth S</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              CS student at IIITDM Kancheepuram (BTech + MTech). I specialize in full-stack web
+              applications and AI-powered solutions that solve real-world problems. When not coding,
+              you&apos;ll find me exploring new technologies and contributing to open-source.
+            </p>
           </motion.div>
 
           {/* Location */}
