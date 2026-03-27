@@ -52,17 +52,22 @@ function WorkNavbar() {
         <div
           className={cn(
             "max-w-6xl mx-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-            scrolled ? "px-4 sm:px-6 pt-3 pb-2" : "px-6 sm:px-10"
+            scrolled ? "px-4 sm:px-6 pt-3 pb-2" : "px-6 sm:px-10 pt-0 pb-0"
           )}
         >
           <div
-            style={{ borderRadius: scrolled ? "1rem" : "0" }}
+            style={{
+              borderRadius: scrolled ? "1rem" : "0",
+              paddingLeft: scrolled ? "12px" : "0",
+              paddingRight: scrolled ? "12px" : "0",
+              transition: "border-radius 500ms cubic-bezier(0.22,1,0.36,1), padding 500ms cubic-bezier(0.22,1,0.36,1), background-color 500ms cubic-bezier(0.22,1,0.36,1), box-shadow 500ms cubic-bezier(0.22,1,0.36,1), border-color 500ms cubic-bezier(0.22,1,0.36,1)",
+            }}
             className={cn(
               "relative flex items-center justify-between gap-2 py-2.5",
-              "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              "border overflow-hidden",
               scrolled
-                ? "px-3 border border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
-                : "bg-transparent"
+                ? "border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
+                : "border-transparent bg-transparent backdrop-blur-none shadow-none"
             )}
           >
             {/* Logo — links back to home */}

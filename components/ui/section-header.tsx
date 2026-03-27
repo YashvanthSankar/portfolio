@@ -17,7 +17,8 @@ export function SectionHeader({ label, title, description, center = false, class
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={cn("mb-12", center && "text-center", className)}
     >
       <p className="text-xs text-zinc-400 dark:text-zinc-500 tracking-widest uppercase mb-3">

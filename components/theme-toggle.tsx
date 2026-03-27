@@ -18,7 +18,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   }, []);
 
   if (!mounted) {
-    return <div className="w-9 h-9" />;
+    return <div className="w-8 h-8" />;
   }
 
   return (

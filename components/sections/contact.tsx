@@ -93,13 +93,13 @@ export function ContactSection() {
           <motion.div initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="md:col-span-2 space-y-6">
             <div className="space-y-4">
               <div>
-                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">email</p>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-1">email</p>
                 <a href="mailto:yashvanthsankar@gmail.com" className="text-sm text-zinc-900 dark:text-white hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
                   yashvanthsankar@gmail.com
                 </a>
               </div>
               <div>
-                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">location</p>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-1">location</p>
                 <p className="text-sm text-zinc-900 dark:text-white">Chennai, India</p>
               </div>
             </div>
@@ -143,7 +143,7 @@ export function ContactSection() {
             </div>
 
             {status === "error" && (
-              <p className="text-xs text-red-500">something went wrong — try again.</p>
+              <p role="alert" className="text-xs text-red-500">something went wrong — try again.</p>
             )}
 
             <button type="submit" disabled={status === "sending" || status === "sent"}

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Download, ArrowUpRight } from "lucide-react";
+import { Hero3DName } from "@/components/sections/hero-3d-name";
 
 const container = {
   hidden: {},
@@ -51,27 +52,10 @@ export function SpotlightHero() {
           </span>
         </motion.div>
 
-        {/* Name */}
-        <motion.h1
-          variants={reveal}
-          className="font-bold tracking-[-0.04em] leading-[0.9] select-none mb-7"
-          style={{ fontSize: "clamp(3.5rem, 9vw, 7.5rem)" }}
-        >
-          <span
-            className="bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-500
-              dark:from-white dark:via-zinc-100 dark:to-zinc-500
-              bg-clip-text text-transparent"
-          >
-            Yashvanth
-          </span>
-          {" "}
-          <span
-            className="text-transparent"
-            style={{ WebkitTextStroke: "2px #a1a1aa" }}
-          >
-            S
-          </span>
-        </motion.h1>
+        {/* Name — 3D typography */}
+        <motion.div variants={reveal}>
+          <Hero3DName />
+        </motion.div>
 
         {/* Role + description */}
         <motion.div variants={reveal} className="mb-10 max-w-xl">
@@ -145,22 +129,6 @@ export function SpotlightHero() {
         </motion.div>
       </motion.div>
 
-      {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6, duration: 0.9 }}
-        className="absolute bottom-7 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 5, 0] }}
-          transition={{ repeat: Infinity, duration: 2.4, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-1"
-        >
-          <span className="text-[9px] tracking-[0.25em] uppercase text-zinc-400 dark:text-zinc-600">scroll</span>
-          <div className="w-px h-6 bg-gradient-to-b from-zinc-400 to-transparent dark:from-zinc-600" />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
