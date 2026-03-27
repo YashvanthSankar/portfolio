@@ -3,29 +3,33 @@ import dynamic from 'next/dynamic';
 import { Navbar } from "@/components/sections/navbar";
 import { SpotlightHero } from "@/components/sections/hero";
 
+const skeleton = (h: string) => (
+  <div className={`${h} bg-zinc-100 dark:bg-zinc-900 animate-pulse`} />
+);
+
 const TechMarquee = dynamic(() => import("@/components/sections/tech-marquee").then(mod => ({ default: mod.TechMarquee })), {
   ssr: false,
-  loading: () => <div className="h-24" />
+  loading: () => skeleton("h-[400px]"),
 });
 
 const AboutBento = dynamic(() => import("@/components/sections/about-bento").then(mod => ({ default: mod.AboutBento })), {
-  loading: () => <div className="h-96 animate-pulse" />
+  loading: () => skeleton("h-[500px]"),
 });
 
 const ProjectsSection = dynamic(() => import("@/components/sections/projects").then(mod => ({ default: mod.ProjectsSection })), {
-  loading: () => <div className="h-[600px] animate-pulse" />
+  loading: () => skeleton("h-[600px]"),
 });
 
 const ExperienceTimeline = dynamic(() => import("@/components/sections/experience").then(mod => ({ default: mod.ExperienceTimeline })), {
-  loading: () => <div className="h-[600px] animate-pulse" />
+  loading: () => skeleton("h-[600px]"),
 });
 
 const ContactSection = dynamic(() => import("@/components/sections/contact").then(mod => ({ default: mod.ContactSection })), {
-  loading: () => <div className="h-[400px] animate-pulse" />
+  loading: () => skeleton("h-[450px]"),
 });
 
 const Footer = dynamic(() => import("@/components/sections/footer").then(mod => ({ default: mod.Footer })), {
-  loading: () => <div className="h-20 animate-pulse" />
+  loading: () => skeleton("h-20"),
 });
 
 export function Portfolio() {

@@ -59,19 +59,19 @@ body {
 
 /* Selection */
 ::selection {
-  background: rgba(139, 92, 246, 0.25);
+  background: rgba(239, 68, 68, 0.25);
   color: inherit;
 }
 
-/* Scrollbar — dark */
+/* Scrollbar — light (default) */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #52525b; }
+::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
 
-/* Scrollbar — light */
-.light ::-webkit-scrollbar-thumb { background: #d4d4d8; }
-.light ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+/* Scrollbar — dark */
+.dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #52525b; }
 
 /* Aceternity Spotlight */
 @keyframes spotlight {
@@ -138,7 +138,7 @@ body {
   --ring: #52525b;
   --sidebar: #18181b;
   --sidebar-foreground: #fafafa;
-  --sidebar-primary: #8b5cf6;
+  --sidebar-primary: #ef4444;
   --sidebar-primary-foreground: #fafafa;
   --sidebar-accent: #27272a;
   --sidebar-accent-foreground: #fafafa;

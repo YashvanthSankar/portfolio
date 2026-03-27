@@ -21,7 +21,7 @@ These fonts are loaded via CSS variables and provide a modern, clean aesthetic s
 
 ### Accent Colors
 - **Blue**: `#3b82f6` (blue-500) - Used in gradients and orbs
-- **Violet**: `#8b5cf6` (violet-500) - Used in gradients and orbs
+- **Red**: `#ef4444` (red-500) - Used in gradients and orbs
 - **Zinc**: Various shades of zinc for borders and subtle elements (e.g., zinc-950, zinc-700)
 
 ### Text Colors

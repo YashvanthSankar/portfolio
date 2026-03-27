@@ -71,7 +71,7 @@ export default async function Image() {
               width: '80px',
               height: '80px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+              background: 'linear-gradient(135deg, #3b82f6, #ef4444)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

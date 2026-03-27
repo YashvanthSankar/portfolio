@@ -18,7 +18,7 @@ export function ExperienceTimeline() {
     content: (
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={i} className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-violet-300 dark:hover:border-violet-700 transition-colors overflow-hidden">
+          <div key={i} className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-red-300 dark:hover:border-red-700 transition-colors overflow-hidden">
             {/* Card header */}
             <div className="flex items-center gap-3 px-5 py-3 border-b border-zinc-100 dark:border-zinc-800">
               <div className={`p-1.5 rounded-md ${item.type === "education" ? "bg-emerald-50 dark:bg-emerald-900/20" : "bg-blue-50 dark:bg-blue-900/20"}`}>
@@ -38,7 +38,7 @@ export function ExperienceTimeline() {
                 <ul className="space-y-1.5 mb-3">
                   {item.bullets.map((b, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs text-zinc-400 dark:text-zinc-500">
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-violet-400 shrink-0" />
+                      <span className="mt-1.5 w-1 h-1 rounded-full bg-red-400 shrink-0" />
                       {b}
                     </li>
                   ))}

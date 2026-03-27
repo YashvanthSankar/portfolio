@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, MapPin, Loader2, Check } from "lucide-react";
+import { Send, Loader2, Check } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SectionBorder } from "@/components/ui/section-border";
 
@@ -55,7 +55,7 @@ const socialLinks = [
 ];
 
 const inputClass =
-  "w-full px-4 py-2.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-violet-400 dark:focus:border-violet-500 focus:ring-1 focus:ring-violet-400/30 dark:focus:ring-violet-500/20 transition-all";
+  "w-full px-4 py-2.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all";
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -84,7 +84,7 @@ export function ContactSection() {
     <SectionBorder id="contact" innerClassName="px-6 sm:px-10 py-16 md:py-24">
         <SectionHeader
           label="get in touch"
-          title={<>let&apos;s work <span className="text-violet-600 dark:text-violet-400">together</span></>}
+          title={<>let&apos;s work <span className="text-red-600 dark:text-red-400">together</span></>}
           description="Have a project in mind? Send me a message and let's create something amazing."
         />
 
@@ -92,44 +92,35 @@ export function ContactSection() {
           {/* Left info */}
           <motion.div initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="md:col-span-2 space-y-6">
             <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-                  <Mail className="w-4 h-4 text-violet-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-0.5">email</p>
-                  <p className="text-sm text-zinc-900 dark:text-white">yashvanthsankar@gmail.com</p>
-                </div>
+              <div>
+                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">email</p>
+                <a href="mailto:yashvanthsankar@gmail.com" className="text-sm text-zinc-900 dark:text-white hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors">
+                  yashvanthsankar@gmail.com
+                </a>
               </div>
-
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-                  <MapPin className="w-4 h-4 text-violet-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-0.5">location</p>
-                  <p className="text-sm text-zinc-900 dark:text-white">Chennai, India</p>
-                </div>
+              <div>
+                <p className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">location</p>
+                <p className="text-sm text-zinc-900 dark:text-white">Chennai, India</p>
               </div>
             </div>
 
             {/* Social */}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {socialLinks.map((link) => (
                 <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name}
-                  className="p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                  className="p-2 rounded-lg text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
                   {link.icon}
                 </a>
               ))}
             </div>
 
             {/* Availability */}
-            <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10">
-              <span className="relative flex h-2 w-2 shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-1.5 w-1.5 shrink-0">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
               </span>
-              <span className="text-xs text-emerald-700 dark:text-emerald-400">available for opportunities</span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">available for opportunities</span>
             </div>
           </motion.div>
 
@@ -156,7 +147,7 @@ export function ContactSection() {
             )}
 
             <button type="submit" disabled={status === "sending" || status === "sent"}
-              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-900 dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               {status === "idle"    && <><Send className="w-3.5 h-3.5" /> send message</>}
               {status === "sending" && <><Loader2 className="w-3.5 h-3.5 animate-spin" /> sending...</>}
               {status === "sent"    && <><Check className="w-3.5 h-3.5" /> message sent!</>}

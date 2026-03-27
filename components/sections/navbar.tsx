@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { throttle } from "@/lib/utils";
@@ -16,36 +16,39 @@ const navItems = [
   { id: "contact",    label: "contact",    icon: Mail },
 ];
 
-function CornerMark({ position }: { position: "tl" | "tr" | "bl" | "br" }) {
-  const cls = {
-    tl: "top-0 left-0 border-t border-l",
-    tr: "top-0 right-0 border-t border-r",
-    bl: "bottom-0 left-0 border-b border-l",
-    br: "bottom-0 right-0 border-b border-r",
-  }[position];
-  return (
-    <span className={cn("absolute w-2.5 h-2.5 pointer-events-none z-20 border-zinc-400/60 dark:border-zinc-500/40", cls)} />
-  );
-}
-
 export function Navbar() {
-  const [active, setActive] = useState("home");
+  const [active, setActive]     = useState("home");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuTop, setMenuTop]   = useState(64);
+  const headerRef               = useRef<HTMLElement>(null);
 
+  /* ── scroll tracking ── */
   useEffect(() => {
     const onScroll = throttle(() => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 48);
       for (const item of navItems) {
         const el = document.getElementById(item.id);
         if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= 120 && rect.bottom >= 120) { setActive(item.id); break; }
+        const { top, bottom } = el.getBoundingClientRect();
+        if (top <= 100 && bottom >= 100) { setActive(item.id); break; }
       }
     }, 16);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  /* ── close on resize to desktop ── */
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth >= 768) setMenuOpen(false); };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  /* ── measure header for mobile menu position ── */
+  useEffect(() => {
+    if (headerRef.current) setMenuTop(headerRef.current.offsetHeight + 8);
+  }, [scrolled]);
 
   const scrollTo = (id: string) => {
     setMenuOpen(false);
@@ -54,149 +57,249 @@ export function Navbar() {
 
   return (
     <>
+      {/* ═══════════════════════════ HEADER ═══════════════════════════ */}
       <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        ref={headerRef}
+        initial={{ y: -72, opacity: 0 }}
+        animate={{ y: 0,   opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="sticky inset-x-0 top-0 z-50"
       >
+        {/*
+         * Outer shell:
+         *   • not scrolled → full-width, flush with page edges, side borders to
+         *     match the SectionBorder column frame running down the page
+         *   • scrolled     → inset, adds top/bottom gap so the pill "floats"
+         */}
         <div
-          className={cn("mx-auto max-w-6xl px-4 sm:px-6 transition-all duration-300", scrolled ? "pt-2" : "pt-4 sm:pt-0")}
-          style={{ paddingTop: scrolled ? undefined : 'max(1rem, env(safe-area-inset-top))' }}
+          className={cn(
+            "max-w-6xl mx-auto transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            scrolled ? "px-4 sm:px-6 pt-3 pb-2" : "px-6 sm:px-10 pt-0 pb-0"
+          )}
         >
-          <div className={cn(
-            "relative px-2 sm:px-3 transition-all duration-300",
-            scrolled ? "" : "border-x border-zinc-200 dark:border-zinc-700"
-          )}>
-            {!scrolled && <CornerMark position="tl" />}
-            {!scrolled && <CornerMark position="tr" />}
-            {!scrolled && <CornerMark position="bl" />}
-            {!scrolled && <CornerMark position="br" />}
-
-            <div className={cn(
-              "relative flex items-center justify-between px-4 py-2.5 transition-all duration-300",
+          {/*
+           * Inner bar — morphs between flat background bar and floating pill.
+           * border-radius is in inline style so CSS can interpolate it smoothly.
+           */}
+          <div
+            style={{
+              borderRadius:  scrolled ? "1rem" : "0",
+              paddingLeft:   scrolled ? "12px" : "0",
+              paddingRight:  scrolled ? "12px" : "0",
+              transition:    "border-radius 500ms cubic-bezier(0.22,1,0.36,1), padding 500ms cubic-bezier(0.22,1,0.36,1), background-color 500ms cubic-bezier(0.22,1,0.36,1), box-shadow 500ms cubic-bezier(0.22,1,0.36,1), border-color 500ms cubic-bezier(0.22,1,0.36,1)",
+            }}
+            className={cn(
+              "relative flex items-center justify-between gap-2 py-2.5",
+              "border overflow-hidden",
               scrolled
-                ? "rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_10px_28px_rgba(0,0,0,0.45)]"
-                : "border-y border-zinc-200/85 dark:border-zinc-700/85 bg-transparent"
-            )}>
-            {/* Logo */}
+                ? "border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
+                : "border-transparent bg-transparent backdrop-blur-none shadow-none"
+            )}
+          >
+            {/* ── Logo ── */}
             <button
               onClick={() => scrollTo("home")}
-              className="relative h-8 w-8 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-700 hover:ring-violet-400 transition-all z-10"
+              aria-label="Go to top"
+              className="relative z-10 h-8 w-8 shrink-0 rounded-lg overflow-hidden
+                         ring-1 ring-zinc-200 dark:ring-zinc-800
+                         hover:ring-red-400 dark:hover:ring-red-500
+                         transition-all duration-200"
             >
               <Image src="/ys.png" alt="YS" fill className="object-cover" quality={85} />
             </button>
 
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1 z-10">
+            {/* ── Desktop nav — absolutely centered ── */}
+            <nav className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2 z-10">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg text-sm border transition-all",
+                    "relative px-3.5 py-1.5 text-sm rounded-xl transition-colors duration-150",
                     active === item.id
-                      ? "text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-600"
-                      : "text-zinc-500 dark:text-zinc-300 border-transparent hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 hover:border-zinc-200 dark:hover:border-zinc-600"
+                      ? "text-zinc-900 dark:text-white font-medium"
+                      : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200"
                   )}
                 >
                   {item.label}
+
+                  {/* Spring-animated dot that slides between active items */}
+                  {active === item.id && (
+                    <motion.span
+                      layoutId="nav-dot"
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-red-500"
+                      transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                    />
+                  )}
                 </button>
               ))}
             </nav>
 
-            {/* Right: theme + CTA + resume */}
-            <div className="hidden md:flex items-center gap-2 z-10">
-              <ThemeToggle className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all" />
+            {/* ── Right actions ── */}
+            <div className="relative z-10 flex items-center gap-1">
+              {/* Theme toggle — all sizes */}
+              <ThemeToggle
+                className="w-8 h-8 flex items-center justify-center rounded-xl
+                           text-zinc-500 dark:text-zinc-400
+                           hover:text-zinc-900 dark:hover:text-white
+                           hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                           transition-all duration-150"
+              />
+
+              {/* Desktop-only: resume + CTA */}
               <a
                 href="/YashvanthS_Resume.pdf"
                 download
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-xl
+                           text-zinc-500 dark:text-zinc-400
+                           hover:text-zinc-900 dark:hover:text-white
+                           hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                           transition-all duration-150"
               >
                 <Download className="w-3.5 h-3.5" />
                 resume
               </a>
+
               <button
                 onClick={() => scrollTo("contact")}
-                className="px-4 py-1.5 text-sm rounded-lg bg-violet-600 hover:bg-violet-700 text-white font-medium transition-colors"
+                className="hidden md:block px-3.5 py-1.5 text-sm rounded-xl font-medium
+                           bg-zinc-900 dark:bg-white text-white dark:text-zinc-900
+                           hover:bg-zinc-700 dark:hover:bg-zinc-100
+                           transition-colors duration-150"
               >
                 let&apos;s talk
               </button>
-            </div>
 
-            {/* Mobile toggle */}
-            <div className="md:hidden flex items-center gap-2 z-10">
-              <ThemeToggle className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all" />
+              {/* Mobile-only: hamburger with rotating icon */}
               <button
                 onClick={() => setMenuOpen((p) => !p)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white/80 dark:bg-zinc-900/80 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-500 transition-all"
                 aria-label="Toggle menu"
+                aria-expanded={menuOpen}
+                className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl
+                           text-zinc-500 dark:text-zinc-400
+                           hover:text-zinc-900 dark:hover:text-white
+                           hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                           transition-all duration-150"
               >
-                {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                <AnimatePresence mode="wait" initial={false}>
+                  {menuOpen ? (
+                    <motion.span key="x" className="flex"
+                      initial={{ opacity: 0, rotate: -90 }}
+                      animate={{ opacity: 1, rotate:   0 }}
+                      exit={{   opacity: 0, rotate:  90 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <X className="w-4 h-4" />
+                    </motion.span>
+                  ) : (
+                    <motion.span key="menu" className="flex"
+                      initial={{ opacity: 0, rotate:  90 }}
+                      animate={{ opacity: 1, rotate:   0 }}
+                      exit={{   opacity: 0, rotate: -90 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <Menu className="w-4 h-4" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </button>
-            </div>
             </div>
           </div>
         </div>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* ═══════════════════════════ MOBILE MENU ═══════════════════════ */}
       <AnimatePresence>
         {menuOpen && (
           <>
+            {/* Dim backdrop */}
             <motion.div
+              key="bd"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              exit={{    opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/25 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 md:hidden bg-black/10 backdrop-blur-[2px]"
             />
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-              className="fixed top-[4.65rem] inset-x-0 z-50 px-4 sm:px-6 md:hidden"
+
+            {/* Dropdown panel — positioned from actual header height */}
+            <motion.nav
+              key="panel"
+              style={{ top: menuTop }}
+              initial={{ opacity: 0, y: -8, scale: 0.97 }}
+              animate={{ opacity: 1, y:  0, scale: 1    }}
+              exit={{    opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-x-4 sm:inset-x-6 z-50 md:hidden max-w-6xl mx-auto"
             >
-              <div className="mx-auto max-w-6xl relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md p-3 shadow-[0_14px_34px_rgba(0,0,0,0.12)] dark:shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
-                <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.08)_1px,transparent_1px)] [background-size:18px_18px] dark:[background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]" />
-
-                <div className="relative space-y-1 mb-3">
-                  {navItems.map((item) => (
-                    <button
+              <div
+                className="rounded-2xl border border-zinc-200 dark:border-zinc-800
+                           bg-white dark:bg-zinc-950
+                           shadow-[0_8px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
+                           overflow-hidden"
+              >
+                {/* Nav links */}
+                <ul className="p-2 space-y-0.5">
+                  {navItems.map((item, i) => (
+                    <motion.li
                       key={item.id}
-                      onClick={() => scrollTo(item.id)}
-                      className={cn(
-                        "w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-left border transition-all",
-                        active === item.id
-                          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-200 dark:border-zinc-600"
-                          : "text-zinc-600 dark:text-zinc-300 border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-600"
-                      )}
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x:  0 }}
+                      transition={{ delay: i * 0.04, duration: 0.18 }}
                     >
-                      <item.icon className="w-4 h-4 shrink-0" />
-                      <span className="text-sm">{item.label}</span>
-                    </button>
+                      <button
+                        onClick={() => scrollTo(item.id)}
+                        className={cn(
+                          "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left",
+                          "transition-colors duration-150",
+                          active === item.id
+                            ? "bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                            : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-200"
+                        )}
+                      >
+                        <item.icon
+                          className={cn(
+                            "w-4 h-4 shrink-0 transition-colors",
+                            active === item.id ? "text-red-500" : "text-zinc-400 dark:text-zinc-500"
+                          )}
+                        />
+                        <span className="text-sm">{item.label}</span>
+                        {active === item.id && (
+                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                        )}
+                      </button>
+                    </motion.li>
                   ))}
-                </div>
+                </ul>
 
-                <div className="relative grid grid-cols-2 gap-2 pt-2 border-t border-zinc-200/80 dark:border-zinc-700/80">
+                {/* CTA row */}
+                <div className="px-2 pb-2 grid grid-cols-2 gap-2">
                   <button
                     onClick={() => scrollTo("contact")}
-                    className="w-full py-2.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium transition-colors"
+                    className="py-2.5 rounded-xl text-sm font-medium
+                               bg-zinc-900 dark:bg-white text-white dark:text-zinc-900
+                               hover:bg-zinc-700 dark:hover:bg-zinc-100
+                               transition-colors duration-150"
                   >
                     let&apos;s talk
                   </button>
                   <a
                     href="/YashvanthS_Resume.pdf"
                     download
-                    className="w-full py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 text-sm flex items-center justify-center gap-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                    className="py-2.5 rounded-xl text-sm
+                               border border-zinc-200 dark:border-zinc-800
+                               text-zinc-600 dark:text-zinc-300
+                               flex items-center justify-center gap-2
+                               hover:bg-zinc-50 dark:hover:bg-zinc-900
+                               transition-colors duration-150"
                   >
-                    <Download className="w-4 h-4" />
+                    <Download className="w-3.5 h-3.5" />
                     resume
                   </a>
                 </div>
               </div>
-            </motion.div>
+            </motion.nav>
           </>
         )}
       </AnimatePresence>
