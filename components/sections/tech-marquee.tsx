@@ -77,81 +77,68 @@ const monoIcons: Record<string, IconType> = {
   linux: SiLinux,
 };
 
-const cardAngles = [
-  "rotate-[-0.8deg]",
-  "rotate-[0.7deg]",
-  "rotate-[-0.5deg]",
-  "rotate-[0.6deg]",
-  "rotate-[-0.4deg]",
-];
 
 export function TechMarquee() {
   return (
-    <SectionBorder id="technologies" innerClassName="px-4 sm:px-6 py-12 md:py-20">
-      <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/35 px-4 py-5 sm:px-6 sm:py-6">
-        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(circle_at_0%_0%,rgba(0,0,0,0.07),transparent_30%),radial-gradient(circle_at_100%_100%,rgba(0,0,0,0.06),transparent_34%)] dark:[background:radial-gradient(circle_at_0%_0%,rgba(255,255,255,0.07),transparent_30%),radial-gradient(circle_at_100%_100%,rgba(255,255,255,0.06),transparent_34%)]" />
+    <SectionBorder id="technologies" innerClassName="px-6 sm:px-10 py-16 md:py-24">
+      {/* Section heading */}
+      <motion.p
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.45 }}
+        className="text-xs uppercase tracking-[0.28em] text-zinc-400 dark:text-zinc-500 mb-3"
+      >
+        {"// technologies i use"}
+      </motion.p>
 
-        <div className="relative">
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
+      <motion.h2
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.06 }}
+        className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white mb-10"
+      >
+        Engineering <span className="text-violet-600 dark:text-violet-400">Toolkit</span>
+      </motion.h2>
+
+      {/* Category cards */}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {technologyCategories.map((category, categoryIndex) => (
+          <motion.article
+            key={category.title}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45 }}
-            className="text-center text-xs uppercase tracking-[0.28em] text-zinc-500 dark:text-zinc-400"
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.45, delay: categoryIndex * 0.07 }}
+            className="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/50 backdrop-blur-sm p-5 transition-colors duration-200 hover:border-zinc-300 dark:hover:border-zinc-700"
           >
-            {"// technologies i use"}
-          </motion.p>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
+                {category.title}
+              </h3>
+              <span className="font-mono text-[11px] text-zinc-300 dark:text-zinc-700">
+                {String(categoryIndex + 1).padStart(2, "0")}
+              </span>
+            </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.06 }}
-            className="mt-4 text-center text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white"
-          >
-            Engineering <span className="text-violet-600 dark:text-violet-400">Toolkit</span>
-          </motion.h2>
-        </div>
+            <div className="flex flex-wrap gap-2">
+              {category.items.map((item) => {
+                const Icon = monoIcons[item.icon] ?? TbDatabase;
 
-        <div className="relative mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {technologyCategories.map((category, categoryIndex) => (
-            <motion.article
-              key={category.title}
-              initial={{ opacity: 0, y: 26 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.45, delay: categoryIndex * 0.07 }}
-              className={`group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-[0_10px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_24px_rgba(0,0,0,0.3)] transition-transform duration-300 hover:-translate-y-1 ${cardAngles[categoryIndex % cardAngles.length]}`}
-            >
-              <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(0,0,0,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.1)_1px,transparent_1px)] [background-size:18px_18px] dark:[background-image:linear-gradient(rgba(255,255,255,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.07)_1px,transparent_1px)]" />
-
-              <div className="relative mb-4 flex items-center justify-between">
-                <h3 className="text-[11px] uppercase tracking-[0.18em] text-zinc-700 dark:text-zinc-300">
-                  {category.title}
-                </h3>
-                <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                  {String(categoryIndex + 1).padStart(2, "0")}
-                </span>
-              </div>
-
-              <div className="relative flex flex-wrap gap-2.5">
-                {category.items.map((item) => {
-                  const Icon = monoIcons[item.icon] ?? TbDatabase;
-
-                  return (
-                    <div
-                      key={item.name}
-                      className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 bg-zinc-100/80 dark:bg-zinc-800/70 px-3 py-1.5 text-zinc-700 dark:text-zinc-200 transition-colors group-hover:border-zinc-300 dark:group-hover:border-zinc-600"
-                    >
-                      <Icon className="h-3.5 w-3.5 shrink-0" />
-                      <span className="text-xs whitespace-nowrap">{item.name}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.article>
-          ))}
-        </div>
+                return (
+                  <div
+                    key={item.name}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 px-3 py-1.5 text-zinc-600 dark:text-zinc-300 transition-colors duration-150 group-hover:border-zinc-300 dark:group-hover:border-zinc-700"
+                  >
+                    <Icon className="h-3 w-3 shrink-0 text-zinc-400 dark:text-zinc-500" />
+                    <span className="text-[11.5px] whitespace-nowrap">{item.name}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.article>
+        ))}
       </div>
     </SectionBorder>
   );

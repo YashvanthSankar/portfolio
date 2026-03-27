@@ -55,7 +55,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
 
 export function ProjectsSection() {
   return (
-    <SectionBorder id="projects" innerClassName="px-4 sm:px-6 py-12 md:py-20">
+    <SectionBorder id="projects" innerClassName="px-6 sm:px-10 py-16 md:py-24">
         <SectionHeader
           label="selected work"
           title={<>featured <span className="text-violet-600 dark:text-violet-400">projects</span></>}

@@ -81,7 +81,7 @@ export function ContactSection() {
   };
 
   return (
-    <SectionBorder id="contact" innerClassName="px-4 sm:px-6 py-12 md:py-20">
+    <SectionBorder id="contact" innerClassName="px-6 sm:px-10 py-16 md:py-24">
         <SectionHeader
           label="get in touch"
           title={<>let&apos;s work <span className="text-violet-600 dark:text-violet-400">together</span></>}

@@ -32,7 +32,7 @@ const card = "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white da
 
 export function AboutBento() {
   return (
-    <SectionBorder id="about" innerClassName="px-4 sm:px-6 py-12 md:py-20">
+    <SectionBorder id="about" innerClassName="px-6 sm:px-10 py-16 md:py-24">
         <SectionHeader
           label="about"
           title={<>about <span className="text-violet-600 dark:text-violet-400">me</span></>}

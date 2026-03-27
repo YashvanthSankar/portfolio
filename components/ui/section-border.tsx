@@ -3,15 +3,23 @@
 import { type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-// Small + crosshair marker where the infinite lines intersect
-function Crosshair({ className }: { className?: string }) {
+// L-shaped corner bracket — elegant engineering aesthetic
+function CornerMark({ position }: { position: "tl" | "tr" | "bl" | "br" }) {
+  const cls = {
+    tl: "top-0 left-0 border-t border-l",
+    tr: "top-0 right-0 border-t border-r",
+    bl: "bottom-0 left-0 border-b border-l",
+    br: "bottom-0 right-0 border-b border-r",
+  }[position];
+
   return (
-    <span className={cn("absolute w-3 h-3 pointer-events-none z-10", className)}>
-      {/* horizontal arm */}
-      <span className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-px bg-violet-500/70" />
-      {/* vertical arm */}
-      <span className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-violet-500/70" />
-    </span>
+    <span
+      className={cn(
+        "absolute w-2.5 h-2.5 pointer-events-none z-10",
+        "border-zinc-400/60 dark:border-zinc-500/40",
+        cls
+      )}
+    />
   );
 }
 
@@ -24,22 +32,17 @@ interface SectionBorderProps {
 
 export function SectionBorder({ children, className, innerClassName, id }: SectionBorderProps) {
   return (
-    <section
-      id={id}
-      className={cn(className)}
-    >
+    <section id={id} className={cn(className)}>
       <div
         className={cn(
-          // Vertical lines at content edges — "infinite" vertical lines
           "relative max-w-6xl mx-auto border-x border-zinc-200 dark:border-zinc-800",
           innerClassName
         )}
       >
-        {/* 4 crosshair marks at the intersections (corners) */}
-        <Crosshair className="-top-1.5 -left-1.5" />
-        <Crosshair className="-top-1.5 -right-1.5" />
-        <Crosshair className="-bottom-1.5 -left-1.5" />
-        <Crosshair className="-bottom-1.5 -right-1.5" />
+        <CornerMark position="tl" />
+        <CornerMark position="tr" />
+        <CornerMark position="bl" />
+        <CornerMark position="br" />
 
         {children}
       </div>

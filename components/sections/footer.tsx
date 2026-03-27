@@ -1,9 +1,10 @@
 "use client";
 
+import React from "react";
 import { Mail, ArrowUp } from "lucide-react";
 import Image from "next/image";
 
-const socialLinks = [
+const socialLinks: { name: string; href: string; icon: React.ReactNode; noBlank?: boolean }[] = [
   {
     name: "GitHub",
     href: "https://github.com/YashvanthSankar",
@@ -62,13 +63,14 @@ const socialLinks = [
     name: "Email",
     href: "mailto:yashvanthsankar@gmail.com",
     icon: <Mail className="w-4 h-4" />,
+    noBlank: true,
   },
 ];
 
 export function Footer() {
   return (
     <footer className="py-8 md:py-10">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
           {/* Logo + copyright */}
           <div className="flex items-center gap-3">
@@ -83,7 +85,7 @@ export function Footer() {
           {/* Social */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             {socialLinks.map((link) => (
-              <a key={link.name} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.name}
+              <a key={link.name} href={link.href} {...(!link.noBlank && { target: "_blank", rel: "noopener noreferrer" })} aria-label={link.name}
                 className="p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-white dark:hover:bg-zinc-900 transition-all">
                 {link.icon}
               </a>

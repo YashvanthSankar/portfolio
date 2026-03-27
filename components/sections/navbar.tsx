@@ -16,12 +16,15 @@ const navItems = [
   { id: "contact",    label: "contact",    icon: Mail },
 ];
 
-function Crosshair({ className }: { className: string }) {
+function CornerMark({ position }: { position: "tl" | "tr" | "bl" | "br" }) {
+  const cls = {
+    tl: "top-0 left-0 border-t border-l",
+    tr: "top-0 right-0 border-t border-r",
+    bl: "bottom-0 left-0 border-b border-l",
+    br: "bottom-0 right-0 border-b border-r",
+  }[position];
   return (
-    <span className={cn("absolute w-3 h-3 pointer-events-none z-20", className)}>
-      <span className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-px bg-violet-500/70" />
-      <span className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-violet-500/70" />
-    </span>
+    <span className={cn("absolute w-2.5 h-2.5 pointer-events-none z-20 border-zinc-400/60 dark:border-zinc-500/40", cls)} />
   );
 }
 
@@ -61,11 +64,14 @@ export function Navbar() {
           className={cn("mx-auto max-w-6xl px-4 sm:px-6 transition-all duration-300", scrolled ? "pt-2" : "pt-4 sm:pt-0")}
           style={{ paddingTop: scrolled ? undefined : 'max(1rem, env(safe-area-inset-top))' }}
         >
-          <div className="relative border-x border-zinc-200 dark:border-zinc-700 px-2 sm:px-3">
-            <Crosshair className="-top-1.5 -left-1.5" />
-            <Crosshair className="-top-1.5 -right-1.5" />
-            <Crosshair className="-bottom-1.5 -left-1.5" />
-            <Crosshair className="-bottom-1.5 -right-1.5" />
+          <div className={cn(
+            "relative px-2 sm:px-3 transition-all duration-300",
+            scrolled ? "" : "border-x border-zinc-200 dark:border-zinc-700"
+          )}>
+            {!scrolled && <CornerMark position="tl" />}
+            {!scrolled && <CornerMark position="tr" />}
+            {!scrolled && <CornerMark position="bl" />}
+            {!scrolled && <CornerMark position="br" />}
 
             <div className={cn(
               "relative flex items-center justify-between px-4 py-2.5 transition-all duration-300",
