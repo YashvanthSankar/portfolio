@@ -12,7 +12,14 @@ interface SectionBorderProps {
 
 export function SectionBorder({ children, className, innerClassName, id }: SectionBorderProps) {
   return (
-    <section id={id} className={cn(className)}>
+    <section id={id} className={cn("relative", className)}>
+      {/* Dashed vertical rail — spans full section height to connect across sections */}
+      <div
+        className="pointer-events-none absolute inset-0 max-w-6xl mx-auto
+                   border-x border-dashed border-zinc-300 dark:border-zinc-700/70"
+        aria-hidden
+      />
+
       <div className={cn("max-w-6xl mx-auto", innerClassName)}>
         {children}
       </div>

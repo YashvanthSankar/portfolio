@@ -95,6 +95,7 @@ export function Footer() {
           {/* Back to top */}
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Scroll to top of page"
             className="group flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
           >
             back to top

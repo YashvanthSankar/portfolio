@@ -31,14 +31,14 @@ const monoIcons: Record<string, IconType> = {
 
 export function TechMarquee() {
   return (
-    <SectionBorder id="technologies" innerClassName="px-6 sm:px-10 py-16 md:py-24">
+    <SectionBorder id="technologies" coord="(0)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
       <SectionHeader
         label="technologies i use"
         title={<>Engineering <span className="text-red-600 dark:text-red-400">Toolkit</span></>}
         description="A curated stack of languages, frameworks, and tools I use to build modern applications."
       />
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {technologyCategories.map((category, i) => (
           <motion.article
             key={category.title}
@@ -46,8 +46,8 @@ export function TechMarquee() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.4, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5
-                       hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors duration-200"
+            className="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 p-5
+                       hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors duration-200"
           >
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">

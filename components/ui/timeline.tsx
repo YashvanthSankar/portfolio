@@ -68,13 +68,13 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
               >
                 <div className="h-3 w-3 rounded-full bg-red-500" />
               </div>
-              <h3 className="hidden md:block text-xl md:pl-20 md:text-4xl font-bold text-zinc-300 dark:text-zinc-600">
+              <h3 className="hidden md:block text-xl md:pl-20 md:text-4xl font-bold text-zinc-400 dark:text-zinc-500">
                 {item.title}
               </h3>
             </div>
 
             <div className="relative pl-14 pr-2 sm:pl-20 sm:pr-4 md:pl-4 md:pr-0 w-full">
-              <h3 className="md:hidden block text-lg mb-3 text-left font-bold text-zinc-300 dark:text-zinc-600">
+              <h3 className="md:hidden block text-lg mb-3 text-left font-bold text-zinc-400 dark:text-zinc-500">
                 {item.title}
               </h3>
               {item.content}

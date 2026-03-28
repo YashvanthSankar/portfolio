@@ -33,7 +33,7 @@ const stats = [
   { label: "yrs coding",   value: "4+"  },
 ];
 
-const card = "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5";
+const card = "rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 p-5";
 
 const fade = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
@@ -44,14 +44,14 @@ const fade = (delay: number) => ({
 
 export function AboutBento() {
   return (
-    <SectionBorder id="about" innerClassName="px-6 sm:px-10 py-16 md:py-24">
+    <SectionBorder id="about" coord="(1)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
       <SectionHeader
         label="about"
         title={<>about <span className="text-red-600 dark:text-red-400">me</span></>}
         description="A passionate developer focused on creating impactful digital experiences."
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Bio */}
         <motion.div {...fade(0.05)} className={`md:col-span-2 ${card}`}>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">

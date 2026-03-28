@@ -42,7 +42,7 @@ export function Portfolio() {
         [background-size:48px_48px]" />
       <Navbar />
       <SpotlightHero />
-      <div className="divide-y divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="divide-y divide-dashed divide-zinc-300 dark:divide-zinc-700/70 border-b border-dashed border-zinc-300 dark:border-zinc-700/70">
         <TechMarquee />
         <AboutBento />
         <ProjectsSection />

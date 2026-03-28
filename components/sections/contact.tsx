@@ -55,7 +55,7 @@ const socialLinks = [
 ];
 
 const inputClass =
-  "w-full px-4 py-2.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 transition-all";
+  "w-full px-4 py-2.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-red-500/50 focus:border-red-400 dark:focus:border-red-500/60 transition-all";
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -81,7 +81,7 @@ export function ContactSection() {
   };
 
   return (
-    <SectionBorder id="contact" innerClassName="px-6 sm:px-10 py-16 md:py-24">
+    <SectionBorder id="contact" coord="(4)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
         <SectionHeader
           label="get in touch"
           title={<>let&apos;s work <span className="text-red-600 dark:text-red-400">together</span></>}
@@ -143,7 +143,9 @@ export function ContactSection() {
             </div>
 
             {status === "error" && (
-              <p role="alert" className="text-xs text-red-500">something went wrong — try again.</p>
+              <p role="alert" className="text-xs text-red-600 dark:text-red-400 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/40">
+                something went wrong — try again.
+              </p>
             )}
 
             <button type="submit" disabled={status === "sending" || status === "sent"}

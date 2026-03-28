@@ -14,14 +14,14 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
-      className="group flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800
+      className="group flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-700/60
                  bg-white dark:bg-zinc-900
-                 hover:border-zinc-300 dark:hover:border-zinc-700
+                 hover:border-zinc-300 dark:hover:border-zinc-600
                  hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]
                  transition-all duration-300 overflow-hidden"
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-100 dark:border-zinc-800/80">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-100 dark:border-zinc-700/40">
         <span className="text-sm font-medium text-zinc-900 dark:text-white truncate">{project.title}</span>
         <div className="flex items-center gap-1 shrink-0 ml-3">
           {project.github && (
@@ -44,7 +44,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
         <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed flex-1">{project.description}</p>
         <div className="flex flex-wrap gap-1.5">
           {project.tags.map((tag) => (
-            <span key={tag} className="px-2 py-0.5 text-[11px] rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+            <span key={tag} className="px-2 py-0.5 text-[11px] rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
               {tag}
             </span>
           ))}
@@ -56,14 +56,14 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
 
 export function ProjectsSection() {
   return (
-    <SectionBorder id="projects" innerClassName="px-6 sm:px-10 py-16 md:py-24">
+    <SectionBorder id="projects" coord="(2)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
       <SectionHeader
         label="selected work"
         title={<>featured <span className="text-red-600 dark:text-red-400">projects</span></>}
         description="A selection of projects that showcase my expertise in building modern web applications and solving complex problems."
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map((project, index) => (
           <ProjectCard key={project.title} project={project} index={index} />
         ))}
