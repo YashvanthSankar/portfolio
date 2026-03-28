@@ -8,6 +8,7 @@ interface SectionBorderProps {
   className?: string;
   innerClassName?: string;
   id?: string;
+  coord?: string;
 }
 
 export function SectionBorder({ children, className, innerClassName, id }: SectionBorderProps) {
@@ -16,7 +17,7 @@ export function SectionBorder({ children, className, innerClassName, id }: Secti
       {/* Dashed vertical rail — spans full section height to connect across sections */}
       <div
         className="pointer-events-none absolute inset-0 max-w-6xl mx-auto
-                   border-x border-dashed border-zinc-300 dark:border-zinc-700/70"
+                   border-x border-dashed border-rose-200 dark:border-rose-900/40"
         aria-hidden
       />
 

@@ -4,7 +4,7 @@ import { Navbar } from "@/components/sections/navbar";
 import { SpotlightHero } from "@/components/sections/hero";
 
 const skeleton = (h: string) => (
-  <div className={`${h} bg-zinc-100 dark:bg-zinc-900 animate-pulse`} />
+  <div className={`${h} bg-rose-100 dark:bg-[#2d0c12] animate-pulse`} />
 );
 
 const TechMarquee = dynamic(() => import("@/components/sections/tech-marquee").then(mod => ({ default: mod.TechMarquee })), {
@@ -36,13 +36,13 @@ export function Portfolio() {
   return (
     <main id="main-content" className="relative min-h-screen antialiased">
       {/* Global grid background — shows through all transparent sections */}
-      <div className="fixed inset-0 -z-10 bg-white dark:bg-zinc-950
-        [background-image:linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)]
-        dark:[background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)]
+      <div className="fixed inset-0 -z-10 bg-[#FFF1F2] dark:bg-[#0d0307]
+        [background-image:linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)]
+        dark:[background-image:linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
         [background-size:48px_48px]" />
       <Navbar />
       <SpotlightHero />
-      <div className="divide-y divide-dashed divide-zinc-300 dark:divide-zinc-700/70 border-b border-dashed border-zinc-300 dark:border-zinc-700/70">
+      <div className="divide-y divide-dashed divide-rose-200 dark:divide-rose-900/40 border-b border-dashed border-rose-200 dark:border-rose-900/40">
         <TechMarquee />
         <AboutBento />
         <ProjectsSection />

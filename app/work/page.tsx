@@ -17,7 +17,7 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-/* ─── Work page navbar — mirrors main navbar pattern ─── */
+/* ─── Work page navbar ─── */
 function WorkNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,7 +58,7 @@ function WorkNavbar() {
           <div
             style={{
               borderRadius: scrolled ? "1rem" : "0",
-              paddingLeft: scrolled ? "12px" : "0",
+              paddingLeft:  scrolled ? "12px" : "0",
               paddingRight: scrolled ? "12px" : "0",
               transition: "border-radius 500ms cubic-bezier(0.22,1,0.36,1), padding 500ms cubic-bezier(0.22,1,0.36,1), background-color 500ms cubic-bezier(0.22,1,0.36,1), box-shadow 500ms cubic-bezier(0.22,1,0.36,1), border-color 500ms cubic-bezier(0.22,1,0.36,1)",
             }}
@@ -66,20 +66,20 @@ function WorkNavbar() {
               "relative flex items-center justify-between gap-2 py-2.5",
               "border overflow-hidden",
               scrolled
-                ? "border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
+                ? "border-rose-200 dark:border-rose-900/40 bg-[#FFF1F2]/95 dark:bg-[#0d0307]/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
                 : "border-transparent bg-transparent backdrop-blur-none shadow-none"
             )}
           >
-            {/* Logo — links back to home */}
+            {/* Logo */}
             <Link
               href="/"
               aria-label="Back to home"
               className="relative h-8 w-8 shrink-0 rounded-lg overflow-hidden
-                         ring-1 ring-zinc-200 dark:ring-zinc-800
-                         hover:ring-red-400 dark:hover:ring-red-500
+                         ring-1 ring-rose-200 dark:ring-rose-900/40
+                         hover:ring-rose-400 dark:hover:ring-rose-500
                          transition-all duration-200"
             >
-              <Image src="/ys.png" alt="YS" fill className="object-cover" quality={85} />
+              <Image src="/ys_red.webp" alt="YS" fill className="object-cover" quality={85} />
             </Link>
 
             {/* Desktop nav */}
@@ -88,7 +88,7 @@ function WorkNavbar() {
                 href="/"
                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm rounded-xl
                            text-zinc-500 dark:text-zinc-400
-                           hover:text-zinc-800 dark:hover:text-zinc-200
+                           hover:text-zinc-900 dark:hover:text-white
                            transition-colors duration-150"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
@@ -100,7 +100,7 @@ function WorkNavbar() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm rounded-xl
                            text-zinc-500 dark:text-zinc-400
-                           hover:text-zinc-800 dark:hover:text-zinc-200
+                           hover:text-zinc-900 dark:hover:text-white
                            transition-colors duration-150"
               >
                 <GithubIcon />
@@ -114,7 +114,7 @@ function WorkNavbar() {
                 className="w-8 h-8 flex items-center justify-center rounded-xl
                            text-zinc-500 dark:text-zinc-400
                            hover:text-zinc-900 dark:hover:text-white
-                           hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                           hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
                            transition-all duration-150"
               />
               <a
@@ -123,7 +123,7 @@ function WorkNavbar() {
                 className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-xl
                            text-zinc-500 dark:text-zinc-400
                            hover:text-zinc-900 dark:hover:text-white
-                           hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                           hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
                            transition-all duration-150"
               >
                 <Download className="w-3.5 h-3.5" />
@@ -138,7 +138,7 @@ function WorkNavbar() {
                 className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl
                            text-zinc-500 dark:text-zinc-400
                            hover:text-zinc-900 dark:hover:text-white
-                           hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                           hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
                            transition-all duration-150"
               >
                 <AnimatePresence mode="wait" initial={false}>
@@ -178,8 +178,8 @@ function WorkNavbar() {
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               className="fixed inset-x-4 sm:inset-x-6 z-50 md:hidden max-w-6xl mx-auto"
             >
-              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800
-                              bg-white dark:bg-zinc-950
+              <div className="rounded-2xl border border-rose-200 dark:border-rose-900/40
+                              bg-[#FFF1F2] dark:bg-[#0d0307]
                               shadow-[0_8px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
                               overflow-hidden">
                 <ul className="p-2 space-y-0.5">
@@ -192,8 +192,8 @@ function WorkNavbar() {
                         <Link href={item.href} onClick={() => setMenuOpen(false)}
                           className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm
                                      text-zinc-500 dark:text-zinc-400
-                                     hover:bg-zinc-50 dark:hover:bg-zinc-900/60
-                                     hover:text-zinc-800 dark:hover:text-zinc-200
+                                     hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
+                                     hover:text-zinc-900 dark:hover:text-white
                                      transition-colors duration-150"
                         >
                           <span className="text-zinc-400 dark:text-zinc-500">{item.icon}</span>
@@ -203,8 +203,8 @@ function WorkNavbar() {
                         <a href={item.href} target="_blank" rel="noopener noreferrer"
                           className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm
                                      text-zinc-500 dark:text-zinc-400
-                                     hover:bg-zinc-50 dark:hover:bg-zinc-900/60
-                                     hover:text-zinc-800 dark:hover:text-zinc-200
+                                     hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
+                                     hover:text-zinc-900 dark:hover:text-white
                                      transition-colors duration-150"
                         >
                           <span className="text-zinc-400 dark:text-zinc-500">{item.icon}</span>
@@ -219,10 +219,10 @@ function WorkNavbar() {
                     href="/YashvanthS_Resume.pdf"
                     download
                     className="w-full py-2.5 rounded-xl text-sm
-                               border border-zinc-200 dark:border-zinc-800
+                               border border-rose-200 dark:border-rose-900/40
                                text-zinc-600 dark:text-zinc-300
                                flex items-center justify-center gap-2
-                               hover:bg-zinc-50 dark:hover:bg-zinc-900
+                               hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
                                transition-colors duration-150"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -260,19 +260,19 @@ function RepoCard({ repo, index }: { repo: Repo; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.04 }}
-      className="group flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-800
-                 bg-white dark:bg-zinc-900
-                 hover:border-zinc-300 dark:hover:border-zinc-700
+      className="group flex flex-col rounded-xl border border-rose-200 dark:border-rose-900/40
+                 bg-[#FFE4E6] dark:bg-[#1a0509]
+                 hover:border-rose-300 dark:hover:border-rose-800
                  hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]
                  transition-all duration-300 overflow-hidden"
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-100 dark:border-zinc-800/80">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-rose-100 dark:border-rose-900/30">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-xs text-zinc-300 dark:text-zinc-600 select-none shrink-0 font-mono">~/</span>
           <span className="text-sm font-semibold text-zinc-900 dark:text-white truncate">{repo.name}</span>
         </div>
-        <ExternalLink className="w-3.5 h-3.5 text-zinc-300 dark:text-zinc-700 group-hover:text-red-500 transition-colors shrink-0 ml-2" />
+        <ExternalLink className="w-3.5 h-3.5 text-rose-200 dark:text-rose-900/60 group-hover:text-rose-500 transition-colors shrink-0 ml-2" />
       </div>
 
       {/* Body */}
@@ -286,9 +286,9 @@ function RepoCard({ repo, index }: { repo: Repo; index: number }) {
             {repo.topics.slice(0, 3).map((t) => (
               <span key={t}
                 className="px-2 py-0.5 text-[11px] rounded-md
-                           bg-zinc-100 dark:bg-zinc-800
+                           bg-rose-100 dark:bg-[#2d0c12]
                            text-zinc-500 dark:text-zinc-400
-                           border border-zinc-200 dark:border-zinc-700"
+                           border border-rose-200 dark:border-rose-900/40"
               >{t}</span>
             ))}
           </div>
@@ -317,16 +317,16 @@ function RepoCard({ repo, index }: { repo: Repo; index: number }) {
 
 function SkeletonCard() {
   return (
-    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
-      <div className="px-5 py-3.5 border-b border-zinc-100 dark:border-zinc-800">
-        <div className="h-4 w-36 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+    <div className="rounded-xl border border-rose-200 dark:border-rose-900/40 bg-[#FFE4E6] dark:bg-[#1a0509] overflow-hidden">
+      <div className="px-5 py-3.5 border-b border-rose-100 dark:border-rose-900/30">
+        <div className="h-4 w-36 bg-rose-200 dark:bg-[#2d0c12] rounded animate-pulse" />
       </div>
       <div className="px-5 py-4 space-y-3">
-        <div className="h-3 w-full bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
-        <div className="h-3 w-3/4 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+        <div className="h-3 w-full bg-rose-100 dark:bg-[#2d0c12] rounded animate-pulse" />
+        <div className="h-3 w-3/4 bg-rose-100 dark:bg-[#2d0c12] rounded animate-pulse" />
         <div className="flex gap-1.5 pt-1">
-          <div className="h-5 w-14 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
-          <div className="h-5 w-10 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
+          <div className="h-5 w-14 bg-rose-100 dark:bg-[#2d0c12] rounded animate-pulse" />
+          <div className="h-5 w-10 bg-rose-100 dark:bg-[#2d0c12] rounded animate-pulse" />
         </div>
       </div>
     </div>
@@ -335,9 +335,9 @@ function SkeletonCard() {
 
 /* ─── Page ─── */
 export default function WorkPage() {
-  const [repos, setRepos]   = useState<Repo[]>([]);
+  const [repos, setRepos]     = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState<string | null>(null);
+  const [error, setError]     = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/repos.json")
@@ -351,20 +351,20 @@ export default function WorkPage() {
 
   return (
     <div className="relative min-h-screen antialiased">
-      {/* Grid background */}
-      <div className="fixed inset-0 -z-10 bg-white dark:bg-zinc-950
-        [background-image:linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)]
-        dark:[background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)]
+      {/* Grid background — matches main portfolio */}
+      <div className="fixed inset-0 -z-10 bg-[#FFF1F2] dark:bg-[#0d0307]
+        [background-image:linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)]
+        dark:[background-image:linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
         [background-size:48px_48px]" />
 
       <WorkNavbar />
 
-      <div className="divide-y divide-zinc-200 dark:divide-zinc-800 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="divide-y divide-dashed divide-rose-200 dark:divide-rose-900/40 border-b border-dashed border-rose-200 dark:border-rose-900/40">
         {/* Page header */}
         <SectionBorder innerClassName="px-6 sm:px-10 pt-14 pb-10">
           <SectionHeader
             label="all projects"
-            title={<>my <span className="text-red-600 dark:text-red-400">work</span></>}
+            title={<>my <span className="text-rose-600 dark:text-rose-400">work</span></>}
             description="All my public GitHub repositories — sorted by stars."
           />
           {!loading && !error && (
@@ -381,10 +381,10 @@ export default function WorkPage() {
               <p className="text-sm text-zinc-400 dark:text-zinc-500">failed to load repositories</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-sm
+                className="px-4 py-2 rounded-lg border border-rose-200 dark:border-rose-900/40 text-sm
                            text-zinc-600 dark:text-zinc-400
                            hover:text-zinc-900 dark:hover:text-white
-                           hover:border-zinc-300 dark:hover:border-zinc-700
+                           hover:border-rose-300 dark:hover:border-rose-800
                            transition-all"
               >
                 try again
@@ -409,11 +409,11 @@ export default function WorkPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl
-                           border border-zinc-200 dark:border-zinc-800
+                           border border-rose-200 dark:border-rose-900/40
                            text-sm text-zinc-500 dark:text-zinc-400
                            hover:text-zinc-900 dark:hover:text-white
-                           hover:border-zinc-300 dark:hover:border-zinc-700
-                           hover:bg-white dark:hover:bg-zinc-900
+                           hover:border-rose-300 dark:hover:border-rose-800
+                           hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
                            transition-all"
               >
                 <GithubIcon />

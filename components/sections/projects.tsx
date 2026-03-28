@@ -14,9 +14,9 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
-      className="group flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-700/60
-                 bg-white dark:bg-zinc-900
-                 hover:border-zinc-300 dark:hover:border-zinc-600
+      className="group flex flex-col rounded-xl border border-rose-200 dark:border-rose-900/40
+                 bg-[#FFE4E6] dark:bg-[#1a0509]
+                 hover:border-rose-300 dark:hover:border-rose-800
                  hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]
                  transition-all duration-300 overflow-hidden"
     >
@@ -44,7 +44,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
         <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed flex-1">{project.description}</p>
         <div className="flex flex-wrap gap-1.5">
           {project.tags.map((tag) => (
-            <span key={tag} className="px-2 py-0.5 text-[11px] rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+            <span key={tag} className="px-2 py-0.5 text-[11px] rounded-lg bg-rose-100 dark:bg-[#2d0c12] text-zinc-500 dark:text-zinc-400">
               {tag}
             </span>
           ))}
@@ -59,7 +59,7 @@ export function ProjectsSection() {
     <SectionBorder id="projects" coord="(2)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
       <SectionHeader
         label="selected work"
-        title={<>featured <span className="text-red-600 dark:text-red-400">projects</span></>}
+        title={<>featured <span className="text-rose-600 dark:text-rose-400">projects</span></>}
         description="A selection of projects that showcase my expertise in building modern web applications and solving complex problems."
       />
 
@@ -75,10 +75,10 @@ export function ProjectsSection() {
       >
         <Link
           href="/work"
-          className="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800
+          className="px-5 py-2.5 rounded-xl border border-rose-200 dark:border-rose-900/40
                      text-sm text-zinc-500 dark:text-zinc-400
                      hover:text-zinc-900 dark:hover:text-white
-                     hover:border-zinc-300 dark:hover:border-zinc-700
+                     hover:border-rose-300 dark:hover:border-rose-800
                      transition-all duration-200"
         >
           explore all projects

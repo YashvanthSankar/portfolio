@@ -33,7 +33,7 @@ const stats = [
   { label: "yrs coding",   value: "4+"  },
 ];
 
-const card = "rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 p-5";
+const card = "rounded-xl border border-rose-200 dark:border-rose-900/40 bg-[#FFE4E6] dark:bg-[#1a0509] p-5";
 
 const fade = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
@@ -47,7 +47,7 @@ export function AboutBento() {
     <SectionBorder id="about" coord="(1)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
       <SectionHeader
         label="about"
-        title={<>about <span className="text-red-600 dark:text-red-400">me</span></>}
+        title={<>about <span className="text-rose-600 dark:text-rose-400">me</span></>}
         description="A passionate developer focused on creating impactful digital experiences."
       />
 

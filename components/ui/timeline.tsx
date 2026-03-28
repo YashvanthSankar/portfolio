@@ -53,7 +53,7 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
       <div className="max-w-6xl mx-auto py-10 md:py-12 px-6 sm:px-10">
         <SectionHeader
           label="my journey"
-          title={<>experience &amp; <span className="text-red-600 dark:text-red-400">education</span></>}
+          title={<>experience &amp; <span className="text-rose-600 dark:text-rose-400">education</span></>}
           description="From academic pursuits to professional experiences."
         />
       </div>
@@ -64,9 +64,9 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-28 self-start max-w-xs lg:max-w-sm md:w-full">
               <div
                 data-timeline-dot
-                className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center"
+                className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-rose-100 dark:bg-[#2d0c12] border border-rose-200 dark:border-rose-900/40 flex items-center justify-center"
               >
-                <div className="h-3 w-3 rounded-full bg-red-500" />
+                <div className="h-3 w-3 rounded-full bg-rose-500" />
               </div>
               <h3 className="hidden md:block text-xl md:pl-20 md:text-4xl font-bold text-zinc-400 dark:text-zinc-500">
                 {item.title}
@@ -94,12 +94,12 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
           {animate ? (
             <motion.div
               style={{ height: heightTransform, opacity: opacityTransform }}
-              className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-red-500 via-red-400 to-transparent rounded-full"
+              className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-rose-500 via-rose-400 to-transparent rounded-full"
             />
           ) : (
             <div
               style={{ height: effectiveHeight + "px", opacity: 1 }}
-              className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-red-500 via-red-400 to-transparent rounded-full"
+              className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-rose-500 via-rose-400 to-transparent rounded-full"
             />
           )}
         </div>

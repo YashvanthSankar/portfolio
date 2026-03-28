@@ -6,7 +6,7 @@ export function PortfolioBackground() {
             {/* Animated gradient orbs - reduced for better performance */}
             <div className="absolute top-[5%] right-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
             <div
-                className="absolute top-[25%] left-1/4 w-[500px] h-[500px] bg-red-500/8 rounded-full blur-3xl animate-pulse"
+                className="absolute top-[25%] left-1/4 w-[500px] h-[500px] bg-rose-500/8 rounded-full blur-3xl animate-pulse"
                 style={{ animationDelay: "1.2s" }}
             />
             <div
@@ -25,7 +25,7 @@ export function PortfolioBackground() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_100%,rgba(6,182,212,0.06),transparent)]" />
 
             {/* Diagonal gradient sweeps for dynamic feel */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-red-500/5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-rose-500/5" />
             <div className="absolute inset-0 bg-gradient-to-tl from-emerald-500/5 via-transparent to-cyan-500/5" />
 
             {/* Multi-layered grid patterns */}

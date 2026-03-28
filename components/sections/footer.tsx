@@ -75,7 +75,7 @@ export function Footer() {
           {/* Logo + copyright */}
           <div className="flex items-center gap-3">
             <div className="relative h-7 w-7 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800">
-              <Image src="/ys.png" alt="YS" fill className="object-cover" quality={85} placeholder="blur" blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" />
+              <Image src="/ys_red.webp" alt="YS" fill className="object-cover" quality={85} />
             </div>
             <p className="text-xs text-zinc-400 dark:text-zinc-500">
               © {new Date().getFullYear()} Yashvanth S

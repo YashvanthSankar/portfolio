@@ -92,7 +92,7 @@ export function Navbar() {
               "relative flex items-center justify-between gap-2 py-2.5",
               "border overflow-hidden",
               scrolled
-                ? "border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
+                ? "border-rose-200 dark:border-rose-900/40 bg-[#FFF1F2]/95 dark:bg-[#0d0307]/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.07)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.55)]"
                 : "border-transparent bg-transparent backdrop-blur-none shadow-none"
             )}
           >
@@ -102,10 +102,10 @@ export function Navbar() {
               aria-label="Go to top"
               className="relative z-10 h-8 w-8 shrink-0 rounded-lg overflow-hidden
                          ring-1 ring-zinc-200 dark:ring-zinc-800
-                         hover:ring-red-400 dark:hover:ring-red-500
+                         hover:ring-rose-400 dark:hover:ring-rose-500
                          transition-all duration-200"
             >
-              <Image src="/ys.png" alt="YS" fill className="object-cover" quality={85} />
+              <Image src="/ys_red.webp" alt="YS" fill className="object-cover" quality={85} />
             </button>
 
             {/* ── Desktop nav — absolutely centered ── */}
@@ -127,7 +127,7 @@ export function Navbar() {
                   {active === item.id && (
                     <motion.span
                       layoutId="nav-dot"
-                      className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-red-500"
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-rose-500"
                       transition={{ type: "spring", stiffness: 500, damping: 35 }}
                     />
                   )}
@@ -163,7 +163,7 @@ export function Navbar() {
               <button
                 onClick={() => scrollTo("contact")}
                 className="hidden md:block px-3.5 py-1.5 text-sm rounded-xl font-medium
-                           bg-zinc-900 dark:bg-white text-white dark:text-zinc-900
+                           bg-[#1a0509] dark:bg-white text-white dark:text-zinc-900
                            hover:bg-zinc-700 dark:hover:bg-zinc-100
                            transition-colors duration-150"
               >
@@ -234,8 +234,8 @@ export function Navbar() {
               className="fixed inset-x-4 sm:inset-x-6 z-50 md:hidden max-w-6xl mx-auto"
             >
               <div
-                className="rounded-2xl border border-zinc-200 dark:border-zinc-800
-                           bg-white dark:bg-zinc-950
+                className="rounded-2xl border border-rose-200 dark:border-rose-900/40
+                           bg-[#FFF1F2] dark:bg-[#0d0307]
                            shadow-[0_8px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
                            overflow-hidden"
               >
@@ -254,19 +254,19 @@ export function Navbar() {
                           "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left",
                           "transition-colors duration-150",
                           active === item.id
-                            ? "bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white"
+                            ? "bg-rose-100 dark:bg-[#2d0c12] text-zinc-900 dark:text-white"
                             : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-200"
                         )}
                       >
                         <item.icon
                           className={cn(
                             "w-4 h-4 shrink-0 transition-colors",
-                            active === item.id ? "text-red-500" : "text-zinc-400 dark:text-zinc-500"
+                            active === item.id ? "text-rose-500" : "text-zinc-400 dark:text-zinc-500"
                           )}
                         />
                         <span className="text-sm">{item.label}</span>
                         {active === item.id && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
                         )}
                       </button>
                     </motion.li>
@@ -278,7 +278,7 @@ export function Navbar() {
                   <button
                     onClick={() => scrollTo("contact")}
                     className="py-2.5 rounded-xl text-sm font-medium
-                               bg-zinc-900 dark:bg-white text-white dark:text-zinc-900
+                               bg-[#1a0509] dark:bg-white text-white dark:text-zinc-900
                                hover:bg-zinc-700 dark:hover:bg-zinc-100
                                transition-colors duration-150"
                   >
@@ -288,7 +288,7 @@ export function Navbar() {
                     href="/YashvanthS_Resume.pdf"
                     download
                     className="py-2.5 rounded-xl text-sm
-                               border border-zinc-200 dark:border-zinc-800
+                               border border-rose-200 dark:border-rose-900/40
                                text-zinc-600 dark:text-zinc-300
                                flex items-center justify-center gap-2
                                hover:bg-zinc-50 dark:hover:bg-zinc-900

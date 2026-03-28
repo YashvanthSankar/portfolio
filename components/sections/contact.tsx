@@ -55,7 +55,7 @@ const socialLinks = [
 ];
 
 const inputClass =
-  "w-full px-4 py-2.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-red-500/50 focus:border-red-400 dark:focus:border-red-500/60 transition-all";
+  "w-full px-4 py-2.5 text-sm rounded-lg border border-rose-200 dark:border-rose-900/40 bg-[#FFE4E6] dark:bg-[#1a0509] text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-rose-500/50 focus:border-rose-400 dark:focus:border-rose-500/60 transition-all";
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -84,7 +84,7 @@ export function ContactSection() {
     <SectionBorder id="contact" coord="(4)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
         <SectionHeader
           label="get in touch"
-          title={<>let&apos;s work <span className="text-red-600 dark:text-red-400">together</span></>}
+          title={<>let&apos;s work <span className="text-rose-600 dark:text-rose-400">together</span></>}
           description="Have a project in mind? Send me a message and let's create something amazing."
         />
 
@@ -143,13 +143,13 @@ export function ContactSection() {
             </div>
 
             {status === "error" && (
-              <p role="alert" className="text-xs text-red-600 dark:text-red-400 px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/40">
+              <p role="alert" className="text-xs text-rose-600 dark:text-rose-400 px-3 py-2 rounded-lg bg-[#FFE4E6] dark:bg-rose-900/10 border border-rose-200 dark:border-rose-900/40">
                 something went wrong — try again.
               </p>
             )}
 
             <button type="submit" disabled={status === "sending" || status === "sent"}
-              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-zinc-900 dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#1a0509] dark:bg-white hover:bg-zinc-700 dark:hover:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
               {status === "idle"    && <><Send className="w-3.5 h-3.5" /> send message</>}
               {status === "sending" && <><Loader2 className="w-3.5 h-3.5 animate-spin" /> sending...</>}
               {status === "sent"    && <><Check className="w-3.5 h-3.5" /> message sent!</>}
