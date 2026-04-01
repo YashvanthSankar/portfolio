@@ -21,7 +21,6 @@ const GithubIcon = ({ className }: { className?: string }) => (
 function WorkNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [menuTop, setMenuTop]   = useState(64);
   const headerRef               = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -37,8 +36,30 @@ function WorkNavbar() {
   }, []);
 
   useEffect(() => {
-    if (headerRef.current) setMenuTop(headerRef.current.offsetHeight + 8);
-  }, [scrolled]);
+    if (!menuOpen) return;
+
+    const scrollY = window.scrollY;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalBodyPosition = document.body.style.position;
+    const originalBodyTop = document.body.style.top;
+    const originalBodyWidth = document.body.style.width;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+
+    return () => {
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.overflow = originalBodyOverflow;
+      document.body.style.position = originalBodyPosition;
+      document.body.style.top = originalBodyTop;
+      document.body.style.width = originalBodyWidth;
+      window.scrollTo(0, scrollY);
+    };
+  }, [menuOpen]);
 
   return (
     <>
@@ -163,75 +184,76 @@ function WorkNavbar() {
       {/* Mobile dropdown */}
       <AnimatePresence>
         {menuOpen && (
-          <>
-            <motion.div key="bd"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 md:hidden bg-black/10 backdrop-blur-[2px]"
-            />
-            <motion.nav key="panel"
-              style={{ top: menuTop }}
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0,  scale: 1    }}
-              exit={{    opacity: 0, y: -8, scale: 0.97 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-x-4 sm:inset-x-6 z-50 md:hidden max-w-6xl mx-auto"
-            >
-              <div className="rounded-2xl border border-rose-200 dark:border-rose-900/40
-                              bg-[#FFF1F2] dark:bg-[#0d0307]
-                              shadow-[0_8px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
-                              overflow-hidden">
-                <ul className="p-2 space-y-0.5">
-                  {[
-                    { href: "/", label: "back to home", icon: <ArrowLeft className="w-4 h-4" />, internal: true },
-                    { href: "https://github.com/YashvanthSankar", label: "github profile", icon: <GithubIcon className="w-4 h-4" />, internal: false },
-                  ].map((item) => (
-                    <li key={item.label}>
-                      {item.internal ? (
-                        <Link href={item.href} onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm
-                                     text-zinc-500 dark:text-zinc-400
-                                     hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
-                                     hover:text-zinc-900 dark:hover:text-white
-                                     transition-colors duration-150"
-                        >
-                          <span className="text-zinc-400 dark:text-zinc-500">{item.icon}</span>
-                          {item.label}
-                        </Link>
-                      ) : (
-                        <a href={item.href} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm
-                                     text-zinc-500 dark:text-zinc-400
-                                     hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
-                                     hover:text-zinc-900 dark:hover:text-white
-                                     transition-colors duration-150"
-                        >
-                          <span className="text-zinc-400 dark:text-zinc-500">{item.icon}</span>
-                          {item.label}
-                        </a>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                <div className="px-2 pb-2">
-                  <a
-                    href="/YashvanthS_Resume.pdf"
-                    download
-                    className="w-full py-2.5 rounded-xl text-sm
-                               border border-rose-200 dark:border-rose-900/40
-                               text-zinc-600 dark:text-zinc-300
-                               flex items-center justify-center gap-2
-                               hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
-                               transition-colors duration-150"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    resume
-                  </a>
-                </div>
-              </div>
-            </motion.nav>
-          </>
+          <motion.nav
+            key="panel"
+            initial={{ x: "-100%" }}
+            animate={{ x: "0%" }}
+            exit={{ x: "-100%" }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-[60] md:hidden flex h-dvh w-screen flex-col overflow-hidden overscroll-none
+                       bg-[#FFF1F2] dark:bg-[#0d0307]"
+          >
+            <div className="flex items-center justify-end px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-2">
+              <button
+                onClick={() => setMenuOpen(false)}
+                aria-label="Close menu"
+                className="w-9 h-9 flex items-center justify-center rounded-xl
+                           text-zinc-500 dark:text-zinc-400
+                           hover:text-zinc-900 dark:hover:text-white
+                           hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                           transition-all duration-150"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <ul className="flex-1 flex flex-col justify-center px-8 gap-1 overflow-hidden">
+              <li>
+                <Link
+                  href="/"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-left
+                             text-zinc-500 dark:text-zinc-400
+                             hover:text-zinc-900 dark:hover:text-white
+                             transition-colors duration-150"
+                >
+                  <ArrowLeft className="w-5 h-5 shrink-0 text-zinc-400 dark:text-zinc-500" />
+                  <span className="text-2xl font-medium tracking-tight">back to home</span>
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/YashvanthSankar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-left
+                             text-zinc-500 dark:text-zinc-400
+                             hover:text-zinc-900 dark:hover:text-white
+                             transition-colors duration-150"
+                >
+                  <GithubIcon className="w-5 h-5 shrink-0 text-zinc-400 dark:text-zinc-500" />
+                  <span className="text-2xl font-medium tracking-tight">github profile</span>
+                </a>
+              </li>
+            </ul>
+
+            <div className="px-6 pb-8 border-t border-rose-200/60 dark:border-rose-900/30 pt-4">
+              <a
+                href="/YashvanthS_Resume.pdf"
+                download
+                className="w-full py-3 rounded-2xl text-sm
+                           border border-rose-200 dark:border-rose-900/40
+                           text-zinc-600 dark:text-zinc-300
+                           flex items-center justify-center gap-2
+                           hover:bg-zinc-50 dark:hover:bg-zinc-900
+                           transition-colors duration-150"
+              >
+                <Download className="w-3.5 h-3.5" />
+                resume
+              </a>
+            </div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </>
