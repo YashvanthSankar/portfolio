@@ -20,6 +20,7 @@ export function Navbar() {
   const [active, setActive]     = useState("home");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pendingScrollId, setPendingScrollId] = useState<string | null>(null);
   const headerRef               = useRef<HTMLElement>(null);
 
   /* ── scroll tracking ── */
@@ -71,9 +72,29 @@ export function Navbar() {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    if (menuOpen || !pendingScrollId) return;
+
+    // Wait for menu close + body scroll unlock cleanup before scrolling.
+    const timer = window.setTimeout(() => {
+      document.getElementById(pendingScrollId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      setPendingScrollId(null);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [menuOpen, pendingScrollId]);
+
 
   const scrollTo = (id: string) => {
-    setMenuOpen(false);
+    if (menuOpen) {
+      setPendingScrollId(id);
+      setMenuOpen(false);
+      return;
+    }
+
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
