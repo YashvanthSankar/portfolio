@@ -20,7 +20,6 @@ export function Navbar() {
   const [active, setActive]     = useState("home");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [menuTop, setMenuTop]   = useState(64);
   const headerRef               = useRef<HTMLElement>(null);
 
   /* ── scroll tracking ── */
@@ -45,10 +44,32 @@ export function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  /* ── measure header for menu offset ── */
+  /* ── lock background scroll while mobile menu is open ── */
   useEffect(() => {
-    if (headerRef.current) setMenuTop(headerRef.current.offsetHeight);
-  }, [scrolled]);
+    if (!menuOpen) return;
+
+    const scrollY = window.scrollY;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalBodyPosition = document.body.style.position;
+    const originalBodyTop = document.body.style.top;
+    const originalBodyWidth = document.body.style.width;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+
+    return () => {
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.overflow = originalBodyOverflow;
+      document.body.style.position = originalBodyPosition;
+      document.body.style.top = originalBodyTop;
+      document.body.style.width = originalBodyWidth;
+      window.scrollTo(0, scrollY);
+    };
+  }, [menuOpen]);
 
 
   const scrollTo = (id: string) => {
@@ -216,16 +237,29 @@ export function Navbar() {
             {/* Full-screen mobile menu — sits below navbar */}
             <motion.nav
               key="panel"
-              style={{ top: menuTop }}
               initial={{ x: "-100%" }}
               animate={{ x: "0%"    }}
               exit={{    x: "-100%" }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-x-0 bottom-0 z-40 md:hidden flex flex-col
+              className="fixed inset-0 z-[60] md:hidden flex h-dvh w-screen flex-col overflow-hidden overscroll-none
                          bg-[#FFF1F2] dark:bg-[#0d0307]"
             >
+              <div className="flex items-center justify-end px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-2">
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  aria-label="Close menu"
+                  className="w-9 h-9 flex items-center justify-center rounded-xl
+                             text-zinc-500 dark:text-zinc-400
+                             hover:text-zinc-900 dark:hover:text-white
+                             hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80
+                             transition-all duration-150"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
               {/* Nav links — centered vertically */}
-              <ul className="flex-1 flex flex-col justify-center px-8 gap-1">
+              <ul className="flex-1 flex flex-col justify-center px-8 gap-1 overflow-hidden">
                 {navItems.map((item, i) => (
                   <motion.li
                     key={item.id}
