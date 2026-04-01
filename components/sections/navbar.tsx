@@ -45,10 +45,11 @@ export function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  /* ── measure header for mobile menu position ── */
+  /* ── measure header for menu offset ── */
   useEffect(() => {
-    if (headerRef.current) setMenuTop(headerRef.current.offsetHeight + 8);
+    if (headerRef.current) setMenuTop(headerRef.current.offsetHeight);
   }, [scrolled]);
+
 
   const scrollTo = (id: string) => {
     setMenuOpen(false);
@@ -212,92 +213,80 @@ export function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Dim backdrop */}
-            <motion.div
-              key="bd"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{    opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 md:hidden bg-black/10 backdrop-blur-[2px]"
-            />
-
-            {/* Dropdown panel — positioned from actual header height */}
+            {/* Full-screen mobile menu — sits below navbar */}
             <motion.nav
               key="panel"
               style={{ top: menuTop }}
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
-              animate={{ opacity: 1, y:  0, scale: 1    }}
-              exit={{    opacity: 0, y: -8, scale: 0.97 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-x-4 sm:inset-x-6 z-50 md:hidden max-w-6xl mx-auto"
+              initial={{ x: "-100%" }}
+              animate={{ x: "0%"    }}
+              exit={{    x: "-100%" }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-x-0 bottom-0 z-40 md:hidden flex flex-col
+                         bg-[#FFF1F2] dark:bg-[#0d0307]"
             >
-              <div
-                className="rounded-2xl border border-rose-200 dark:border-rose-900/40
-                           bg-[#FFF1F2] dark:bg-[#0d0307]
-                           shadow-[0_8px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)]
-                           overflow-hidden"
-              >
-                {/* Nav links */}
-                <ul className="p-2 space-y-0.5">
-                  {navItems.map((item, i) => (
-                    <motion.li
-                      key={item.id}
-                      initial={{ opacity: 0, x: -6 }}
-                      animate={{ opacity: 1, x:  0 }}
-                      transition={{ delay: i * 0.04, duration: 0.18 }}
+              {/* Nav links — centered vertically */}
+              <ul className="flex-1 flex flex-col justify-center px-8 gap-1">
+                {navItems.map((item, i) => (
+                  <motion.li
+                    key={item.id}
+                    initial={{ opacity: 0, x: -32 }}
+                    animate={{ opacity: 1, x:  0  }}
+                    transition={{ delay: i * 0.07, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <button
+                      onClick={() => scrollTo(item.id)}
+                      className={cn(
+                        "w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-left relative",
+                        "transition-colors duration-150",
+                        active === item.id
+                          ? "text-zinc-900 dark:text-white"
+                          : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                      )}
                     >
-                      <button
-                        onClick={() => scrollTo(item.id)}
-                        className={cn(
-                          "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left",
-                          "transition-colors duration-150",
-                          active === item.id
-                            ? "bg-rose-100 dark:bg-[#2d0c12] text-zinc-900 dark:text-white"
-                            : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-200"
-                        )}
-                      >
-                        <item.icon
-                          className={cn(
-                            "w-4 h-4 shrink-0 transition-colors",
-                            active === item.id ? "text-rose-500" : "text-zinc-400 dark:text-zinc-500"
-                          )}
+                      {active === item.id && (
+                        <motion.span
+                          layoutId="menu-accent"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 rounded-full bg-rose-500"
+                          transition={{ type: "spring", stiffness: 500, damping: 35 }}
                         />
-                        <span className="text-sm">{item.label}</span>
-                        {active === item.id && (
-                          <span className="ml-auto w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                      )}
+                      <item.icon
+                        className={cn(
+                          "w-5 h-5 shrink-0 transition-colors",
+                          active === item.id ? "text-rose-500" : "text-zinc-400 dark:text-zinc-500"
                         )}
-                      </button>
-                    </motion.li>
-                  ))}
-                </ul>
+                      />
+                      <span className="text-2xl font-medium tracking-tight">{item.label}</span>
+                    </button>
+                  </motion.li>
+                ))}
+              </ul>
 
-                {/* CTA row */}
-                <div className="px-2 pb-2 grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => scrollTo("contact")}
-                    className="py-2.5 rounded-xl text-sm font-medium
-                               bg-[#1a0509] dark:bg-white text-white dark:text-zinc-900
-                               hover:bg-zinc-700 dark:hover:bg-zinc-100
-                               transition-colors duration-150"
-                  >
-                    let&apos;s talk
-                  </button>
-                  <a
-                    href="/YashvanthS_Resume.pdf"
-                    download
-                    className="py-2.5 rounded-xl text-sm
-                               border border-rose-200 dark:border-rose-900/40
-                               text-zinc-600 dark:text-zinc-300
-                               flex items-center justify-center gap-2
-                               hover:bg-zinc-50 dark:hover:bg-zinc-900
-                               transition-colors duration-150"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    resume
-                  </a>
-                </div>
+              {/* CTA row — pinned to bottom */}
+              <div className="px-6 pb-8 grid grid-cols-2 gap-3
+                              border-t border-rose-200/60 dark:border-rose-900/30 pt-4">
+                <button
+                  onClick={() => scrollTo("contact")}
+                  className="py-3 rounded-2xl text-sm font-medium
+                             bg-[#1a0509] dark:bg-white text-white dark:text-zinc-900
+                             hover:bg-zinc-700 dark:hover:bg-zinc-100
+                             transition-colors duration-150"
+                >
+                  let&apos;s talk
+                </button>
+                <a
+                  href="/YashvanthS_Resume.pdf"
+                  download
+                  className="py-3 rounded-2xl text-sm
+                             border border-rose-200 dark:border-rose-900/40
+                             text-zinc-600 dark:text-zinc-300
+                             flex items-center justify-center gap-2
+                             hover:bg-zinc-50 dark:hover:bg-zinc-900
+                             transition-colors duration-150"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  resume
+                </a>
               </div>
             </motion.nav>
           </>
