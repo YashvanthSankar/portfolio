@@ -68,7 +68,7 @@ function WorkNavbar() {
         initial={{ y: -72, opacity: 0 }}
         animate={{ y: 0,   opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="sticky inset-x-0 top-0 z-50"
+        className={cn("sticky inset-x-0 top-0", menuOpen ? "z-[130]" : "z-50")}
       >
         <div
           className={cn(
@@ -190,7 +190,7 @@ function WorkNavbar() {
             animate={{ x: "0%" }}
             exit={{ x: "-100%" }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[60] md:hidden flex h-dvh w-screen flex-col overflow-hidden overscroll-none
+            className="fixed inset-0 z-[120] md:hidden flex h-dvh w-screen flex-col overflow-hidden overscroll-none pointer-events-auto
                        bg-[#FFF1F2] dark:bg-[#0d0307]"
           >
             <div className="flex items-center justify-end px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-2">
@@ -372,7 +372,7 @@ export default function WorkPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen antialiased">
+    <div className="relative min-h-screen antialiased isolate">
       {/* Grid background — matches main portfolio */}
       <div className="fixed inset-0 -z-10 bg-[#FFF1F2] dark:bg-[#0d0307]
         [background-image:linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)]
