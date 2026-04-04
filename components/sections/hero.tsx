@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
-import { Download, ArrowUpRight, Mail } from "lucide-react";
-import { Hero3DName } from "@/components/sections/hero-3d-name";
+import { Download, ArrowUpRight, Mail, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "@/lib/gsap";
 
 const socials = [
   {
@@ -68,30 +68,158 @@ const socials = [
   },
 ];
 
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
-};
+/* Scroll cue */
+function ScrollCue() {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    const handler = () => setVisible(window.scrollY < 60);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
 
-const reveal: Variants = {
-  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
-  },
-};
+  return (
+    <div
+      className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 pointer-events-none transition-opacity duration-500"
+      style={{ opacity: visible ? 1 : 0 }}
+    >
+      <span className="text-[9px] tracking-[0.25em] uppercase text-zinc-400 dark:text-zinc-600">scroll</span>
+      <div className="scroll-cue-arrow">
+        <ChevronDown className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-600" />
+      </div>
+    </div>
+  );
+}
 
 export function SpotlightHero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const orb1Ref    = useRef<HTMLDivElement>(null);
+  const orb2Ref    = useRef<HTMLDivElement>(null);
+  const orb3Ref    = useRef<HTMLDivElement>(null);
+  const badgeRef   = useRef<HTMLDivElement>(null);
+  const nameRef    = useRef<HTMLHeadingElement>(null);
+  const roleRef    = useRef<HTMLDivElement>(null);
+  const ctaRef     = useRef<HTMLDivElement>(null);
+  const socialsRef = useRef<HTMLDivElement>(null);
+
+  /* ── Main entrance timeline ── */
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      /* Floating orb animations — independent infinite loops */
+      gsap.to(orb1Ref.current, {
+        x: 30, y: -20,
+        duration: 12, repeat: -1, yoyo: true, ease: "sine.inOut",
+      });
+      gsap.to(orb2Ref.current, {
+        x: -25, y: 25,
+        duration: 15, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 3,
+      });
+      gsap.to(orb3Ref.current, {
+        x: 15, y: -15,
+        duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 6,
+      });
+
+      /* Scroll-cue bounce */
+      gsap.to(".scroll-cue-arrow", {
+        y: 6, duration: 1.5, repeat: -1, yoyo: true, ease: "sine.inOut",
+      });
+
+      /* Main reveal timeline */
+      const tl = gsap.timeline({ delay: 0.1 });
+
+      tl.fromTo(
+        badgeRef.current,
+        { opacity: 0, y: 16, filter: "blur(8px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }
+      );
+
+      /* Name — split words and stagger them */
+      if (nameRef.current) {
+        const words = nameRef.current.querySelectorAll(".hero-word");
+        tl.fromTo(
+          words,
+          { opacity: 0, y: 40, rotateX: -25, filter: "blur(10px)" },
+          {
+            opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)",
+            duration: 0.75, stagger: 0.12, ease: "power4.out",
+          },
+          "-=0.2"
+        );
+      }
+
+      tl.fromTo(
+        roleRef.current,
+        { opacity: 0, y: 18, filter: "blur(4px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" },
+        "-=0.4"
+      )
+        .fromTo(
+          ctaRef.current,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+          "-=0.3"
+        )
+        .fromTo(
+          socialsRef.current?.querySelectorAll("a") ?? [],
+          { opacity: 0, y: 10, scale: 0.85 },
+          {
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.4, stagger: 0.06, ease: "back.out(1.5)",
+          },
+          "-=0.2"
+        );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  /* ── Parallax orbs on mousemove ── */
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const { innerWidth: W, innerHeight: H } = window;
+      const nx = (e.clientX / W - 0.5) * 2; // -1 to 1
+      const ny = (e.clientY / H - 0.5) * 2;
+
+      gsap.to(orb1Ref.current, { x: nx * 18, y: ny * 12, duration: 1.8, ease: "power1.out", overwrite: "auto" });
+      gsap.to(orb2Ref.current, { x: nx * -14, y: ny * 10, duration: 2.2, ease: "power1.out", overwrite: "auto" });
+      gsap.to(orb3Ref.current, { x: nx * 10, y: ny * -8, duration: 1.5, ease: "power1.out", overwrite: "auto" });
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
+  /* ── Magnetic buttons ── */
+  const setupMagnetic = (el: HTMLElement | null) => {
+    if (!el) return;
+    const onMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      gsap.to(el, { x: (e.clientX - cx) * 0.28, y: (e.clientY - cy) * 0.28, duration: 0.4, ease: "power2.out" });
+    };
+    const onLeave = () => gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.4)" });
+    el.addEventListener("mousemove", onMove);
+    el.addEventListener("mouseleave", onLeave);
+    return () => { el.removeEventListener("mousemove", onMove); el.removeEventListener("mouseleave", onLeave); };
+  };
+
+  const primaryBtnRef   = useRef<HTMLAnchorElement>(null);
+  const secondaryBtnRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const c1 = setupMagnetic(primaryBtnRef.current);
+    const c2 = setupMagnetic(secondaryBtnRef.current);
+    return () => { c1?.(); c2?.(); };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="home"
       className="relative min-h-[100dvh] flex items-center overflow-hidden border-b border-rose-200 dark:border-rose-900/40"
     >
       {/* Grain texture */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.02] dark:opacity-[0.035]"
+        className="absolute inset-0 pointer-events-none opacity-[0.025] dark:opacity-[0.04]"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
           backgroundSize: "180px 180px",
@@ -100,14 +228,28 @@ export function SpotlightHero() {
         }}
       />
 
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 pt-28 pb-24"
-      >
+      {/* Ambient orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div
+          ref={orb1Ref}
+          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.07] dark:opacity-[0.05]"
+          style={{ background: "radial-gradient(circle, #e11d48 0%, transparent 70%)", top: "10%", right: "-10%" }}
+        />
+        <div
+          ref={orb2Ref}
+          className="absolute w-[400px] h-[400px] rounded-full opacity-[0.05] dark:opacity-[0.04]"
+          style={{ background: "radial-gradient(circle, #fb7185 0%, transparent 70%)", bottom: "5%", left: "-8%" }}
+        />
+        <div
+          ref={orb3Ref}
+          className="absolute w-[300px] h-[300px] rounded-full opacity-[0.04] dark:opacity-[0.03]"
+          style={{ background: "radial-gradient(circle, #9f1239 0%, transparent 70%)", top: "40%", left: "60%" }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 pt-28 pb-24">
         {/* Availability badge */}
-        <motion.div variants={reveal} className="mb-10">
+        <div ref={badgeRef} className="mb-10" style={{ opacity: 0 }}>
           <span className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-rose-200 dark:border-rose-900/40 bg-rose-50/70 dark:bg-[#1a0509]/70 text-[10px] tracking-[0.18em] uppercase text-zinc-500 dark:text-zinc-400">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -115,47 +257,60 @@ export function SpotlightHero() {
             </span>
             open to opportunities
           </span>
-        </motion.div>
+        </div>
 
-        {/* Name — 3D typography */}
-        <motion.div variants={reveal}>
-          <Hero3DName />
-        </motion.div>
+        {/* Name — each word wrapped for GSAP stagger */}
+        <h1
+          ref={nameRef}
+          className="font-bold tracking-[-0.04em] leading-[0.9] select-none mb-7 overflow-hidden"
+          style={{ fontSize: "clamp(3.5rem, 9vw, 7.5rem)", perspective: "600px" }}
+        >
+          {"Yashvanth S".split(" ").map((word) => (
+            <span
+              key={word}
+              className="hero-word inline-block mr-[0.22em] gradient-name-text"
+              style={{ opacity: 0 }}
+            >
+              {word}
+            </span>
+          ))}
+        </h1>
 
         {/* Role + description */}
-        <motion.div variants={reveal} className="mb-10 max-w-xl">
+        <div ref={roleRef} className="mb-10 max-w-xl" style={{ opacity: 0 }}>
           <p className="font-mono text-[11px] tracking-[0.24em] uppercase text-zinc-500 dark:text-zinc-400 mb-4">
-            Full-Stack Developer & AI Engineer
+            Full-Stack Developer &amp; AI Engineer
           </p>
           <p className="font-mono text-base sm:text-lg text-zinc-700 dark:text-zinc-300 leading-[1.75]">
             Building fast, impactful products for the modern web and AI-first workflows.{" "}
-            <span className="text-zinc-500 dark:text-zinc-400">
-              CS student at IIITDM Kancheepuram.
-            </span>
+            <span className="text-zinc-500 dark:text-zinc-400">CS student at IIITDM Kancheepuram.</span>
           </p>
-        </motion.div>
+        </div>
 
         {/* CTAs */}
-        <motion.div variants={reveal} className="flex flex-wrap items-center gap-3">
+        <div ref={ctaRef} className="flex flex-wrap items-center gap-3" style={{ opacity: 0 }}>
           <Link
+            ref={primaryBtnRef}
             href="/work"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl
                        bg-[#1a0509] dark:bg-white text-white dark:text-zinc-900
                        text-sm font-semibold
                        hover:bg-zinc-800 dark:hover:bg-zinc-100
-                       transition-colors duration-200"
+                       transition-colors duration-200 group"
           >
             view my work
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
 
           <a
+            ref={secondaryBtnRef}
             href="#contact"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl
                        border border-rose-200 dark:border-rose-900/40
                        text-zinc-600 dark:text-zinc-300 text-sm font-medium
-                       hover:border-rose-300 dark:hover:border-rose-800
+                       hover:border-rose-400 dark:hover:border-rose-700
                        hover:text-zinc-900 dark:hover:text-white
+                       hover:bg-rose-50/50 dark:hover:bg-rose-900/10
                        transition-all duration-200"
           >
             get in touch
@@ -173,27 +328,30 @@ export function SpotlightHero() {
             <Download className="w-3 h-3" />
             resume
           </a>
-        </motion.div>
+        </div>
 
         {/* Socials */}
-        <motion.div variants={reveal} className="mt-16 flex items-center gap-1">
+        <div ref={socialsRef} className="mt-16 flex items-center gap-0.5">
           {socials.map(({ label, href, icon, noBlank }) => (
             <a
               key={label}
               href={href}
               {...(!noBlank && { target: "_blank", rel: "noopener noreferrer" })}
               aria-label={label}
+              style={{ opacity: 0 }}
               className="p-2 rounded-lg text-zinc-400 dark:text-zinc-500
                          hover:text-zinc-900 dark:hover:text-white
                          hover:bg-[#FFE4E6] dark:hover:bg-[#1a0509]
-                         transition-colors duration-150"
+                         transition-colors duration-150
+                         hover:scale-110 active:scale-95"
             >
               {icon}
             </a>
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
+      <ScrollCue />
     </section>
   );
 }

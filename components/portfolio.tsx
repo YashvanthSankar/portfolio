@@ -2,6 +2,7 @@
 import dynamic from 'next/dynamic';
 import { Navbar } from "@/components/sections/navbar";
 import { SpotlightHero } from "@/components/sections/hero";
+import { ScrollProgressBar } from "@/components/sections/footer";
 
 const skeleton = (h: string) => (
   <div className={`${h} bg-rose-100 dark:bg-[#2d0c12] animate-pulse`} />
@@ -35,6 +36,7 @@ const Footer = dynamic(() => import("@/components/sections/footer").then(mod => 
 export function Portfolio() {
   return (
     <main id="main-content" className="relative min-h-screen antialiased">
+      <ScrollProgressBar />
       {/* Global grid background — shows through all transparent sections */}
       <div className="fixed inset-0 -z-10 bg-[#FFF1F2] dark:bg-[#0d0307]
         [background-image:linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)]

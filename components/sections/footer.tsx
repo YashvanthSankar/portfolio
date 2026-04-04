@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Mail, ArrowUp } from "lucide-react";
 import Image from "next/image";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 const socialLinks: { name: string; href: string; icon: React.ReactNode; noBlank?: boolean }[] = [
   {
@@ -67,14 +68,111 @@ const socialLinks: { name: string; href: string; icon: React.ReactNode; noBlank?
   },
 ];
 
-export function Footer() {
+/* ── Scroll progress bar — pure GSAP, no Framer Motion ── */
+export function ScrollProgressBar() {
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!barRef.current) return;
+    const st = ScrollTrigger.create({
+      start: 0,
+      end: "max",
+      scrub: 0,
+      onUpdate(self) {
+        if (barRef.current) {
+          gsap.set(barRef.current, { scaleX: self.progress });
+        }
+      },
+    });
+    return () => st.kill();
+  }, []);
+
   return (
-    <footer className="py-8 md:py-10">
+    <div
+      ref={barRef}
+      className="fixed top-0 left-0 right-0 h-[2px] z-[9999] origin-left"
+      style={{
+        background: "linear-gradient(90deg, #e11d48, #fb7185, #fda4af)",
+        transform: "scaleX(0)",
+        transformOrigin: "left",
+      }}
+    />
+  );
+}
+
+/* ── Footer ── */
+export function Footer() {
+  const footerRef  = useRef<HTMLElement>(null);
+  const logoRef    = useRef<HTMLDivElement>(null);
+  const socialsRef = useRef<HTMLDivElement>(null);
+  const topBtnRef  = useRef<HTMLButtonElement>(null);
+  const arrowRef   = useRef<HTMLSpanElement>(null);
+  const [showTop, setShowTop] = useState(false);
+
+  /* Scroll-based visibility of back-to-top */
+  useEffect(() => {
+    const handler = () => setShowTop(window.scrollY > 400);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  useEffect(() => {
+    if (!topBtnRef.current) return;
+    gsap.to(topBtnRef.current, { opacity: showTop ? 1 : 0.35, duration: 0.3, ease: "power2.out" });
+  }, [showTop]);
+
+  /* Arrow bounce loop */
+  useEffect(() => {
+    if (!arrowRef.current) return;
+    gsap.to(arrowRef.current, { y: -4, duration: 0.9, repeat: -1, yoyo: true, ease: "sine.inOut" });
+  }, []);
+
+  /* Footer entrance */
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: footerRef.current, start: "top 95%", once: true },
+      });
+      tl.fromTo(
+        [logoRef.current, socialsRef.current, topBtnRef.current],
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.45, stagger: 0.1, ease: "power2.out" }
+      );
+
+      /* Social icon hover effects */
+      const icons = socialsRef.current?.querySelectorAll("a");
+      icons?.forEach((icon) => {
+        icon.addEventListener("mouseenter", () =>
+          gsap.to(icon, { scale: 1.18, y: -3, duration: 0.2, ease: "power2.out" })
+        );
+        icon.addEventListener("mouseleave", () =>
+          gsap.to(icon, { scale: 1, y: 0, duration: 0.4, ease: "elastic.out(1, 0.5)" })
+        );
+      });
+
+      /* Logo hover */
+      if (logoRef.current) {
+        logoRef.current.addEventListener("mouseenter", () =>
+          gsap.to(logoRef.current, { rotate: 6, scale: 1.08, duration: 0.25, ease: "power2.out" })
+        );
+        logoRef.current.addEventListener("mouseleave", () =>
+          gsap.to(logoRef.current, { rotate: 0, scale: 1, duration: 0.5, ease: "elastic.out(1, 0.4)" })
+        );
+      }
+    }, footerRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <footer ref={footerRef} className="py-8 md:py-10 relative">
       <div className="relative max-w-6xl mx-auto px-6 sm:px-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
           {/* Logo + copyright */}
-          <div className="flex items-center gap-3">
-            <div className="relative h-7 w-7 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800">
+          <div className="flex items-center gap-3" style={{ opacity: 0 }}>
+            <div
+              ref={logoRef}
+              className="relative h-7 w-7 rounded-lg overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800 cursor-pointer"
+            >
               <Image src="/ys_red.webp" alt="YS" fill className="object-cover" quality={85} />
             </div>
             <p className="text-xs text-zinc-400 dark:text-zinc-500">
@@ -82,11 +180,16 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Social */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
+          {/* Socials */}
+          <div ref={socialsRef} className="flex flex-wrap items-center justify-center gap-2" style={{ opacity: 0 }}>
             {socialLinks.map((link) => (
-              <a key={link.name} href={link.href} {...(!link.noBlank && { target: "_blank", rel: "noopener noreferrer" })} aria-label={link.name}
-                className="p-1.5 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <a
+                key={link.name}
+                href={link.href}
+                {...(!link.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
+                aria-label={link.name}
+                className="p-1.5 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+              >
                 {link.icon}
               </a>
             ))}
@@ -94,12 +197,16 @@ export function Footer() {
 
           {/* Back to top */}
           <button
+            ref={topBtnRef}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Scroll to top of page"
-            className="group flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+            className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+            style={{ opacity: 0 }}
           >
             back to top
-            <ArrowUp className="w-3 h-3 group-hover:-translate-y-0.5 transition-transform" />
+            <span ref={arrowRef} className="inline-flex">
+              <ArrowUp className="w-3 h-3" />
+            </span>
           </button>
         </div>
       </div>

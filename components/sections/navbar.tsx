@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "@/lib/gsap";
 import Image from "next/image";
 import { throttle } from "@/lib/utils";
 import { Home, Folder, User, Briefcase, Mail, Download, Menu, X } from "lucide-react";
@@ -98,14 +99,22 @@ export function Navbar() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  /* ── GSAP navbar entrance ── */
+  useEffect(() => {
+    if (!headerRef.current) return;
+    gsap.fromTo(
+      headerRef.current,
+      { y: -72, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", delay: 0.05 }
+    );
+  }, []);
+
   return (
     <>
       {/* ═══════════════════════════ HEADER ═══════════════════════════ */}
-      <motion.header
+      <header
         ref={headerRef}
-        initial={{ y: -72, opacity: 0 }}
-        animate={{ y: 0,   opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        style={{ opacity: 0 }}
         className="sticky inset-x-0 top-0 z-50"
       >
         {/*
@@ -249,7 +258,7 @@ export function Navbar() {
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* ═══════════════════════════ MOBILE MENU ═══════════════════════ */}
       <AnimatePresence>
