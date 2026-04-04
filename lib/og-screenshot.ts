@@ -11,8 +11,8 @@ function getSiteOrigin() {
   );
 }
 
-export async function captureOgScreenshot(path: "/" | "/work") {
-  const targetUrl = new URL(path, getSiteOrigin()).toString();
+export async function captureOgScreenshot(path: "/" | "/work", origin?: string) {
+  const targetUrl = new URL(path, origin || getSiteOrigin()).toString();
   const executablePath = await chromium.executablePath();
 
   const browser = await playwright.launch({
@@ -23,7 +23,7 @@ export async function captureOgScreenshot(path: "/" | "/work") {
 
   try {
     const page = await browser.newPage({ viewport: VIEWPORT });
-    await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 20000 });
     await page.waitForTimeout(900);
 
     const png = await page.screenshot({
