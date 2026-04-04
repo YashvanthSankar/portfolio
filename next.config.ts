@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["playwright-core", "@sparticuz/chromium"],
   images: {
     qualities: [75, 85],
     formats: ['image/avif', 'image/webp'],
