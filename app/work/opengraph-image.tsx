@@ -10,68 +10,98 @@ export default async function Image() {
     (
       <div
         style={{
-          background: 'linear-gradient(135deg, #09090b 0%, #18181b 50%, #09090b 100%)',
+          background: '#FFF1F2',
           width: '100%',
           height: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
           position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        {/* Gradient orbs */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '10%',
-            left: '15%',
-            width: '400px',
-            height: '400px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%)',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '10%',
-            right: '15%',
-            width: '350px',
-            height: '350px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(139,92,246,0.12), transparent 70%)',
-          }}
-        />
-
-        {/* Grid pattern */}
+        {/* Grid background */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-            backgroundSize: '64px 64px',
+            backgroundImage:
+              'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
           }}
         />
 
-        {/* Content */}
+        {/* Ambient rose glows */}
         <div
           style={{
+            position: 'absolute',
+            top: '-90px',
+            left: '-80px',
+            width: '380px',
+            height: '380px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(225,29,72,0.12), transparent 72%)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '-110px',
+            right: '-80px',
+            width: '420px',
+            height: '420px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(251,113,133,0.14), transparent 72%)',
+          }}
+        />
+
+        {/* Main card */}
+        <div
+          style={{
+            position: 'relative',
+            width: '1040px',
+            height: '510px',
+            borderRadius: '28px',
+            border: '1px solid #FECDD3',
+            background: 'rgba(255, 241, 242, 0.94)',
+            boxShadow: '0 18px 48px rgba(31, 2, 8, 0.12)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '24px',
-            position: 'relative',
+            justifyContent: 'center',
+            gap: '20px',
+            overflow: 'hidden',
           }}
         >
           <div
             style={{
-              fontSize: '48px',
+              position: 'absolute',
+              inset: 0,
+              borderLeft: '1px dashed #FDA4AF',
+              borderRight: '1px dashed #FDA4AF',
+              opacity: 0.35,
+            }}
+          />
+
+          <div
+            style={{
+              fontSize: '18px',
+              textTransform: 'uppercase',
+              letterSpacing: '3px',
+              color: '#6b7280',
+            }}
+          >
+            all projects
+          </div>
+
+          <div
+            style={{
+              fontSize: '72px',
               fontWeight: 800,
-              color: 'white',
-              letterSpacing: '-2px',
-              lineHeight: 1.1,
+              color: '#1f0208',
+              letterSpacing: '-2.5px',
+              lineHeight: 1,
             }}
           >
             My Work
@@ -80,54 +110,44 @@ export default async function Image() {
           <div
             style={{
               fontSize: '24px',
-              color: '#a1a1aa',
-              fontWeight: 400,
-              maxWidth: '600px',
+              color: '#52525b',
+              maxWidth: '760px',
               textAlign: 'center',
               lineHeight: 1.4,
             }}
           >
-            GitHub Repositories & Open Source Projects by Yashvanth S
+            GitHub repositories and open-source projects by Yashvanth S
           </div>
 
-          {/* Tech icons row */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '12px',
-              marginTop: '24px',
-            }}
-          >
+          <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
             {['Full-Stack', 'AI/ML', 'Open Source', 'Web Apps'].map((label) => (
               <div
                 key={label}
                 style={{
-                  padding: '10px 24px',
+                  padding: '8px 16px',
                   borderRadius: '9999px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  background: 'rgba(255,255,255,0.05)',
-                  color: '#d4d4d8',
+                  border: '1px solid #FECDD3',
+                  background: '#FFE4E6',
+                  color: '#3f3f46',
                   fontSize: '16px',
-                  fontWeight: 500,
                 }}
               >
                 {label}
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Domain */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '40px',
-            fontSize: '18px',
-            color: '#71717a',
-            letterSpacing: '1px',
-          }}
-        >
-          yashvanth.com/work
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '22px',
+              fontSize: '18px',
+              color: '#71717a',
+              letterSpacing: '0.8px',
+            }}
+          >
+            yashvanth.com/work
+          </div>
         </div>
       </div>
     ),
