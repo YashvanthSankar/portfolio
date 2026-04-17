@@ -10,15 +10,13 @@ interface TimelineEntry {
   content: React.ReactNode;
 }
 
-export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
-  const containerRef  = useRef<HTMLDivElement>(null);
-  const trackRef      = useRef<HTMLDivElement>(null);
-  const fillRef       = useRef<HTMLDivElement>(null);
-  const [lineTop, setLineTop]   = useState(52);
-  const [trackH,  setTrackH]    = useState(0);
+export const Timeline = React.memo(function Timeline({ data }: { data: TimelineEntry[] }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
+  const [lineTop, setLineTop] = useState(52);
+  const [trackH, setTrackH] = useState(0);
   const animate = shouldAnimate();
 
-  /* Measure track height & dot offset */
   useEffect(() => {
     const measure = () => {
       if (!trackRef.current) return;
@@ -37,12 +35,9 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
     return () => ro.disconnect();
   }, []);
 
-  /* GSAP ScrollTrigger — scrub fill line */
   useEffect(() => {
     if (!animate || !fillRef.current || !trackRef.current || trackH === 0) return;
-
     const effectiveH = Math.max(0, trackH - lineTop);
-
     const st = ScrollTrigger.create({
       trigger: trackRef.current,
       start: "top 10%",
@@ -56,68 +51,72 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
         });
       },
     });
-
     return () => st.kill();
   }, [animate, trackH, lineTop]);
 
-  /* Cards stagger in on scroll */
   useEffect(() => {
     if (!animate || !trackRef.current) return;
     const cards = trackRef.current.querySelectorAll<HTMLElement>("[data-timeline-card]");
     if (!cards.length) return;
-
     const ctx = gsap.context(() => {
       ScrollTrigger.batch(cards, {
         start: "top 88%",
         onEnter(batch) {
-          gsap.fromTo(batch,
-            { opacity: 0, y: 24, filter: "blur(4px)" },
-            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, stagger: 0.1, ease: "power3.out" }
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: 32 },
+            { opacity: 1, y: 0, duration: 0.55, stagger: 0.12, ease: "power3.out" }
           );
         },
         once: true,
       });
     }, trackRef);
-
     return () => ctx.revert();
   }, [animate, data]);
 
   const effectiveHeight = Math.max(0, trackH - lineTop);
 
   return (
-    <div className="w-full" ref={containerRef}>
-      <div className="max-w-6xl mx-auto py-10 md:py-12 px-6 sm:px-10">
+    <div className="w-full">
+      <div className="max-w-6xl mx-auto py-12 md:py-16 px-6 sm:px-10">
         <SectionHeader
           label="my journey"
-          title={<>experience &amp; <span className="text-rose-600 dark:text-rose-400">education</span></>}
-          description="From academic pursuits to professional experiences."
+          title={
+            <>
+              Experience &<br />
+              <span className="inline-block bg-[var(--highlight)] border-[2.5px] border-[var(--border-ink)] px-3 shadow-[4px_4px_0_0_var(--border-ink)] -rotate-sticker-1">
+                Education
+              </span>
+            </>
+          }
+          description="From academic milestones to real engineering work."
         />
       </div>
 
-      <div ref={trackRef} className="relative max-w-6xl mx-auto px-6 sm:px-10 pb-16">
+      <div ref={trackRef} className="relative max-w-6xl mx-auto px-6 sm:px-10 pb-20">
         {data.map((item, index) => (
           <div key={index} className="flex justify-start pt-8 md:pt-16 md:gap-10">
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-28 self-start max-w-xs lg:max-w-sm md:w-full">
               <div
                 data-timeline-dot
-                className="h-10 absolute left-3 md:left-3 w-10 rounded-full
-                           bg-rose-100 dark:bg-[#2d0c12]
-                           border border-rose-200 dark:border-rose-900/40
+                className="h-12 w-12 absolute left-2 md:left-2
+                           bg-[var(--highlight)] border-[2.5px] border-[var(--border-ink)]
+                           shadow-[4px_4px_0_0_var(--border-ink)]
                            flex items-center justify-center"
               >
-                <div className="h-3 w-3 rounded-full bg-rose-500" />
+                <div className="h-3 w-3 bg-[var(--ink)]" />
               </div>
-              <h3 className="hidden md:block text-xl md:pl-20 md:text-4xl font-bold text-zinc-400 dark:text-zinc-500">
+              <h3 className="hidden md:block font-display text-xl md:pl-24 md:text-4xl font-bold text-[var(--ink)]">
                 {item.title}
               </h3>
             </div>
 
             <div
               data-timeline-card
-              className="relative pl-14 pr-2 sm:pl-20 sm:pr-4 md:pl-4 md:pr-0 w-full"
+              className="relative pl-16 pr-2 sm:pl-24 sm:pr-4 md:pl-4 md:pr-0 w-full"
               style={{ opacity: animate ? 0 : 1 }}
             >
-              <h3 className="md:hidden block text-lg mb-3 text-left font-bold text-zinc-400 dark:text-zinc-500">
+              <h3 className="md:hidden block font-display text-2xl mb-4 text-left font-bold text-[var(--ink)]">
                 {item.title}
               </h3>
               {item.content}
@@ -125,18 +124,15 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
           </div>
         ))}
 
-        {/* Track background */}
+        {/* Track — thick black rail */}
         <div
           style={{ height: effectiveHeight + "px", top: lineTop + "px" }}
-          className="absolute md:left-8 left-8 overflow-hidden w-[2px]
-            bg-[linear-gradient(to_bottom,var(--tw-gradient-stops))]
-            from-transparent from-[0%] via-zinc-200 dark:via-zinc-800 to-transparent to-[99%]
-            [mask-image:linear-gradient(to_bottom,transparent_0%,black_6%,black_94%,transparent_100%)]"
+          className="absolute md:left-[30px] left-[30px] w-[3px] bg-[var(--border-ink)] opacity-25"
+          aria-hidden="true"
         >
-          {/* GSAP-controlled fill */}
           <div
             ref={fillRef}
-            className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-rose-500 via-rose-400 to-transparent rounded-full"
+            className="absolute inset-x-0 top-0 w-[3px] bg-[var(--accent)]"
             style={{ height: animate ? 0 : effectiveHeight + "px", opacity: animate ? 0 : 1 }}
           />
         </div>
@@ -144,5 +140,3 @@ export const Timeline = React.memo(({ data }: { data: TimelineEntry[] }) => {
     </div>
   );
 });
-
-Timeline.displayName = "Timeline";

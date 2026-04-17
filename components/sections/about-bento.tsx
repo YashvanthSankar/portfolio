@@ -1,40 +1,46 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { MapPin, Mail, Check, Copy } from "lucide-react";
+import { MapPin, Mail, Check, Copy, Zap } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { shouldAnimate } from "@/lib/utils";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SectionBorder } from "@/components/ui/section-border";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
   return (
     <button
-      onClick={handleCopy}
-      className="flex items-center gap-1.5 text-xs text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+      type="button"
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }}
+      className="inline-flex items-center gap-1.5 px-2 py-1 border-2 border-[var(--border-ink)] bg-[var(--paper)] text-[var(--ink)] font-mono text-[10px] font-bold uppercase tracking-wider shadow-[2px_2px_0_0_var(--border-ink)] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-[3px_3px_0_0_var(--border-ink)] transition-transform duration-150"
     >
-      {copied
-        ? <><Check className="w-3 h-3 text-emerald-500" /><span className="text-emerald-500">copied</span></>
-        : <><Copy className="w-3 h-3" /><span>copy</span></>
-      }
+      {copied ? (
+        <>
+          <Check className="w-3 h-3" /> Copied
+        </>
+      ) : (
+        <>
+          <Copy className="w-3 h-3" /> Copy
+        </>
+      )}
     </button>
   );
 }
 
-/* Animated counter */
 function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
+  const animate = shouldAnimate();
+  const [count, setCount] = useState(() => (animate ? 0 : target));
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !animate) return;
     const st = ScrollTrigger.create({
       trigger: el,
       start: "top 90%",
@@ -54,66 +60,38 @@ function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
       },
     });
     return () => st.kill();
-  }, [target]);
+  }, [target, animate]);
 
-  return <span ref={ref} className="tabular-nums">{count}{suffix}</span>;
+  return (
+    <span ref={ref} className="tabular-nums">
+      {count}
+      {suffix}
+    </span>
+  );
 }
 
 const stats = [
-  { label: "projects",     value: 15, suffix: "+" },
+  { label: "projects", value: 15, suffix: "+" },
   { label: "technologies", value: 20, suffix: "+" },
-  { label: "gpa",          value: 9.27, suffix: "", isFloat: true },
-  { label: "yrs coding",   value: 4,  suffix: "+"  },
+  { label: "gpa", value: 9.27, suffix: "", isFloat: true },
+  { label: "yrs coding", value: 4, suffix: "+" },
 ];
-
-/* Tilt card using GSAP */
-function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const onMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width  - 0.5;
-      const y = (e.clientY - rect.top)  / rect.height - 0.5;
-      gsap.to(el, { rotateY: x * 8, rotateX: -y * 8, duration: 0.4, ease: "power2.out", transformPerspective: 800 });
-    };
-    const onLeave = () => gsap.to(el, { rotateX: 0, rotateY: 0, duration: 0.6, ease: "elastic.out(1, 0.5)" });
-    el.addEventListener("mousemove", onMove);
-    el.addEventListener("mouseleave", onLeave);
-    return () => { el.removeEventListener("mousemove", onMove); el.removeEventListener("mouseleave", onLeave); };
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      data-bento-card
-      className={`rounded-xl border border-rose-200 dark:border-rose-900/40 bg-[#FFE4E6] dark:bg-[#1a0509] p-5
-                  hover:border-rose-300 dark:hover:border-rose-800
-                  hover:shadow-[0_8px_30px_rgba(225,29,72,0.08)] dark:hover:shadow-[0_8px_30px_rgba(225,29,72,0.05)]
-                  transition-[border-color,box-shadow] duration-300 ${className ?? ""}`}
-      style={{ opacity: 0 }}
-    >
-      {children}
-    </div>
-  );
-}
 
 export function AboutBento() {
   const gridRef = useRef<HTMLDivElement>(null);
 
-  /* Batch stagger cards in */
   useEffect(() => {
+    if (!shouldAnimate()) return;
     const ctx = gsap.context(() => {
-      const cards = document.querySelectorAll("[data-bento-card]");
-      if (!cards.length) return;
+      const cards = gridRef.current?.querySelectorAll<HTMLElement>("[data-bento-card]");
+      if (!cards?.length) return;
       ScrollTrigger.batch(cards, {
         start: "top 88%",
         onEnter(batch) {
-          gsap.fromTo(batch,
-            { opacity: 0, y: 28, filter: "blur(6px)" },
-            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, stagger: 0.1, ease: "power3.out" }
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: 32 },
+            { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power3.out" }
           );
         },
         once: true,
@@ -123,79 +101,113 @@ export function AboutBento() {
   }, []);
 
   return (
-    <SectionBorder id="about" coord="(1)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
+    <SectionBorder id="about" label="// about" innerClassName="px-6 sm:px-10 py-16 md:py-24">
       <SectionHeader
-        label="about"
-        title={<>about <span className="text-rose-600 dark:text-rose-400">me</span></>}
-        description="A passionate developer focused on creating impactful digital experiences."
+        label="who am i"
+        title={
+          <>
+            About{" "}
+            <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] rotate-1">
+              me.
+            </span>
+          </>
+        }
+        description="Passionate developer focused on impactful digital experiences."
       />
 
-      <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{ perspective: "1000px" }}>
-        {/* Bio */}
-        <TiltCard className="md:col-span-2 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.06] pointer-events-none"
-            style={{ background: "radial-gradient(circle, #e11d48 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed relative z-10">
-            CS student at IIITDM Kancheepuram (BTech + MTech). I specialize in full-stack web
-            applications and AI-powered solutions that solve real-world problems. When not coding,
-            I&apos;m exploring new technologies and contributing to open-source.
+      <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Bio — spans 2 */}
+        <div
+          data-bento-card
+          className="md:col-span-2 relative bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] shadow-brutal p-7"
+          style={{ opacity: 0 }}
+        >
+          <div className="absolute -top-3 left-6 px-3 py-1 bg-[var(--accent)] text-[var(--accent-ink)] border-2 border-[var(--border-ink)] font-display font-bold text-[10px] tracking-[0.2em] uppercase shadow-[3px_3px_0_0_var(--border-ink)] -rotate-sticker-1">
+            Bio
+          </div>
+          <p className="text-base md:text-lg text-[var(--ink)] leading-[1.7] mt-2">
+            CS student at{" "}
+            <span className="bg-[var(--ink)] text-[var(--paper)] px-1.5 font-display font-bold">
+              IIITDM Kancheepuram
+            </span>{" "}
+            (BTech + MTech). I specialize in full-stack web applications and AI-powered solutions
+            that solve real-world problems. When not coding, I&apos;m exploring new tech and
+            contributing to open source.
           </p>
-        </TiltCard>
+        </div>
 
         {/* Location */}
-        <TiltCard>
-          <div className="flex items-center gap-2 mb-3">
-            <MapPin className="w-3.5 h-3.5 text-rose-400 dark:text-rose-500" />
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">location</span>
+        <div
+          data-bento-card
+          className="relative bg-[var(--ink)] text-[var(--paper)] border-[2.5px] border-[var(--border-ink)] shadow-brutal p-6"
+          style={{ opacity: 0 }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <MapPin className="w-4 h-4" aria-hidden="true" />
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em]">location</span>
           </div>
-          <p className="text-sm font-medium text-zinc-900 dark:text-white">Chennai, India</p>
-          <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">IIITDM Kancheepuram</p>
-        </TiltCard>
+          <p className="font-display text-2xl font-bold">Chennai</p>
+          <p className="text-sm mt-1 opacity-80">Tamil Nadu, India</p>
+        </div>
 
         {/* Email */}
-        <TiltCard>
-          <div className="flex items-center gap-2 mb-3">
-            <Mail className="w-3.5 h-3.5 text-rose-400 dark:text-rose-500" />
-            <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">email</span>
+        <div
+          data-bento-card
+          className="relative bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] shadow-brutal p-6"
+          style={{ opacity: 0 }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Mail className="w-4 h-4" aria-hidden="true" />
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em]">email</span>
           </div>
-          <a href="mailto:yashvanthsankar@gmail.com"
-            className="block text-sm text-zinc-900 dark:text-white font-medium mb-2 hover:text-rose-600 dark:hover:text-rose-400 transition-colors break-words">
+          <a
+            href="mailto:yashvanthsankar@gmail.com"
+            className="block font-display font-bold text-[var(--ink)] mb-3 break-words hover:underline decoration-4 decoration-[var(--accent)] underline-offset-4"
+          >
             yashvanthsankar@gmail.com
           </a>
           <CopyButton text="yashvanthsankar@gmail.com" />
-        </TiltCard>
+        </div>
 
-        {/* Stats */}
-        <TiltCard className="md:col-span-2">
+        {/* Stats — spans 2 */}
+        <div
+          data-bento-card
+          className="md:col-span-2 bg-[var(--surface-alt)] border-[2.5px] border-[var(--border-ink)] shadow-brutal p-6"
+          style={{ opacity: 0 }}
+        >
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {stats.map((s) => (
-              <div key={s.label} className="group">
-                <div className="text-2xl font-bold text-zinc-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-300">
+              <div key={s.label} className="border-r-2 last:border-r-0 border-dashed border-[var(--ink)] pr-4 last:pr-0">
+                <div className="font-display text-3xl md:text-4xl font-bold text-[var(--ink)] leading-none">
                   {s.isFloat ? <span className="tabular-nums">{s.value}</span> : <Counter target={s.value} suffix={s.suffix} />}
                 </div>
-                <div className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5 uppercase tracking-wide">{s.label}</div>
+                <div className="font-mono text-[10px] text-[var(--ink)] mt-2 uppercase tracking-[0.2em] font-bold">
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
-        </TiltCard>
+        </div>
 
-        {/* Availability */}
+        {/* Availability — spans 3 */}
         <div
           data-bento-card
-          className="md:col-span-3 rounded-xl border border-rose-200 dark:border-rose-900/40
-                     bg-[#FFE4E6] dark:bg-[#1a0509] p-5 flex items-center gap-3
-                     hover:border-rose-300 dark:hover:border-rose-800 transition-colors duration-300
-                     relative overflow-hidden"
+          className="md:col-span-3 bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] shadow-brutal p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
           style={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-            style={{ background: "linear-gradient(90deg, #e11d48 0%, transparent 60%)" }} />
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
-          <span className="text-sm text-zinc-500 dark:text-zinc-400 relative z-10">
-            available for <span className="text-zinc-900 dark:text-white font-semibold">freelance</span> &amp; <span className="text-zinc-900 dark:text-white font-semibold">full-time</span> opportunities
+          <div className="flex items-center gap-4">
+            <Zap className="w-6 h-6 shrink-0" aria-hidden="true" />
+            <p className="font-display text-lg md:text-xl font-bold">
+              Available for <span className="underline decoration-[3px] underline-offset-4">freelance</span> &amp;{" "}
+              <span className="underline decoration-[3px] underline-offset-4">full-time</span> opportunities
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--paper)] border-2 border-[var(--border-ink)] text-[var(--ink)] font-mono text-xs font-bold uppercase tracking-widest shadow-[3px_3px_0_0_var(--border-ink)]">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping bg-[var(--success)]" />
+              <span className="relative inline-flex h-2 w-2 bg-[var(--success)]" />
+            </span>
+            Online now
           </span>
         </div>
       </div>

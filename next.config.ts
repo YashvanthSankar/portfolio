@@ -1,61 +1,63 @@
 import type { NextConfig } from "next";
 
+/**
+ * Content Security Policy.
+ * - 'unsafe-inline' on script-src is needed for Next.js inline bootstrap and our
+ *   JSON-LD <script> tags. 'unsafe-eval' is needed for Vercel Analytics.
+ * - Google Fonts requires fonts.googleapis.com (style) + fonts.gstatic.com (font).
+ * - Vercel Insights endpoint is va.vercel-scripts.com + *.vercel-analytics.com.
+ */
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["playwright-core", "@sparticuz/chromium"],
   images: {
-    qualities: [75, 85],
-    formats: ['image/avif', 'image/webp'],
+    qualities: [75, 85, 95],
+    formats: ["image/avif", "image/webp"],
   },
   compress: true,
   poweredByHeader: false,
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
+          { key: "Content-Security-Policy", value: csp },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
       },
       {
-        source: '/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)',
+        source: "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {
-        source: '/(.*)\\.(js|css)',
+        source: "/(.*)\\.(js|css|woff2)",
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {
-        source: '/YashvanthS_Resume.pdf',
+        source: "/YashvanthS_Resume.pdf",
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=86400',
-          },
+          { key: "Cache-Control", value: "public, max-age=86400" },
         ],
       },
     ];

@@ -1,25 +1,26 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function shouldAnimate() {
-  if (typeof window === 'undefined') return true; // SSR fallback
-  return window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  if (typeof window === "undefined") return true;
+  return window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
 }
 
-export function throttle<T extends (...args: any[]) => any>(
-  func: T,
+export function throttle<Args extends unknown[]>(
+  fn: (...args: Args) => void,
   limit: number
-): T {
-  let inThrottle: boolean;
-  return ((...args: any[]) => {
-    if (!inThrottle) {
-      func.apply(null, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  }) as T;
+): (...args: Args) => void {
+  let inThrottle = false;
+  return (...args: Args) => {
+    if (inThrottle) return;
+    fn(...args);
+    inThrottle = true;
+    setTimeout(() => {
+      inThrottle = false;
+    }, limit);
+  };
 }

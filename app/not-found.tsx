@@ -1,59 +1,44 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft, Home } from "lucide-react";
+import { BrutalButton } from "@/components/ui/brutal";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-6">
-      {/* Background effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-rose-500/5 rounded-full blur-3xl" />
-      </div>
+    <div className="min-h-screen bg-brutal-grid flex items-center justify-center px-6 py-24">
+      <div className="relative max-w-xl w-full text-center">
+        {/* 404 block */}
+        <div className="relative inline-block mb-8">
+          <span className="font-display font-bold text-[120px] sm:text-[180px] leading-none text-[var(--ink)] block">
+            404
+          </span>
+          <span className="absolute -top-6 -right-8 px-3 py-1 bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] shadow-[4px_4px_0_0_var(--border-ink)] font-display font-bold text-sm tracking-widest uppercase rotate-12">
+            Oops
+          </span>
+        </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 text-center max-w-md"
-      >
-        {/* 404 number */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[120px] sm:text-[160px] font-bold leading-none text-transparent bg-clip-text bg-gradient-to-b from-zinc-300 to-zinc-700 select-none"
-        >
-          404
-        </motion.div>
-
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mt-2 mb-4">
-          Page not found
+        <h1 className="font-display text-3xl sm:text-4xl font-bold mb-4">
+          Page not <span className="bg-[var(--highlight)] border-[2.5px] border-[var(--border-ink)] px-2 shadow-[4px_4px_0_0_var(--border-ink)] -rotate-sticker-1 inline-block">found</span>
         </h1>
-        <p className="text-zinc-400 mb-10 leading-relaxed">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved. 
-          Let&apos;s get you back on track.
+        <p className="text-[var(--muted)] mb-10 leading-relaxed max-w-sm mx-auto">
+          The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold hover:bg-zinc-200 transition-all hover:scale-105 active:scale-95"
-          >
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <BrutalButton as="link" href="/" variant="primary" size="lg">
             <Home className="w-4 h-4" />
-            Go Home
-          </Link>
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-zinc-700 text-zinc-300 hover:bg-zinc-900 hover:text-white transition-all hover:scale-105 active:scale-95"
+            Go home
+          </BrutalButton>
+          <Link
+            href="/work"
+            className="inline-flex items-center gap-2 px-5 py-3 border-[2.5px] border-[var(--border-ink)] bg-[var(--surface)] text-[var(--ink)] font-display font-bold shadow-brutal hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_0_var(--border-ink)] transition-transform duration-150"
           >
             <ArrowLeft className="w-4 h-4" />
-            Go Back
-          </button>
+            Browse work
+          </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

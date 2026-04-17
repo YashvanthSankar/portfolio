@@ -9,79 +9,36 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: {
-          DEFAULT: "hsl(190 100% 50%)",
-          foreground: "hsl(0 0% 100%)",
-        },
+      fontFamily: {
+        display: ["var(--font-display)", "Space Grotesk", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
-      animation: {
-        marquee: "marquee var(--duration) linear infinite",
-        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
-        first: "moveVertical 30s ease infinite",
-        second: "moveInCircle 20s reverse infinite",
-        third: "moveInCircle 40s linear infinite",
-        fourth: "moveHorizontal 40s ease infinite",
-        fifth: "moveInCircle 20s ease infinite",
-        grid: "grid 15s linear infinite",
-        spotlight: "spotlight 2s ease .75s 1 forwards",
+      colors: {
+        ink: "var(--ink)",
+        paper: "var(--paper)",
+        surface: "var(--surface)",
+        "surface-alt": "var(--surface-alt)",
+        accent: "var(--accent)",
+        "accent-ink": "var(--accent-ink)",
+        highlight: "var(--highlight)",
+        muted: "var(--muted)",
+      },
+      boxShadow: {
+        "brutal-sm": "var(--shadow-brutal-sm)",
+        brutal: "var(--shadow-brutal)",
+        "brutal-lg": "var(--shadow-brutal-lg)",
+      },
+      borderWidth: {
+        brutal: "2.5px",
       },
       keyframes: {
         marquee: {
           from: { transform: "translateX(0)" },
-          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+          to: { transform: "translateX(calc(-100% - var(--gap, 1rem)))" },
         },
-        "marquee-vertical": {
-          from: { transform: "translateY(0)" },
-          to: { transform: "translateY(calc(-100% - var(--gap)))" },
-        },
-        moveHorizontal: {
-          "0%": {
-            transform: "translateX(-50%) translateY(-10%)",
-          },
-          "50%": {
-            transform: "translateX(50%) translateY(10%)",
-          },
-          "100%": {
-            transform: "translateX(-50%) translateY(-10%)",
-          },
-        },
-        moveInCircle: {
-          "0%": {
-            transform: "rotate(0deg)",
-          },
-          "50%": {
-            transform: "rotate(180deg)",
-          },
-          "100%": {
-            transform: "rotate(360deg)",
-          },
-        },
-        moveVertical: {
-          "0%": {
-            transform: "translateY(-50%)",
-          },
-          "50%": {
-            transform: "translateY(50%)",
-          },
-          "100%": {
-            transform: "translateY(-50%)",
-          },
-        },
-        grid: {
-          "0%": { transform: "translateY(-50%)" },
-          "100%": { transform: "translateY(0)" },
-        },
-        spotlight: {
-          "0%": {
-            opacity: "0",
-            transform: "translate(-72%, -62%) scale(0.5)",
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translate(-50%,-40%) scale(1)",
-          },
-        },
+      },
+      animation: {
+        marquee: "marquee var(--duration, 30s) linear infinite",
       },
     },
   },

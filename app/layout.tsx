@@ -1,29 +1,38 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {
   viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F4EFE6" },
+    { media: "(prefers-color-scheme: dark)", color: "#151311" },
+  ],
 };
 
 export const metadata: Metadata = {
   title: {
-    default: "Yashvanth S | Developer Portfolio",
-    template: "%s | Yashvanth S"
+    default: "Yashvanth S — Full-Stack Developer & AI Engineer",
+    template: "%s · Yashvanth S",
   },
-  description: "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning. Explore my portfolio of innovative web applications and open-source projects.",
+  description:
+    "Full-stack developer & AI engineer building fast, opinionated products for the modern web. React, Next.js, Node.js, Python, ML.",
   keywords: [
     "Yashvanth S",
     "full-stack developer",
@@ -37,33 +46,30 @@ export const metadata: Metadata = {
     "JavaScript",
     "TypeScript",
     "Python",
-    "open source"
+    "open source",
+    "IIITDM Kancheepuram",
   ],
   authors: [{ name: "Yashvanth S" }],
   creator: "Yashvanth S",
   publisher: "Yashvanth S",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL('https://yashvanth.com'),
-  alternates: {
-    canonical: '/',
-  },
+  formatDetection: { email: false, address: false, telephone: false },
+  metadataBase: new URL("https://yashvanth.com"),
+  alternates: { canonical: "/" },
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://yashvanth.com',
-    title: 'Yashvanth S | Full-Stack Developer & AI Engineer',
-    description: 'Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning. Explore my portfolio of innovative web applications.',
-    siteName: 'Yashvanth S Portfolio',
+    type: "website",
+    locale: "en_US",
+    url: "https://yashvanth.com",
+    title: "Yashvanth S — Full-Stack Developer & AI Engineer",
+    description:
+      "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
+    siteName: "Yashvanth S",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Yashvanth S | Full-Stack Developer & AI Engineer',
-    description: 'Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.',
-    creator: '@yashvanths',
+    card: "summary_large_image",
+    title: "Yashvanth S — Full-Stack Developer & AI Engineer",
+    description:
+      "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
+    creator: "@yashvanths19",
   },
   robots: {
     index: true,
@@ -71,13 +77,13 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   verification: {
-    google: 'ZR-1eKynBhaBA8AmLJvdzCX-OQybiFhgC6EjoXwbGoc',
+    google: "ZR-1eKynBhaBA8AmLJvdzCX-OQybiFhgC6EjoXwbGoc",
   },
 };
 
@@ -92,25 +98,24 @@ export default function RootLayout({
         <link rel="icon" href="/ys_red.webp" type="image/webp" />
         <link rel="icon" href="/ys_red.png" type="image/png" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0d0307" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Person",
-              "name": "Yashvanth S",
-              "jobTitle": "Full-Stack Developer & AI Engineer",
-              "description": "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.",
-              "url": "https://yashvanth.com",
-              "sameAs": [
+              name: "Yashvanth S",
+              jobTitle: "Full-Stack Developer & AI Engineer",
+              description:
+                "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.",
+              url: "https://yashvanth.com",
+              sameAs: [
                 "https://github.com/YashvanthSankar",
                 "https://linkedin.com/in/yashvanths",
-                "https://instagram.com/yashvanth191206"
+                "https://x.com/yashvanths19",
+                "https://instagram.com/yashvanth191206",
               ],
-              "knowsAbout": [
+              knowsAbout: [
                 "JavaScript",
                 "TypeScript",
                 "React",
@@ -120,18 +125,18 @@ export default function RootLayout({
                 "Machine Learning",
                 "AI",
                 "Web Development",
-                "Full-Stack Development"
+                "Full-Stack Development",
               ],
-              "alumniOf": {
+              alumniOf: {
                 "@type": "EducationalOrganization",
-                "name": "IIITDM Kancheepuram"
-              }
+                name: "IIITDM Kancheepuram",
+              },
             }),
           }}
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-mono antialiased`}
+        className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} font-mono antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -142,7 +147,7 @@ export default function RootLayout({
         >
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-lg focus:text-sm focus:font-medium"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--highlight)] focus:text-black focus:border-2 focus:border-black focus:shadow-[4px_4px_0_0_#000] focus:text-sm focus:font-bold"
           >
             Skip to main content
           </a>

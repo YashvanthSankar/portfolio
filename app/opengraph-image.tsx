@@ -1,51 +1,147 @@
-import { captureOgScreenshot } from "@/lib/og-screenshot";
-import { headers } from "next/headers";
 import { ImageResponse } from "next/og";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-export const alt = "Yashvanth S - Full-Stack Developer & AI Engineer";
+export const runtime = "edge";
+export const alt = "Yashvanth S — Full-Stack Developer & AI Engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function Image() {
-  const h = await headers();
-  const host = h.get("x-forwarded-host") || h.get("host");
-  const proto = h.get("x-forwarded-proto") || "https";
-  const origin = host ? `${proto}://${host}` : undefined;
-
-  try {
-    const png = await captureOgScreenshot("/", origin);
-
-    return new Response(png, {
-      headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
-    });
-  } catch {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#FFF1F2",
-            color: "#1f0208",
-            fontSize: 56,
-            fontWeight: 700,
-            fontFamily: "ui-monospace, monospace",
-          }}
-        >
-          Yashvanth S
+export default async function OpenGraphImage() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          background: "#F4EFE6",
+          backgroundImage:
+            "linear-gradient(rgba(10,10,10,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,10,0.07) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+          padding: "64px 72px",
+          fontFamily: "system-ui, sans-serif",
+          color: "#1A1A1A",
+        }}
+      >
+        {/* Top row — sticker badge */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              padding: "10px 18px",
+              background: "#FCF9F0",
+              border: "3px solid #1A1A1A",
+              boxShadow: "6px 6px 0 0 #1A1A1A",
+              fontWeight: 800,
+              fontSize: 20,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              transform: "rotate(-2deg)",
+            }}
+          >
+            <div style={{ width: 12, height: 12, background: "#1A1A1A" }} />
+            PORTFOLIO / 2026
+          </div>
+          <div
+            style={{
+              display: "flex",
+              padding: "10px 18px",
+              background: "#FFFFFF",
+              border: "3px solid #1A1A1A",
+              boxShadow: "6px 6px 0 0 #1A1A1A",
+              fontWeight: 700,
+              fontSize: 20,
+            }}
+          >
+            yashvanth.com
+          </div>
         </div>
-      ),
-      { ...size }
-    );
-  }
+
+        {/* Main name */}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              fontSize: 124,
+              fontWeight: 900,
+              letterSpacing: "-0.04em",
+              lineHeight: 0.9,
+              color: "#1A1A1A",
+              display: "flex",
+            }}
+          >
+            Yashvanth
+          </div>
+          <div style={{ display: "flex", marginTop: 8 }}>
+            <div
+              style={{
+                fontSize: 124,
+                fontWeight: 900,
+                letterSpacing: "-0.04em",
+                lineHeight: 0.9,
+                color: "#FFFFFF",
+                background: "#DA1A3F",
+                border: "4px solid #1A1A1A",
+                boxShadow: "10px 10px 0 0 #1A1A1A",
+                padding: "0 28px",
+                transform: "rotate(-1deg)",
+                display: "flex",
+              }}
+            >
+              Sankar.
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom row — role tags */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div
+            style={{
+              display: "flex",
+              padding: "10px 18px",
+              background: "#1A1A1A",
+              color: "#F4EFE6",
+              border: "3px solid #1A1A1A",
+              boxShadow: "4px 4px 0 0 #1A1A1A",
+              fontWeight: 700,
+              fontSize: 22,
+            }}
+          >
+            Full-Stack Dev
+          </div>
+          <div
+            style={{
+              display: "flex",
+              padding: "10px 18px",
+              background: "#E5DCC8",
+              border: "3px solid #1A1A1A",
+              boxShadow: "4px 4px 0 0 #1A1A1A",
+              fontWeight: 700,
+              fontSize: 22,
+              transform: "rotate(-2deg)",
+            }}
+          >
+            AI Engineer
+          </div>
+          <div
+            style={{
+              display: "flex",
+              padding: "10px 18px",
+              background: "#FFFFFF",
+              border: "3px solid #1A1A1A",
+              boxShadow: "4px 4px 0 0 #1A1A1A",
+              fontWeight: 700,
+              fontSize: 22,
+              transform: "rotate(1.5deg)",
+            }}
+          >
+            CS Student
+          </div>
+        </div>
+      </div>
+    ),
+    { ...size }
+  );
 }

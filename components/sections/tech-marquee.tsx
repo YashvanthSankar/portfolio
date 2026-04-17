@@ -13,6 +13,7 @@ import {
 } from "react-icons/si";
 import { technologyCategories } from "@/data/technologies";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { shouldAnimate } from "@/lib/utils";
 import { SectionBorder } from "@/components/ui/section-border";
 import { SectionHeader } from "@/components/ui/section-header";
 
@@ -30,113 +31,178 @@ const monoIcons: Record<string, IconType> = {
   postman: SiPostman, figma: SiFigma, linux: SiLinux,
 };
 
-const categoryAccentIcons = [
-  "text-yellow-500", "text-cyan-500", "text-green-500", "text-blue-500", "text-orange-500",
+/* Per-category visual design: body bg + tab (colored tag at top) + layout span */
+type Variant = {
+  body: string;          /* card body classes */
+  tab: string;           /* tab label pill classes */
+  tabRotate: string;
+  number: string;        /* big bg index number color */
+  chip: string;          /* chip bg */
+  iconBox: string;       /* square behind icon inside chip */
+};
+
+const variants: Variant[] = [
+  /* Languages — featured, accent body, ink text */
+  {
+    body: "bg-[var(--accent)] text-[var(--accent-ink)]",
+    tab: "bg-[var(--ink)] text-[var(--paper)]",
+    tabRotate: "-rotate-3",
+    number: "text-[var(--accent-ink)] opacity-10",
+    chip: "bg-[var(--paper)] text-[var(--ink)]",
+    iconBox: "bg-[var(--accent)] text-[var(--accent-ink)]",
+  },
+  /* Frontend */
+  {
+    body: "bg-[var(--surface)] text-[var(--ink)]",
+    tab: "bg-[var(--accent)] text-[var(--accent-ink)]",
+    tabRotate: "rotate-2",
+    number: "text-[var(--ink)] opacity-[0.06]",
+    chip: "bg-[var(--paper)] text-[var(--ink)]",
+    iconBox: "bg-[var(--ink)] text-[var(--paper)]",
+  },
+  /* Backend */
+  {
+    body: "bg-[var(--ink)] text-[var(--paper)]",
+    tab: "bg-[var(--accent)] text-[var(--accent-ink)]",
+    tabRotate: "-rotate-2",
+    number: "text-[var(--paper)] opacity-10",
+    chip: "bg-[var(--paper)] text-[var(--ink)]",
+    iconBox: "bg-[var(--accent)] text-[var(--accent-ink)]",
+  },
+  /* Databases */
+  {
+    body: "bg-[var(--surface-alt)] text-[var(--ink)]",
+    tab: "bg-[var(--ink)] text-[var(--paper)]",
+    tabRotate: "rotate-3",
+    number: "text-[var(--ink)] opacity-[0.08]",
+    chip: "bg-[var(--paper)] text-[var(--ink)]",
+    iconBox: "bg-[var(--ink)] text-[var(--paper)]",
+  },
+  /* DevOps & Tools */
+  {
+    body: "bg-[var(--surface)] text-[var(--ink)]",
+    tab: "bg-[var(--ink)] text-[var(--paper)]",
+    tabRotate: "-rotate-2",
+    number: "text-[var(--ink)] opacity-[0.06]",
+    chip: "bg-[var(--paper)] text-[var(--ink)]",
+    iconBox: "bg-[var(--accent)] text-[var(--accent-ink)]",
+  },
 ];
+
+/* Grid layout — asymmetric but height follows content (no row-span) */
+const spanFor = (i: number) => {
+  /* 6-col grid on xl. Cards flow with their own content height. */
+  switch (i) {
+    case 0: return "xl:col-span-4";   /* Languages — wider, featured */
+    case 1: return "xl:col-span-2";   /* Frontend */
+    case 2: return "xl:col-span-3";   /* Backend */
+    case 3: return "xl:col-span-3";   /* Databases */
+    case 4: return "xl:col-span-6";   /* DevOps — full width */
+    default: return "xl:col-span-3";
+  }
+};
 
 export function TechMarquee() {
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!shouldAnimate()) return;
     const ctx = gsap.context(() => {
-      const cards = gridRef.current?.querySelectorAll("[data-tech-card]");
+      const cards = gridRef.current?.querySelectorAll<HTMLElement>("[data-tech-card]");
       if (!cards?.length) return;
-
       ScrollTrigger.batch(cards, {
         start: "top 88%",
         onEnter(batch) {
-          gsap.fromTo(batch,
-            { opacity: 0, y: 24, filter: "blur(6px)" },
-            {
-              opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, stagger: 0.1, ease: "power3.out",
-              onComplete() {
-                /* Animate accent lines after cards appear */
-                const lines = gridRef.current?.querySelectorAll("[data-accent-line]");
-                if (lines?.length) {
-                  gsap.to(lines, { scaleX: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" });
-                }
-              },
-            }
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: 36 },
+            { opacity: 1, y: 0, duration: 0.55, stagger: 0.1, ease: "power3.out" }
           );
         },
         once: true,
-      });
-
-      /* Chip hover — GSAP for buttery scale */
-      const chips = gridRef.current?.querySelectorAll("[data-tech-chip]");
-      chips?.forEach((chip) => {
-        const el = chip as HTMLElement;
-        el.addEventListener("mouseenter", () =>
-          gsap.to(el, { scale: 1.08, y: -2, duration: 0.2, ease: "power2.out" })
-        );
-        el.addEventListener("mouseleave", () =>
-          gsap.to(el, { scale: 1, y: 0, duration: 0.35, ease: "elastic.out(1, 0.5)" })
-        );
       });
     }, gridRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <SectionBorder id="technologies" coord="(0)" innerClassName="px-6 sm:px-10 py-16 md:py-24">
+    <SectionBorder id="technologies" label="// stack" innerClassName="px-6 sm:px-10 py-16 md:py-24">
       <SectionHeader
-        label="technologies i use"
-        title={<>Engineering <span className="text-rose-600 dark:text-rose-400">Toolkit</span></>}
-        description="A curated stack of languages, frameworks, and tools I use to build modern applications."
+        label="technologies"
+        title={
+          <>
+            Engineering{" "}
+            <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] -rotate-1">
+              Toolkit.
+            </span>
+          </>
+        }
+        description="A curated stack of languages, frameworks, and tools I use to ship modern applications."
       />
 
-      <div ref={gridRef} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {technologyCategories.map((category, i) => (
-          <article
-            key={category.title}
-            data-tech-card
-            className="group rounded-xl border border-rose-200 dark:border-rose-900/40 bg-[#FFE4E6] dark:bg-[#1a0509] p-5
-                       hover:border-rose-300 dark:hover:border-rose-800
-                       hover:shadow-[0_4px_24px_rgba(225,29,72,0.07)] dark:hover:shadow-[0_4px_24px_rgba(225,29,72,0.05)]
-                       transition-[border-color,box-shadow] duration-300 relative overflow-hidden"
-            style={{ opacity: 0 }}
-          >
-            {/* Corner number */}
-            <div className="absolute top-3 right-4 font-mono text-[10px] text-zinc-200 dark:text-zinc-800 select-none pointer-events-none">
-              {String(i + 1).padStart(2, "0")}
-            </div>
+      <div
+        ref={gridRef}
+        className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-6"
+      >
+        {technologyCategories.map((category, i) => {
+          const v = variants[i] ?? variants[0];
 
-            <div className="mb-4 flex items-center gap-2">
-              <h3 className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
-                {category.title}
-              </h3>
-              {/* Accent line */}
+          return (
+            <article
+              key={category.title}
+              data-tech-card
+              className={`relative border-[2.5px] border-[var(--border-ink)] shadow-brutal brutal-card-hover ${v.body} ${spanFor(i)}`}
+              style={{ opacity: 0 }}
+            >
+              {/* Inner clipper — contains the big bg number without clipping the hanging tab */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <span
+                  aria-hidden="true"
+                  className={`absolute bottom-0 right-4 translate-y-[18%] font-display font-black select-none leading-none ${v.number}`}
+                  style={{ fontSize: "clamp(5rem, 14vw, 10rem)" }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+
+              {/* Hanging tab — bleeds above card edge (NOT clipped) */}
               <div
-                data-accent-line
-                className="h-px flex-1 bg-gradient-to-r from-rose-200 dark:from-rose-800 to-transparent"
-                style={{ transform: "scaleX(0)", transformOrigin: "left" }}
-              />
-            </div>
+                className={`absolute -top-4 left-5 inline-flex items-center gap-2 px-3 py-1.5 border-[2.5px] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-[11px] tracking-[0.22em] uppercase ${v.tab} ${v.tabRotate}`}
+              >
+                <span className="w-1.5 h-1.5 bg-current" aria-hidden="true" />
+                {category.title}
+              </div>
 
-            <div className="flex flex-wrap gap-1.5">
-              {category.items.map((item) => {
-                const Icon = monoIcons[item.icon] ?? TbDatabase;
-                return (
-                  <span
-                    key={item.name}
-                    data-tech-chip
-                    className={`inline-flex items-center gap-1.5
-                               px-2.5 py-1 rounded-lg cursor-default
-                               border border-zinc-100 dark:border-zinc-800
-                               bg-rose-50 dark:bg-[#2d0c12]/50
-                               text-[11px] text-zinc-600 dark:text-zinc-400
-                               hover:border-rose-200 dark:hover:border-rose-800
-                               hover:bg-rose-100 dark:hover:bg-[#2d0c12]
-                               transition-[border-color,background-color] duration-200`}
-                  >
-                    <Icon className={`h-2.5 w-2.5 shrink-0 text-zinc-400 dark:text-zinc-500 group-hover:${categoryAccentIcons[i] ?? "text-rose-400"} transition-colors duration-300`} />
-                    {item.name}
-                  </span>
-                );
-              })}
-            </div>
-          </article>
-        ))}
+              {/* Content */}
+              <div className="relative z-10 p-6 pt-10 flex flex-wrap gap-2">
+                {category.items.map((item) => {
+                  const Icon = monoIcons[item.icon] ?? TbDatabase;
+                  return (
+                    <span
+                      key={item.name}
+                      className={`group inline-flex items-stretch border-2 border-[var(--border-ink)] shadow-[2px_2px_0_0_var(--border-ink)] font-mono text-[12px] font-semibold transition-transform duration-150 hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-[3px_3px_0_0_var(--border-ink)] ${v.chip}`}
+                    >
+                      <span className={`inline-flex items-center justify-center px-2 border-r-2 border-[var(--border-ink)] ${v.iconBox}`}>
+                        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
+                      <span className="inline-flex items-center px-2.5 py-1">
+                        {item.name}
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
+
+              {/* Corner tick-marks for extra brutalist texture on featured card */}
+              {i === 0 && (
+                <>
+                  <span className="absolute top-2 right-2 w-3 h-3 border-[2.5px] border-[var(--accent-ink)] opacity-40" aria-hidden="true" />
+                  <span className="absolute bottom-2 left-2 w-3 h-3 border-[2.5px] border-[var(--accent-ink)] opacity-40" aria-hidden="true" />
+                </>
+              )}
+            </article>
+          );
+        })}
       </div>
     </SectionBorder>
   );
