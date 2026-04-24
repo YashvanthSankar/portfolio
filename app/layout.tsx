@@ -97,7 +97,6 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/ys_red.webp" type="image/webp" />
         <link rel="icon" href="/ys_red.png" type="image/png" />
-        <link rel="manifest" href="/manifest.json" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

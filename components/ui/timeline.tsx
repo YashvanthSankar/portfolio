@@ -86,7 +86,7 @@ export const Timeline = React.memo(function Timeline({ data }: { data: TimelineE
           title={
             <>
               Experience &<br />
-              <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] px-3 shadow-[4px_4px_0_0_var(--border-ink)] -rotate-sticker-1">
+              <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] -rotate-sticker-1">
                 Education
               </span>
             </>

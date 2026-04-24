@@ -74,11 +74,23 @@ export function BrutalButton(props: BrutalButtonProps) {
       ? "px-6 py-3.5 text-base"
       : "px-5 py-2.5 text-sm";
 
+  const shadowClass =
+    size === "sm"
+      ? cn(
+          "shadow-[3px_3px_0_0_var(--border-ink)]",
+          "hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-[4px_4px_0_0_var(--border-ink)]",
+          "active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_0_var(--border-ink)]"
+        )
+      : cn(
+          "shadow-brutal",
+          "hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_0_var(--border-ink)]",
+          "active:translate-x-[3px] active:translate-y-[3px] active:shadow-[2px_2px_0_0_var(--border-ink)]"
+        );
+
   const base = cn(
     "inline-flex items-center justify-center gap-2 border-[2.5px] border-[var(--border-ink)] font-display font-bold tracking-wide",
-    "shadow-brutal transition-transform transition-shadow duration-150",
-    "hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_0_var(--border-ink)]",
-    "active:translate-x-[3px] active:translate-y-[3px] active:shadow-[2px_2px_0_0_var(--border-ink)]",
+    "transition-transform transition-shadow duration-150",
+    shadowClass,
     "focus-visible:outline-3 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
     variantClass,
     sizeClass,
