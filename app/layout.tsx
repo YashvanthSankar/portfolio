@@ -112,7 +112,7 @@ export default function RootLayout({
                 "https://github.com/YashvanthSankar",
                 "https://linkedin.com/in/yashvanths",
                 "https://x.com/yashvanths19",
-                "https://instagram.com/yashvanth191206",
+                "https://instagram.com/yashvanth.19",
               ],
               knowsAbout: [
                 "JavaScript",
