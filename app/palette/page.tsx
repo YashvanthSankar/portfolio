@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Palette — Yashvanth S",
+  title: "Palette · Yashvanth S",
   description: "The minimal three-color system used across the portfolio.",
 };
 
@@ -19,8 +19,8 @@ const lightTokens: Token[] = [
   { name: "surface", css: "#FFFFFF", display: "#FFFFFF", label: "Card fill" },
   { name: "surface-alt", css: "#F0F0F2", display: "#F0F0F2", label: "Alt surface / hover" },
   { name: "muted", css: "#6B6B70", display: "#6B6B70", label: "Muted text" },
-  { name: "ink", css: "#0B0B0C", display: "#0B0B0C", label: "Text + borders — near black" },
-  { name: "accent", css: "#0B0B0C", display: "#0B0B0C", label: "Accent — inverted ink block" },
+  { name: "ink", css: "#0B0B0C", display: "#0B0B0C", label: "Text & borders, near black" },
+  { name: "accent", css: "#0B0B0C", display: "#0B0B0C", label: "Accent, inverted ink block" },
 ];
 
 const darkTokens: Token[] = [
@@ -29,7 +29,7 @@ const darkTokens: Token[] = [
   { name: "surface-alt", css: "#1C1C1F", display: "#1C1C1F", label: "Alt surface / hover" },
   { name: "muted", css: "#9A9AA0", display: "#9A9AA0", label: "Muted text" },
   { name: "ink", css: "#FAFAFA", display: "#FAFAFA", label: "Text + borders" },
-  { name: "accent", css: "#FAFAFA", display: "#FAFAFA", label: "Accent — inverted ink block" },
+  { name: "accent", css: "#FAFAFA", display: "#FAFAFA", label: "Accent, inverted ink block" },
 ];
 
 function isDark(hex: string) {
