@@ -28,7 +28,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Yashvanth S — Full-Stack Developer & AI Engineer",
+    default: "Yashvanth S · Full-Stack Developer & AI Engineer",
     template: "%s · Yashvanth S",
   },
   description:
@@ -59,14 +59,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://yashvanth.com",
-    title: "Yashvanth S — Full-Stack Developer & AI Engineer",
+    title: "Yashvanth S · Full-Stack Developer & AI Engineer",
     description:
       "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
     siteName: "Yashvanth S",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yashvanth S — Full-Stack Developer & AI Engineer",
+    title: "Yashvanth S · Full-Stack Developer & AI Engineer",
     description:
       "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
     creator: "@yashvanths19",
