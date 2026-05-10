@@ -3,6 +3,8 @@ import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/navbar";
 import { SpotlightHero } from "@/components/sections/hero";
 import { ScrollProgressBar } from "@/components/sections/footer";
+import { SectionIndex } from "@/components/section-index";
+import { KbdShortcuts } from "@/components/kbd-shortcuts";
 
 const skeleton = (h: string) => (
   <div
@@ -10,9 +12,13 @@ const skeleton = (h: string) => (
   />
 );
 
+const NowSection = dynamic(
+  () => import("@/components/sections/now").then((m) => ({ default: m.NowSection })),
+  { loading: () => skeleton("h-[400px]") }
+);
 const TechMarquee = dynamic(
   () => import("@/components/sections/tech-marquee").then((m) => ({ default: m.TechMarquee })),
-  { ssr: false, loading: () => skeleton("h-[500px]") }
+  { ssr: false, loading: () => skeleton("h-[420px]") }
 );
 const AboutBento = dynamic(
   () => import("@/components/sections/about-bento").then((m) => ({ default: m.AboutBento })),
@@ -39,11 +45,14 @@ export function Portfolio() {
   return (
     <main id="main-content" className="relative min-h-screen">
       <ScrollProgressBar />
+      <SectionIndex />
+      <KbdShortcuts />
       {/* Global brutalist grid background */}
       <div className="fixed inset-0 -z-10 bg-brutal-grid" aria-hidden="true" />
 
       <Navbar />
       <SpotlightHero />
+      <NowSection />
       <TechMarquee />
       <AboutBento />
       <ProjectsSection />

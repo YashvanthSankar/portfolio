@@ -15,21 +15,21 @@ interface Token {
 }
 
 const lightTokens: Token[] = [
-  { name: "paper", css: "#F4EFE6", display: "#F4EFE6", label: "Page background — linen" },
-  { name: "surface", css: "#FCF9F0", display: "#FCF9F0", label: "Card fill" },
-  { name: "surface-alt", css: "#E5DCC8", display: "#E5DCC8", label: "Alt surface — khaki" },
-  { name: "ink", css: "#1A1A1A", display: "#1A1A1A", label: "Text + borders — eerie black" },
-  { name: "muted", css: "#5a5449", display: "#5a5449", label: "Muted text" },
-  { name: "accent", css: "#DA1A3F", display: "#DA1A3F", label: "Accent — rose madder" },
+  { name: "paper", css: "#FAFAFA", display: "#FAFAFA", label: "Page background" },
+  { name: "surface", css: "#FFFFFF", display: "#FFFFFF", label: "Card fill" },
+  { name: "surface-alt", css: "#F0F0F2", display: "#F0F0F2", label: "Alt surface / hover" },
+  { name: "muted", css: "#6B6B70", display: "#6B6B70", label: "Muted text" },
+  { name: "ink", css: "#0B0B0C", display: "#0B0B0C", label: "Text + borders — near black" },
+  { name: "accent", css: "#0B0B0C", display: "#0B0B0C", label: "Accent — inverted ink block" },
 ];
 
 const darkTokens: Token[] = [
-  { name: "paper", css: "#151311", display: "#151311", label: "Page background — warm black" },
-  { name: "surface", css: "#1E1B18", display: "#1E1B18", label: "Card fill" },
-  { name: "surface-alt", css: "#2B261E", display: "#2B261E", label: "Alt surface" },
-  { name: "ink", css: "#F4EFE6", display: "#F4EFE6", label: "Text + borders — linen" },
-  { name: "muted", css: "#9a9184", display: "#9a9184", label: "Muted text" },
-  { name: "accent", css: "#F43F5E", display: "#F43F5E", label: "Accent — bright rose madder" },
+  { name: "paper", css: "#0B0B0C", display: "#0B0B0C", label: "Page background" },
+  { name: "surface", css: "#141416", display: "#141416", label: "Card fill" },
+  { name: "surface-alt", css: "#1C1C1F", display: "#1C1C1F", label: "Alt surface / hover" },
+  { name: "muted", css: "#9A9AA0", display: "#9A9AA0", label: "Muted text" },
+  { name: "ink", css: "#FAFAFA", display: "#FAFAFA", label: "Text + borders" },
+  { name: "accent", css: "#FAFAFA", display: "#FAFAFA", label: "Accent — inverted ink block" },
 ];
 
 function isDark(hex: string) {
@@ -47,7 +47,7 @@ function Swatch({ name, css, display, label }: Token) {
         <span
           className="font-mono text-[10px] tracking-wide px-1.5 py-0.5 border-2 border-[var(--border-ink)] font-bold"
           style={{
-            color: dark ? "#F4EFE6" : "#1A1A1A",
+            color: dark ? "#FAFAFA" : "#0B0B0C",
             backgroundColor: dark ? "rgba(0,0,0,0.4)" : "rgba(255,255,255,0.75)",
           }}
         >
@@ -101,16 +101,16 @@ export default function PalettePage() {
           <span className="absolute -top-3 -left-3 px-3 py-1 bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-xs tracking-[0.22em] uppercase -rotate-sticker-2">
             {"// design system"}
           </span>
-          <h1 className="font-display font-bold text-[clamp(3rem,10vw,7rem)] leading-[0.9] tracking-[-0.04em] text-[var(--ink)] mb-6">
-            Minimal
+          <h1 className="font-display font-bold text-[clamp(3rem,10vw,7rem)] leading-[0.9] tracking-[-0.05em] text-[var(--ink)] mb-6">
+            Monochrome
             <br />
             <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] shadow-[8px_8px_0_0_var(--border-ink)] px-4 -rotate-1">
               palette.
             </span>
           </h1>
           <p className="max-w-md text-base text-[var(--muted)] leading-relaxed">
-            Three colors, no gradients. Warm putty paper, near-black ink, and a deep plum accent
-            calibrated for editorial contrast in both light and dark modes.
+            No hue. A five-step grayscale ramp does everything color used to —
+            depth comes from contrast, weight, and rhythm, not chroma.
           </p>
         </div>
       </div>

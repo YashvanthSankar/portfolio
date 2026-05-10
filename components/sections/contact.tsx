@@ -14,10 +14,19 @@ export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", message: "", website: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [snap, setSnap] = useState(false);
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  /* Brutal snap — one hard frame on status change, no easing */
+  useEffect(() => {
+    if (status !== "sent" && status !== "error") return;
+    setSnap(true);
+    const t = setTimeout(() => setSnap(false), 220);
+    return () => clearTimeout(t);
+  }, [status]);
 
   useEffect(() => {
     if (!shouldAnimate()) return;
@@ -140,8 +149,12 @@ export function ContactSection() {
         <form
           ref={formRef}
           onSubmit={handleSubmit}
-          className="md:col-span-3 bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] shadow-brutal p-6 md:p-8 space-y-5"
-          style={{ opacity: 0 }}
+          className={`relative md:col-span-3 bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] p-6 md:p-8 space-y-5 ${
+            snap
+              ? "shadow-[12px_12px_0_0_var(--border-ink)] translate-x-[-2px] translate-y-[-2px]"
+              : "shadow-brutal"
+          }`}
+          style={{ opacity: 0, transition: snap ? "none" : undefined }}
           noValidate
         >
           {/* Honeypot: hidden from users, catches bots */}
@@ -194,9 +207,28 @@ export function ContactSection() {
           </div>
 
           <div>
-            <label htmlFor="message" className="block font-display font-bold text-sm mb-2">
-              Message <span className="text-[var(--accent)]">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="message" className="block font-display font-bold text-sm">
+                Message <span className="text-[var(--accent)]">*</span>
+              </label>
+              <span
+                className={`font-mono text-[10px] font-bold tracking-[0.18em] uppercase tabular-nums transition-colors duration-200 ${
+                  form.message.length >= 4000
+                    ? "text-[var(--ink)]"
+                    : form.message.length >= 3600
+                    ? "text-[var(--ink)]"
+                    : form.message.length >= 10
+                    ? "text-[var(--muted)]"
+                    : "text-[var(--muted)]/60"
+                }`}
+                aria-live="polite"
+              >
+                {form.message.length} / 4000
+                {form.message.length > 0 && form.message.length < 10 && (
+                  <span className="ml-2 text-[var(--ink)]">· {10 - form.message.length} more</span>
+                )}
+              </span>
+            </div>
             <textarea
               id="message"
               value={form.message}
@@ -208,6 +240,24 @@ export function ContactSection() {
               minLength={10}
               maxLength={4000}
             />
+            {/* Live progress bar — segmented brutal style */}
+            <div
+              className="mt-2 flex gap-0.5 h-1"
+              aria-hidden="true"
+            >
+              {Array.from({ length: 20 }).map((_, i) => {
+                const filled = (form.message.length / 4000) * 20;
+                const active = i < Math.round(filled);
+                return (
+                  <span
+                    key={i}
+                    className={`flex-1 transition-colors duration-150 ${
+                      active ? "bg-[var(--ink)]" : "bg-[var(--surface-alt)] border border-[var(--border-ink)]/30"
+                    }`}
+                  />
+                );
+              })}
+            </div>
           </div>
 
           <AnimatePresence>
@@ -219,7 +269,7 @@ export function ContactSection() {
                 role="alert"
                 className="px-4 py-3 bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-sm"
               >
-                {errorMsg || "Something went wrong — try again."}
+                {errorMsg || "Something went wrong. Try again."}
               </motion.p>
             )}
             {status === "sent" && (
@@ -228,7 +278,7 @@ export function ContactSection() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 role="status"
-                className="px-4 py-3 bg-[var(--success)] text-white border-[2.5px] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-sm"
+                className="px-4 py-3 bg-[var(--ink)] text-[var(--paper)] border-[2.5px] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-sm"
               >
                 Message sent. I&apos;ll get back to you shortly.
               </motion.p>

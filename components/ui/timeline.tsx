@@ -16,6 +16,7 @@ export const Timeline = React.memo(function Timeline({ data }: { data: TimelineE
   const [lineTop, setLineTop] = useState(52);
   /* Rail length — distance from first dot's center to the last dot's center */
   const [lineLen, setLineLen] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const animate = shouldAnimate();
 
   useEffect(() => {
@@ -78,37 +79,91 @@ export const Timeline = React.memo(function Timeline({ data }: { data: TimelineE
     return () => ctx.revert();
   }, [animate, data]);
 
+  /* Track which timeline entry is currently in view → drives sticky badge */
+  useEffect(() => {
+    if (!trackRef.current) return;
+    const items = trackRef.current.querySelectorAll<HTMLElement>("[data-timeline-item]");
+    if (!items.length) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (!visible.length) return;
+        const top = visible.reduce((a, b) =>
+          a.boundingClientRect.top < b.boundingClientRect.top ? a : b
+        );
+        const idx = Number(top.target.getAttribute("data-timeline-item"));
+        if (!isNaN(idx)) setActiveIndex(idx);
+      },
+      { rootMargin: "-30% 0px -50% 0px", threshold: 0 }
+    );
+
+    items.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [data]);
+
   return (
     <div className="w-full">
       <div className="max-w-6xl mx-auto py-12 md:py-16 px-6 sm:px-10">
         <SectionHeader
-          label="my journey"
+          label="the journey"
           title={
             <>
-              Experience &<br />
+              Where I&apos;ve{" "}
               <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] -rotate-sticker-1">
-                Education
+                been.
               </span>
             </>
           }
-          description="From academic milestones to real engineering work."
+          description="Studying, shipping, learning. The chapters that brought me here."
         />
       </div>
 
-      <div ref={trackRef} className="relative max-w-6xl mx-auto px-6 sm:px-10 pb-20">
+      {/* Sticky "you are here" period badge — fixed in viewport, updates as you scroll */}
+      <div className="hidden md:block sticky top-24 z-30 max-w-6xl mx-auto px-6 sm:px-10 pointer-events-none">
+        <div className="flex justify-end">
+          <div
+            key={activeIndex}
+            className="inline-flex items-center gap-2 px-3 py-1.5 border-[2.5px] border-[var(--border-ink)] bg-[var(--ink)] text-[var(--paper)] shadow-[4px_4px_0_0_var(--border-ink)] font-mono text-[10px] font-bold tracking-[0.22em] uppercase animate-[reveal-up_300ms_var(--ease-spring)_forwards]"
+          >
+            <span className="relative flex h-2 w-2 items-center justify-center">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--paper)] opacity-60" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--paper)]" />
+            </span>
+            {data[activeIndex]?.title}
+          </div>
+        </div>
+      </div>
+
+      <div ref={trackRef} className="relative max-w-6xl mx-auto px-6 sm:px-10 pb-20 -mt-10">
         {data.map((item, index) => (
-          <div key={index} className="flex justify-start pt-8 md:pt-16 md:gap-10">
+          <div
+            key={index}
+            data-timeline-item={index}
+            className="flex justify-start pt-8 md:pt-16 md:gap-10"
+          >
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-28 self-start max-w-xs lg:max-w-sm md:w-full">
               <div
                 data-timeline-dot
-                className="h-12 w-12 absolute left-2 md:left-2
-                           bg-[var(--accent)] border-[2.5px] border-[var(--border-ink)]
-                           shadow-[4px_4px_0_0_var(--border-ink)]
-                           flex items-center justify-center"
+                className={`h-12 w-12 absolute left-2 md:left-2 border-[2.5px] border-[var(--border-ink)] shadow-[4px_4px_0_0_var(--border-ink)] flex items-center justify-center transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  activeIndex === index
+                    ? "bg-[var(--ink)] scale-110"
+                    : "bg-[var(--accent)]"
+                }`}
               >
-                <div className="h-3 w-3 bg-[var(--accent-ink)]" />
+                <div
+                  className={`h-3 w-3 transition-colors duration-300 ${
+                    activeIndex === index ? "bg-[var(--paper)]" : "bg-[var(--accent-ink)]"
+                  }`}
+                />
               </div>
-              <h3 className="hidden md:block font-display text-xl md:pl-24 md:text-4xl font-bold text-[var(--ink)]">
+              <h3
+                className={`hidden md:block font-display text-xl md:pl-24 md:text-4xl font-bold transition-[color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                  activeIndex === index
+                    ? "text-[var(--ink)] -translate-y-0.5"
+                    : "text-[var(--muted)]"
+                }`}
+              >
                 {item.title}
               </h3>
             </div>

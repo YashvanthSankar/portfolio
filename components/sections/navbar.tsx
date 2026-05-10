@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { throttle, cn } from "@/lib/utils";
 import { Home, Folder, User, Briefcase, Mail, Download, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BrutalButton } from "@/components/ui/brutal";
+import { socials } from "@/data/socials";
 
 const navItems = [
   { id: "home", label: "Home", icon: Home },
@@ -104,9 +104,9 @@ export function Navbar() {
             <button
               onClick={() => scrollTo("home")}
               aria-label="Go to top"
-              className="relative h-10 w-10 shrink-0 border-2 border-[var(--border-ink)] overflow-hidden bg-[var(--accent)]"
+              className="logo-frame relative h-10 w-10 shrink-0 border-2 border-[var(--ink)] overflow-hidden shadow-[3px_3px_0_0_var(--ink)] transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] active:translate-x-[1px] active:translate-y-[1px]"
             >
-              <Image src="/ys_red.webp" alt="" fill className="object-cover" quality={85} />
+              <span className="logo-mark" aria-hidden="true" />
             </button>
 
             <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
@@ -118,11 +118,12 @@ export function Navbar() {
                     onClick={() => scrollTo(item.id)}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "relative px-3 py-1.5 font-display font-semibold text-sm transition-transform duration-100",
+                      "group relative px-3 py-1.5 font-display font-semibold text-sm",
                       "border-2 border-transparent",
+                      "transition-[transform,background-color,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]",
                       isActive
                         ? "bg-[var(--accent)] text-[var(--accent-ink)] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)]"
-                        : "text-[var(--ink)] hover:-translate-y-[1px] hover:border-[var(--border-ink)] hover:bg-[var(--surface)] hover:shadow-[3px_3px_0_0_var(--border-ink)]"
+                        : "text-[var(--ink)] hover:-translate-y-[2px] hover:border-[var(--border-ink)] hover:bg-[var(--surface-alt)] hover:shadow-[3px_3px_0_0_var(--border-ink)]"
                     )}
                   >
                     {item.label}
@@ -186,63 +187,167 @@ export function Navbar() {
         {menuOpen && (
           <motion.nav
             key="panel"
-            initial={{ x: "-100%" }}
-            animate={{ x: "0%" }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
+            animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
+            exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
+            transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
             className="fixed inset-0 z-[60] md:hidden flex h-dvh w-screen flex-col overflow-hidden bg-[var(--paper)]"
+            aria-label="Mobile navigation"
           >
-            <div className="flex items-center justify-between px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-4 border-b-[2.5px] border-[var(--border-ink)]">
-              <span className="font-display font-bold text-lg">Menu</span>
-              <button
+            {/* Background watermark — giant typographic wallpaper */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
+            >
+              <span
+                className="font-display font-bold leading-[0.85] tracking-[-0.06em] text-[var(--ink)] opacity-[0.04] whitespace-nowrap -mr-12 -mb-8"
+                style={{ fontSize: "clamp(14rem, 50vw, 28rem)" }}
+              >
+                YASH.
+              </span>
+            </div>
+            {/* Background grid texture */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.4]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(11,11,12,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(11,11,12,0.04) 1px, transparent 1px)",
+                backgroundSize: "40px 40px",
+              }}
+            />
+
+            {/* Top strip — meta */}
+            <div className="relative flex items-center justify-between px-6 pt-[max(env(safe-area-inset-top),1.25rem)] pb-4 border-b-[2.5px] border-[var(--ink)]">
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.18, duration: 0.4 }}
+                className="flex items-center gap-2"
+              >
+                <span className="inline-flex items-center gap-1.5 px-2 py-1 border-2 border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] font-mono text-[9px] font-bold tracking-[0.22em] uppercase">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--paper)] opacity-70" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--paper)]" />
+                  </span>
+                  menu · open
+                </span>
+              </motion.div>
+              <motion.button
+                initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
+                transition={{ delay: 0.18, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
                 onClick={() => setMenuOpen(false)}
                 aria-label="Close menu"
-                className="inline-flex items-center justify-center w-10 h-10 border-2 border-[var(--border-ink)] bg-[var(--accent)] text-[var(--accent-ink)] shadow-[3px_3px_0_0_var(--border-ink)]"
+                className="inline-flex items-center justify-center w-11 h-11 border-[2.5px] border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] shadow-[4px_4px_0_0_var(--ink)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_0_var(--ink)] transition-transform duration-150"
               >
-                <X className="w-4 h-4" />
-              </button>
+                <X className="w-5 h-5" />
+              </motion.button>
             </div>
 
-            <ul className="flex-1 flex flex-col justify-center px-6 gap-3">
+            {/* Big editorial nav list */}
+            <ul className="relative flex-1 flex flex-col justify-center px-6 gap-1 overflow-y-auto py-6">
               {navItems.map((item, i) => {
                 const isActive = active === item.id;
+                const num = String(i + 1).padStart(2, "0");
                 return (
                   <motion.li
                     key={item.id}
-                    initial={{ opacity: 0, x: -32 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    initial={{ opacity: 0, x: -40, skewX: 4 }}
+                    animate={{ opacity: 1, x: 0, skewX: 0 }}
+                    exit={{ opacity: 0, x: -40 }}
+                    transition={{
+                      delay: 0.22 + i * 0.06,
+                      duration: 0.45,
+                      ease: [0.32, 0.72, 0, 1],
+                    }}
                   >
                     <button
                       onClick={() => scrollTo(item.id)}
                       aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "w-full flex items-center gap-4 px-5 py-4 text-left",
-                        "border-[2.5px] border-[var(--border-ink)] font-display font-bold text-2xl",
-                        "shadow-brutal transition-transform duration-150",
-                        "hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_0_var(--border-ink)]",
-                        isActive
-                          ? "bg-[var(--accent)] text-[var(--accent-ink)]"
-                          : "bg-[var(--surface)] text-[var(--ink)]"
+                        "group relative w-full flex items-baseline gap-4 py-3 text-left border-b-2 border-dashed border-[var(--ink)]/20",
+                        "transition-colors duration-200"
                       )}
                     >
-                      <item.icon className="w-5 h-5 shrink-0" aria-hidden="true" />
-                      {item.label}
+                      <span className="font-mono text-[11px] font-bold tabular-nums tracking-[0.18em] text-[var(--muted)] group-hover:text-[var(--ink)] transition-colors duration-200">
+                        / {num}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-display font-bold leading-[0.95] tracking-[-0.04em] transition-[color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                          "group-hover:translate-x-2 group-active:translate-x-1",
+                          isActive ? "text-[var(--ink)]" : "text-[var(--ink)]/85"
+                        )}
+                        style={{ fontSize: "clamp(2.4rem, 11vw, 4rem)" }}
+                      >
+                        {item.label}
+                      </span>
+                      {isActive && (
+                        <span
+                          className="ml-auto self-center font-mono text-[9px] font-bold tracking-[0.22em] uppercase text-[var(--paper)] bg-[var(--ink)] px-2 py-1 border-2 border-[var(--ink)] shadow-[2px_2px_0_0_var(--ink)]"
+                          aria-hidden="true"
+                        >
+                          here
+                        </span>
+                      )}
+                      {/* hover underline that draws in */}
+                      <span
+                        aria-hidden="true"
+                        className="absolute left-0 right-0 bottom-0 h-[3px] bg-[var(--ink)] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                      />
                     </button>
                   </motion.li>
                 );
               })}
             </ul>
 
-            <div className="px-6 pb-8 grid grid-cols-2 gap-3 border-t-[2.5px] border-[var(--border-ink)] pt-5">
-              <BrutalButton variant="primary" onClick={() => scrollTo("contact")}>
-                Let&apos;s talk
-              </BrutalButton>
-              <BrutalButton as="a" href="/YashvanthS_Resume.pdf" download variant="ghost">
-                <Download className="w-4 h-4" />
-                Resume
-              </BrutalButton>
-            </div>
+            {/* Bottom strip — socials, time, CTAs, theme */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 24 }}
+              transition={{ delay: 0.5, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              className="relative px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-5 border-t-[2.5px] border-[var(--ink)] bg-[var(--paper)]"
+            >
+              {/* Socials row */}
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <span className="font-mono text-[9px] font-bold tracking-[0.22em] uppercase text-[var(--muted)]">
+                  follow ↗
+                </span>
+                <div className="flex items-center gap-1.5">
+                  {socials.slice(0, 5).map((s) => (
+                    <a
+                      key={s.name}
+                      href={s.href}
+                      {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
+                      aria-label={s.name}
+                      className="inline-flex items-center justify-center w-9 h-9 border-2 border-[var(--ink)] bg-[var(--surface)] text-[var(--ink)] shadow-[2px_2px_0_0_var(--ink)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_0_var(--ink)] transition-transform duration-150"
+                    >
+                      <span className="w-3.5 h-3.5">{s.icon}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA row */}
+              <div className="grid grid-cols-2 gap-3">
+                <BrutalButton variant="primary" onClick={() => scrollTo("contact")}>
+                  Let&apos;s talk
+                </BrutalButton>
+                <BrutalButton as="a" href="/YashvanthS_Resume.pdf" download variant="secondary">
+                  <Download className="w-4 h-4" />
+                  Resume
+                </BrutalButton>
+              </div>
+
+              {/* Footer line */}
+              <div className="mt-4 flex items-center justify-between font-mono text-[9px] tracking-[0.22em] uppercase text-[var(--muted)]">
+                <span>portfolio · 2026</span>
+                <span>chennai · ist</span>
+              </div>
+            </motion.div>
           </motion.nav>
         )}
       </AnimatePresence>

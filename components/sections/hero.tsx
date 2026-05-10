@@ -1,49 +1,113 @@
 "use client";
 
-import { Download, ArrowUpRight, Sparkles, ChevronDown } from "lucide-react";
+import { Download, ArrowUpRight, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
 import { socials } from "@/data/socials";
 import { BrutalButton, BrutalBadge, BrutalTag } from "@/components/ui/brutal";
+import { TextScramble } from "@/components/ui/text-scramble";
+import { useMagnetic } from "@/lib/use-magnetic";
 
 const roles = ["Full-Stack Dev", "AI Engineer", "CS Student"];
 
 function ScrollCue() {
   const [visible, setVisible] = useState(true);
   useEffect(() => {
-    const handler = () => setVisible(window.scrollY < 60);
+    const handler = () => setVisible(window.scrollY < 80);
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
   return (
     <div
-      className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none transition-opacity duration-500"
+      className="absolute bottom-8 left-6 sm:left-10 flex flex-col items-center gap-3 pointer-events-none transition-opacity duration-500"
       style={{ opacity: visible ? 1 : 0 }}
       aria-hidden="true"
     >
-      <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--muted)]">scroll</span>
-      <div className="scroll-cue-arrow w-8 h-8 flex items-center justify-center border-2 border-[var(--border-ink)] bg-[var(--surface)] shadow-[3px_3px_0_0_var(--border-ink)]">
-        <ChevronDown className="w-4 h-4 text-[var(--ink)]" />
+      <span className="font-mono text-[10px] tracking-[0.32em] uppercase text-[var(--muted)] [writing-mode:vertical-rl] rotate-180">
+        scroll · keep going
+      </span>
+      <div className="relative w-[2px] h-20 bg-[var(--border-ink)]/30 overflow-hidden">
+        <span className="scroll-cue-tick absolute left-0 right-0 h-3 bg-[var(--ink)]" />
       </div>
+      <span className="font-mono text-[9px] tracking-[0.32em] tabular-nums text-[var(--muted)]">
+        001
+      </span>
     </div>
   );
 }
 
 export function SpotlightHero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const spotlightRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const roleRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const socialsRef = useRef<HTMLDivElement>(null);
+  const primaryCtaRef = useMagnetic<HTMLDivElement>(0.18, 6);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const spot = spotlightRef.current;
+    if (!section || !spot) return;
+    if (window.matchMedia("(hover: none)").matches) return;
+    if (!shouldAnimate()) return;
+
+    let lastDot = 0;
+    const onMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      spot.style.setProperty("--x", `${x}%`);
+      spot.style.setProperty("--y", `${y}%`);
+
+      // Throttle: emit a fading ink dot every ~70ms
+      const now = performance.now();
+      if (now - lastDot < 70) return;
+      lastDot = now;
+
+      const dot = document.createElement("span");
+      dot.className = "ink-trail-dot";
+      dot.style.left = `${e.clientX - rect.left}px`;
+      dot.style.top = `${e.clientY - rect.top}px`;
+      section.appendChild(dot);
+      // Auto-remove after the CSS animation completes
+      window.setTimeout(() => dot.remove(), 900);
+    };
+    const onEnter = () => spot.setAttribute("data-active", "true");
+    const onLeave = () => spot.setAttribute("data-active", "false");
+
+    section.addEventListener("mousemove", onMove);
+    section.addEventListener("mouseenter", onEnter);
+    section.addEventListener("mouseleave", onLeave);
+    return () => {
+      section.removeEventListener("mousemove", onMove);
+      section.removeEventListener("mouseenter", onEnter);
+      section.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
 
   useEffect(() => {
     if (!shouldAnimate()) return;
     const ctx = gsap.context(() => {
-      gsap.to(".scroll-cue-arrow", {
-        y: 4, duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut",
-      });
+      gsap.fromTo(
+        ".scroll-cue-tick",
+        { y: -16, opacity: 0 },
+        {
+          y: 80,
+          opacity: 1,
+          duration: 1.6,
+          repeat: -1,
+          ease: "power2.in",
+          keyframes: {
+            "0%":   { y: -16, opacity: 0 },
+            "20%":  { opacity: 1 },
+            "80%":  { opacity: 1 },
+            "100%": { y: 80, opacity: 0 },
+          },
+        }
+      );
 
       const tl = gsap.timeline({ delay: 0.15 });
 
@@ -95,19 +159,7 @@ export function SpotlightHero() {
       id="home"
       className="relative min-h-[100dvh] flex items-center overflow-hidden"
     >
-      {/* Decorative offset squares — three palette swatches for visual rhythm */}
-      <div
-        className="hidden md:block absolute top-[18%] right-[6%] w-24 h-24 bg-[var(--ink)] border-[2.5px] border-[var(--border-ink)] shadow-brutal-lg rotate-12 pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="hidden md:block absolute bottom-[14%] right-[14%] w-14 h-14 bg-[var(--surface-alt)] border-[2.5px] border-[var(--border-ink)] shadow-brutal -rotate-12 pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="hidden md:block absolute top-[40%] right-[22%] w-8 h-8 bg-[var(--accent)] border-2 border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] rotate-45 pointer-events-none"
-        aria-hidden="true"
-      />
+      <div ref={spotlightRef} className="cursor-spotlight" aria-hidden="true" />
 
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 sm:px-10 pt-32 pb-28">
         {/* Availability badge */}
@@ -136,7 +188,7 @@ export function SpotlightHero() {
             className="hero-word inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-4 md:px-6 py-1 shadow-[8px_8px_0_0_var(--border-ink)] -rotate-1"
             style={{ opacity: 0 }}
           >
-            Sankar.
+            <TextScramble text="Sankar." startDelay={620} duration={700} />
           </span>
         </h1>
 
@@ -163,10 +215,12 @@ export function SpotlightHero() {
 
         {/* CTAs */}
         <div ref={ctaRef} className="flex flex-wrap items-center gap-4" style={{ opacity: 0 }}>
-          <BrutalButton as="link" href="/work" variant="primary" size="lg">
-            View my work
-            <ArrowUpRight className="w-4 h-4" />
-          </BrutalButton>
+          <div ref={primaryCtaRef} className="magnetic inline-flex">
+            <BrutalButton as="link" href="/work" variant="primary" size="lg">
+              View my work
+              <ArrowUpRight className="w-4 h-4" />
+            </BrutalButton>
+          </div>
 
           <BrutalButton as="link" href="#contact" variant="secondary" size="lg">
             Let&apos;s talk
@@ -190,10 +244,10 @@ export function SpotlightHero() {
               className="inline-flex items-center justify-center w-10 h-10
                          border-2 border-[var(--border-ink)] bg-[var(--surface)] text-[var(--ink)]
                          shadow-[3px_3px_0_0_var(--border-ink)]
-                         transition-transform duration-150
-                         hover:-translate-x-[1px] hover:-translate-y-[1px]
-                         hover:shadow-[4px_4px_0_0_var(--border-ink)]
-                         hover:bg-[var(--highlight)]
+                         transition-[transform,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]
+                         hover:-translate-x-[3px] hover:-translate-y-[3px]
+                         hover:shadow-[6px_6px_0_0_var(--border-ink)]
+                         hover:bg-[var(--surface-alt)]
                          active:translate-x-[2px] active:translate-y-[2px]
                          active:shadow-[1px_1px_0_0_var(--border-ink)]"
             >

@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Star, GitFork, Code2, ArrowLeft, Download, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Footer } from "@/components/sections/footer";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SectionBorder } from "@/components/ui/section-border";
@@ -67,9 +66,9 @@ function WorkNavbar() {
             <Link
               href="/"
               aria-label="Back to home"
-              className="relative h-10 w-10 shrink-0 border-2 border-[var(--border-ink)] overflow-hidden bg-[var(--accent)]"
+              className="logo-frame relative h-10 w-10 shrink-0 border-2 border-[var(--ink)] overflow-hidden shadow-[3px_3px_0_0_var(--ink)] transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px]"
             >
-              <Image src="/ys_red.webp" alt="" fill className="object-cover" quality={85} />
+              <span className="logo-mark" aria-hidden="true" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
