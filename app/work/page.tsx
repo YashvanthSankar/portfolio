@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Star, GitFork, Code2, ArrowLeft, Download, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Footer } from "@/components/sections/footer";
+import { Footer, ScrollProgressBar } from "@/components/sections/footer";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SectionBorder } from "@/components/ui/section-border";
 import { cn, throttle } from "@/lib/utils";
@@ -62,7 +62,7 @@ function WorkNavbar() {
     <>
       <header className={cn("sticky inset-x-0 top-0 transition-all duration-200", menuOpen ? "z-[130]" : "z-50", scrolled ? "py-3" : "py-4")}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between gap-2 px-3 py-2 border-[2.5px] border-[var(--border-ink)] bg-[var(--surface)] shadow-brutal">
+          <div className="flex items-center justify-between gap-2 px-3 py-2 border-[2.5px] border-[var(--ink)] bg-[var(--surface)] shadow-brutal">
             <Link
               href="/"
               aria-label="Back to home"
@@ -74,7 +74,7 @@ function WorkNavbar() {
             <nav className="hidden md:flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
               <Link
                 href="/"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-transparent font-display font-semibold text-sm text-[var(--ink)] hover:border-[var(--border-ink)] hover:bg-[var(--surface)] hover:shadow-[3px_3px_0_0_var(--border-ink)] hover:-translate-y-[1px] transition-transform duration-100"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-transparent font-display font-semibold text-sm text-[var(--ink)] transition-[transform,background-color,border-color,box-shadow] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-[2px] hover:border-[var(--ink)] hover:bg-[var(--surface-alt)] hover:shadow-[3px_3px_0_0_var(--ink)]"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Home
@@ -83,7 +83,7 @@ function WorkNavbar() {
                 href="https://github.com/YashvanthSankar"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-transparent font-display font-semibold text-sm text-[var(--ink)] hover:border-[var(--border-ink)] hover:bg-[var(--surface)] hover:shadow-[3px_3px_0_0_var(--border-ink)] hover:-translate-y-[1px] transition-transform duration-100"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-transparent font-display font-semibold text-sm text-[var(--ink)] transition-[transform,background-color,border-color,box-shadow] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-[2px] hover:border-[var(--ink)] hover:bg-[var(--surface-alt)] hover:shadow-[3px_3px_0_0_var(--ink)]"
               >
                 <GithubIcon className="w-3.5 h-3.5" />
                 GitHub
@@ -103,7 +103,7 @@ function WorkNavbar() {
                 onClick={() => setMenuOpen((p) => !p)}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
-                className="md:hidden inline-flex items-center justify-center w-10 h-10 border-2 border-[var(--border-ink)] bg-[var(--accent)] text-[var(--accent-ink)] shadow-[3px_3px_0_0_var(--border-ink)]"
+                className="md:hidden inline-flex items-center justify-center w-10 h-10 border-2 border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] shadow-[3px_3px_0_0_var(--ink)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_0_var(--ink)] transition-transform duration-150"
               >
                 <AnimatePresence mode="wait" initial={false}>
                   {menuOpen ? (
@@ -122,58 +122,133 @@ function WorkNavbar() {
         </div>
       </header>
 
+      {/* Full-screen typographic mobile menu — matches the home page treatment */}
       <AnimatePresence>
         {menuOpen && (
           <motion.nav
             key="panel"
-            initial={{ x: "-100%" }}
-            animate={{ x: "0%" }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[120] md:hidden flex h-dvh w-screen flex-col bg-[var(--paper)]"
+            initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
+            animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
+            exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
+            transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
+            className="fixed inset-0 z-[120] md:hidden flex h-dvh w-screen flex-col overflow-hidden bg-[var(--paper)]"
+            aria-label="Work page navigation"
           >
-            <div className="flex items-center justify-between px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-4 border-b-[2.5px] border-[var(--border-ink)]">
-              <span className="font-display font-bold text-lg">Menu</span>
-              <button
+            {/* Background watermark */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
+            >
+              <span
+                className="font-display font-bold leading-[0.85] tracking-[-0.06em] text-[var(--ink)] opacity-[0.04] whitespace-nowrap -mr-12 -mb-8"
+                style={{ fontSize: "clamp(14rem, 50vw, 28rem)" }}
+              >
+                WORK.
+              </span>
+            </div>
+            {/* Background grid texture */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.4]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(11,11,12,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(11,11,12,0.04) 1px, transparent 1px)",
+                backgroundSize: "40px 40px",
+              }}
+            />
+
+            {/* Top strip */}
+            <div className="relative flex items-center justify-between px-6 pt-[max(env(safe-area-inset-top),1.25rem)] pb-4 border-b-[2.5px] border-[var(--ink)]">
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.18, duration: 0.4 }}
+              >
+                <span className="inline-flex items-center gap-1.5 px-2 py-1 border-2 border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] font-mono text-[9px] font-bold tracking-[0.22em] uppercase">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--paper)] opacity-70" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--paper)]" />
+                  </span>
+                  menu · open
+                </span>
+              </motion.div>
+              <motion.button
+                initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
+                transition={{ delay: 0.18, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
                 onClick={() => setMenuOpen(false)}
                 aria-label="Close menu"
-                className="inline-flex items-center justify-center w-10 h-10 border-2 border-[var(--border-ink)] bg-[var(--accent)] text-[var(--accent-ink)] shadow-[3px_3px_0_0_var(--border-ink)]"
+                className="inline-flex items-center justify-center w-11 h-11 border-[2.5px] border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] shadow-[4px_4px_0_0_var(--ink)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_0_var(--ink)] transition-transform duration-150"
               >
-                <X className="w-4 h-4" />
-              </button>
+                <X className="w-5 h-5" />
+              </motion.button>
             </div>
 
-            <ul className="flex-1 flex flex-col justify-center px-6 gap-3">
-              <li>
-                <Link
-                  href="/"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full flex items-center gap-4 px-5 py-4 text-left border-[2.5px] border-[var(--border-ink)] bg-[var(--surface)] text-[var(--ink)] font-display font-bold text-2xl shadow-brutal hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_0_var(--border-ink)] transition-transform duration-150"
-                >
-                  <ArrowLeft className="w-5 h-5 shrink-0" aria-hidden="true" />
-                  Back to home
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/YashvanthSankar"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full flex items-center gap-4 px-5 py-4 text-left border-[2.5px] border-[var(--border-ink)] bg-[var(--ink)] text-[var(--paper)] font-display font-bold text-2xl shadow-brutal hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_0_var(--border-ink)] transition-transform duration-150"
-                >
-                  <GithubIcon className="w-5 h-5 shrink-0" />
-                  GitHub profile
-                </a>
-              </li>
+            {/* Big editorial nav list */}
+            <ul className="relative flex-1 flex flex-col justify-center px-6 gap-1 overflow-y-auto py-6">
+              {[
+                { label: "Home", href: "/", icon: ArrowLeft, num: "01" },
+                { label: "GitHub", href: "https://github.com/YashvanthSankar", icon: () => <GithubIcon className="w-5 h-5" />, num: "02", external: true },
+                { label: "Resume", href: "/YashvanthS_Resume.pdf", icon: Download, num: "03", download: true },
+              ].map((item, i) => {
+                const Tag: "a" | "span" = "a";
+                const props = item.external
+                  ? { href: item.href, target: "_blank" as const, rel: "noopener noreferrer" }
+                  : item.download
+                  ? { href: item.href, download: true }
+                  : { href: item.href };
+                const Icon = item.icon as React.ComponentType<{ className?: string }>;
+                return (
+                  <motion.li
+                    key={item.label}
+                    initial={{ opacity: 0, x: -40, skewX: 4 }}
+                    animate={{ opacity: 1, x: 0, skewX: 0 }}
+                    exit={{ opacity: 0, x: -40 }}
+                    transition={{
+                      delay: 0.22 + i * 0.06,
+                      duration: 0.45,
+                      ease: [0.32, 0.72, 0, 1],
+                    }}
+                  >
+                    <Tag
+                      {...props}
+                      onClick={() => setMenuOpen(false)}
+                      className="group relative w-full flex items-baseline gap-4 py-3 text-left border-b-2 border-dashed border-[var(--ink)]/20 transition-colors duration-200"
+                    >
+                      <span className="font-mono text-[11px] font-bold tabular-nums tracking-[0.18em] text-[var(--muted)] group-hover:text-[var(--ink)] transition-colors duration-200">
+                        / {item.num}
+                      </span>
+                      <span
+                        className="font-display font-bold leading-[0.95] tracking-[-0.04em] text-[var(--ink)]/85 group-hover:translate-x-2 group-active:translate-x-1 transition-[color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] inline-flex items-center gap-3"
+                        style={{ fontSize: "clamp(2.4rem, 11vw, 4rem)" }}
+                      >
+                        <Icon className="w-7 h-7 shrink-0 opacity-70" />
+                        {item.label}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="absolute left-0 right-0 bottom-0 h-[3px] bg-[var(--ink)] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                      />
+                    </Tag>
+                  </motion.li>
+                );
+              })}
             </ul>
 
-            <div className="px-6 pb-8 border-t-[2.5px] border-[var(--border-ink)] pt-5">
-              <BrutalButton as="a" href="/YashvanthS_Resume.pdf" download variant="ghost" className="w-full">
-                <Download className="w-4 h-4" />
-                Resume
-              </BrutalButton>
-            </div>
+            {/* Bottom strip */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 24 }}
+              transition={{ delay: 0.5, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              className="relative px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-5 border-t-[2.5px] border-[var(--ink)] bg-[var(--paper)]"
+            >
+              <div className="flex items-center justify-between font-mono text-[9px] tracking-[0.22em] uppercase text-[var(--muted)]">
+                <span>portfolio · 2026</span>
+                <span>github / repos</span>
+              </div>
+            </motion.div>
           </motion.nav>
         )}
       </AnimatePresence>
@@ -192,14 +267,8 @@ interface Repo {
   updated_at: string;
 }
 
-const repoHeaderVariants = [
-  "bg-[var(--accent)] text-[var(--accent-ink)]",
-  "bg-[var(--ink)] text-[var(--paper)]",
-  "bg-[var(--surface-alt)] text-[var(--ink)]",
-];
-
 function RepoCard({ repo, index }: { repo: Repo; index: number }) {
-  const headerClass = repoHeaderVariants[index % repoHeaderVariants.length];
+  const num = String(index + 1).padStart(2, "0");
 
   return (
     <motion.a
@@ -210,16 +279,35 @@ function RepoCard({ repo, index }: { repo: Repo; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: Math.min(index * 0.03, 0.3) }}
-      className="group flex flex-col bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] shadow-brutal brutal-card-hover"
+      className="group relative flex flex-col bg-[var(--surface)] border-[2.5px] border-[var(--ink)] shadow-brutal brutal-card-hover overflow-hidden"
     >
-      <div className={`flex items-center justify-between px-5 py-3 border-b-[2.5px] border-[var(--border-ink)] ${headerClass}`}>
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="font-mono text-xs font-bold shrink-0 opacity-70">~/</span>
-          <span className="font-display font-bold text-base truncate">{repo.name}</span>
-        </div>
-        <ExternalLink className="w-4 h-4 shrink-0 ml-2" aria-hidden="true" />
+      {/* Browser-chrome header */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b-2 border-[var(--ink)] bg-[var(--paper)]">
+        <span className="flex gap-1.5">
+          <span className="w-2 h-2 border-2 border-[var(--ink)] bg-[var(--paper)]" />
+          <span className="w-2 h-2 border-2 border-[var(--ink)] bg-[var(--paper)]" />
+          <span className="w-2 h-2 border-2 border-[var(--ink)] bg-[var(--paper)]" />
+        </span>
+        <span className="ml-1 flex-1 truncate font-mono text-[10px] font-bold tracking-wide text-[var(--muted)]">
+          github.com/YashvanthSankar/{repo.name}
+        </span>
+        <span className="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-[var(--muted)] tabular-nums">
+          {num}
+        </span>
       </div>
 
+      {/* Title row */}
+      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b-2 border-dashed border-[var(--ink)]/30">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="font-mono text-xs font-bold shrink-0 text-[var(--muted)]">~/</span>
+          <span className="font-display font-bold text-base text-[var(--ink)] truncate tracking-[-0.02em]">
+            {repo.name}
+          </span>
+        </div>
+        <ExternalLink className="w-4 h-4 shrink-0 text-[var(--muted)] transition-[transform,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:text-[var(--ink)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+      </div>
+
+      {/* Body */}
       <div className="flex flex-col flex-1 p-5 gap-4">
         <p className="text-sm text-[var(--ink)] leading-[1.6] flex-1 line-clamp-3">
           {repo.description ?? <span className="italic text-[var(--muted)]">No description</span>}
@@ -256,8 +344,16 @@ function RepoCard({ repo, index }: { repo: Repo; index: number }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] shadow-brutal">
-      <div className="px-5 py-3 border-b-[2.5px] border-[var(--border-ink)] bg-[var(--surface-alt)]">
+    <div className="bg-[var(--surface)] border-[2.5px] border-[var(--ink)] shadow-brutal overflow-hidden">
+      <div className="flex items-center gap-2 px-3 py-2 border-b-2 border-[var(--ink)] bg-[var(--paper)]">
+        <span className="flex gap-1.5">
+          <span className="w-2 h-2 border-2 border-[var(--ink)]" />
+          <span className="w-2 h-2 border-2 border-[var(--ink)]" />
+          <span className="w-2 h-2 border-2 border-[var(--ink)]" />
+        </span>
+        <div className="ml-1 h-2 flex-1 bg-[var(--ink)]/10 animate-pulse" />
+      </div>
+      <div className="px-5 py-4 border-b-2 border-dashed border-[var(--ink)]/30">
         <div className="h-4 w-36 bg-[var(--ink)]/15 animate-pulse" />
       </div>
       <div className="p-5 space-y-3">
@@ -296,6 +392,7 @@ export default function WorkPage() {
 
   return (
     <div className="relative min-h-screen isolate">
+      <ScrollProgressBar />
       <div className="fixed inset-0 -z-10 bg-brutal-grid" aria-hidden="true" />
       <WorkNavbar />
 
@@ -305,7 +402,7 @@ export default function WorkPage() {
           title={
             <>
               My{" "}
-              <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] -rotate-1">
+              <span className="inline-block bg-[var(--ink)] text-[var(--paper)] border-[3px] border-[var(--ink)] px-3 shadow-[6px_6px_0_0_var(--ink)] -rotate-1">
                 work.
               </span>
             </>
@@ -313,8 +410,11 @@ export default function WorkPage() {
           description="Every public GitHub repository, sorted by stars."
         />
         {!loading && !error && (
-          <p className="inline-flex items-center gap-2 mt-6 px-3 py-1 border-2 border-[var(--border-ink)] bg-[var(--surface)] shadow-[3px_3px_0_0_var(--border-ink)] font-mono text-xs font-bold uppercase tracking-widest tabular-nums">
-            <span className="w-2 h-2 bg-[var(--accent)]" aria-hidden="true" />
+          <p className="inline-flex items-center gap-2 mt-6 px-3 py-1 border-2 border-[var(--ink)] bg-[var(--surface)] shadow-[3px_3px_0_0_var(--ink)] font-mono text-xs font-bold uppercase tracking-widest tabular-nums">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--ink)] opacity-70" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--ink)]" />
+            </span>
             {repos.length} repositories
           </p>
         )}
@@ -323,10 +423,10 @@ export default function WorkPage() {
       <SectionBorder innerClassName="px-6 sm:px-10 py-10 md:py-14">
         {error ? (
           <div className="flex flex-col items-center justify-center py-24 gap-5">
-            <div className="px-6 py-4 bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] shadow-brutal font-display font-bold">
+            <div className="px-6 py-4 bg-[var(--ink)] text-[var(--paper)] border-[2.5px] border-[var(--ink)] shadow-brutal font-display font-bold">
               Failed to load repositories
             </div>
-            <BrutalButton onClick={() => window.location.reload()} variant="ghost">
+            <BrutalButton onClick={() => window.location.reload()} variant="secondary">
               Try again
             </BrutalButton>
           </div>
