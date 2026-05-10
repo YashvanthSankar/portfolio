@@ -154,8 +154,8 @@ export function AboutBento() {
       {/* PULL QUOTE — signature moment */}
       <div ref={quoteRef} className="mb-10 md:mb-14">
         <p
-          className="font-display font-bold leading-[0.95] tracking-[-0.045em] text-[var(--ink)] max-w-5xl"
-          style={{ fontSize: "clamp(2rem, 5.5vw, 4rem)" }}
+          className="font-display font-bold leading-[1.1] md:leading-[0.95] tracking-[-0.045em] text-[var(--ink)] max-w-5xl"
+          style={{ fontSize: "clamp(1.75rem, 5.5vw, 4rem)" }}
         >
           {[
             "I", "build", "small,", "fast",
@@ -169,7 +169,7 @@ export function AboutBento() {
               data-quote-word
               className={`inline-block mr-[0.18em] ${
                 ["small,", "fast"].includes(w)
-                  ? "underline decoration-[6px] underline-offset-[10px]"
+                  ? "underline decoration-[3px] md:decoration-[6px] underline-offset-[5px] md:underline-offset-[10px]"
                   : ""
               }`}
               style={{ opacity: 0 }}

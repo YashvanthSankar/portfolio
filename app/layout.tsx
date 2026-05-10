@@ -95,8 +95,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/ys_red.webp" type="image/webp" />
-        <link rel="icon" href="/ys_red.png" type="image/png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

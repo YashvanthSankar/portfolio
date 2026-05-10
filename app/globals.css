@@ -375,12 +375,12 @@ body {
 }
 
 /* ═══════════════════════════ LOGO MONO TREATMENT ════════════════════
- * Source: ys_red.png — red wavy contours + "yash_vanth" text on solid
- * black background. The .logo-mark element paints `var(--paper)`
- * through a luminance mask of the source: bright pixels (red) show the
- * paper color, dark pixels (black bg) become transparent. The wrapper
- * provides the ink-tone backdrop. Result: paper-on-ink stamp in both
- * themes, since paper and ink swap with the theme automatically.
+ * Source: ys_new.png — pure white "YASH_VANTH" wordmark with wavy
+ * contour rails and chevron accents on solid black. Used as a
+ * luminance mask so the white pixels reveal the element's background
+ * (paper-tone), and the black pixels stay transparent. The wrapper
+ * provides the ink-tone backdrop, so the result is a clean paper-on-
+ * ink stamp that flips automatically with the theme.
  * ═══════════════════════════════════════════════════════════════════ */
 .logo-frame {
   background: var(--ink);
@@ -390,8 +390,8 @@ body {
   width: 100%;
   height: 100%;
   background-color: var(--paper);
-  -webkit-mask-image: url("/ys_red.png");
-          mask-image: url("/ys_red.png");
+  -webkit-mask-image: url("/ys_new.png");
+          mask-image: url("/ys_new.png");
   -webkit-mask-mode: luminance;
           mask-mode: luminance;
   -webkit-mask-size: cover;
