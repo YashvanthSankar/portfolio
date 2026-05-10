@@ -20,7 +20,7 @@ function ScrollCue() {
   }, []);
   return (
     <div
-      className="absolute bottom-8 left-6 sm:left-10 flex flex-col items-center gap-3 pointer-events-none transition-opacity duration-500"
+      className="hidden md:flex absolute bottom-8 left-10 flex-col items-center gap-3 pointer-events-none transition-opacity duration-500"
       style={{ opacity: visible ? 1 : 0 }}
       aria-hidden="true"
     >

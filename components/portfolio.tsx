@@ -5,6 +5,7 @@ import { SpotlightHero } from "@/components/sections/hero";
 import { ScrollProgressBar } from "@/components/sections/footer";
 import { SectionIndex } from "@/components/section-index";
 import { KbdShortcuts } from "@/components/kbd-shortcuts";
+import { MobileProgress } from "@/components/mobile-progress";
 
 const skeleton = (h: string) => (
   <div
@@ -46,6 +47,7 @@ export function Portfolio() {
     <main id="main-content" className="relative min-h-screen">
       <ScrollProgressBar />
       <SectionIndex />
+      <MobileProgress />
       <KbdShortcuts />
       {/* Global brutalist grid background */}
       <div className="fixed inset-0 -z-10 bg-brutal-grid" aria-hidden="true" />

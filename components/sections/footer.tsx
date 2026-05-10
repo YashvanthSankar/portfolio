@@ -217,11 +217,11 @@ export function Footer() {
         className="border-t-[2.5px] border-[var(--border-ink)] overflow-hidden select-none"
         aria-hidden="true"
       >
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-10 pt-6 pb-2">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-10 pt-6 pb-2">
           <p
             data-footer-wordmark
             className="font-display font-bold leading-[0.85] tracking-[-0.06em] text-[var(--ink)] whitespace-nowrap"
-            style={{ fontSize: "clamp(4rem, 18vw, 16rem)", opacity: 0 }}
+            style={{ fontSize: "clamp(3rem, 14vw, 14rem)", opacity: 0 }}
           >
             YASHVANTH<span className="text-[var(--surface-alt)]">.</span>
           </p>
