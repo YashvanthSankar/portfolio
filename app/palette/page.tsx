@@ -109,8 +109,8 @@ export default function PalettePage() {
             </span>
           </h1>
           <p className="max-w-md text-base text-[var(--muted)] leading-relaxed">
-            No hue. A five-step grayscale ramp does everything color used to —
-            depth comes from contrast, weight, and rhythm, not chroma.
+            No hue. A five-step grayscale ramp does everything color used to.
+            Depth comes from contrast, weight, and rhythm, not chroma.
           </p>
         </div>
       </div>

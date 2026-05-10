@@ -215,7 +215,7 @@ export function ProjectsSection() {
             </span>
           </>
         }
-        description="Things I've shipped — across web apps, AI tooling, and quiet automation."
+        description="Things I've shipped across web apps, AI tooling, and quiet automation."
       />
 
       <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">

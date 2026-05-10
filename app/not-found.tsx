@@ -38,7 +38,7 @@ export default function NotFound() {
         </h1>
 
         <p className="text-base text-[var(--muted)] mb-10 leading-relaxed max-w-md">
-          The page you&apos;re looking for doesn&apos;t exist — or it moved while
+          The page you&apos;re looking for doesn&apos;t exist, or it moved while
           you weren&apos;t looking. The grid above doesn&apos;t mind. You can
           rejoin the rest of the site below.
         </p>
