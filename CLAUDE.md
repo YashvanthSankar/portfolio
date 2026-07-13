@@ -15,39 +15,45 @@ No test suite is configured.
 
 ## Architecture
 
-**Next.js 16 App Router** portfolio site with TypeScript, Tailwind CSS v4, and Framer Motion.
+**Next.js 16 App Router** portfolio site with TypeScript, Tailwind CSS v4, and Framer Motion (used sparingly, for `AnimatePresence` only).
 
 ### Routing
 
 - `/` → `app/page.tsx` renders `<Portfolio />` which orchestrates all page sections
-- `/work` → dedicated work/projects sub-page with its own navbar
-- `/api/contact` → POST endpoint using **Resend** to send contact form emails
+- `/work` → GitHub repo gallery; fetches static `public/repos.json` client-side (refresh it via `scripts/github_extractor.py`, then copy to `public/`)
+- `/palette` → design-token visualizer for the monochrome system
+- `/api/contact` → POST endpoint: Zod validation, honeypot field, in-memory rate limit (3/hr/IP, `lib/rate-limit.ts`), **Resend** email delivery
 
 ### Component Structure
 
-- `components/sections/` — page sections (Hero, Navbar, Projects, Experience, Contact, Footer, TechMarquee, AboutBento)
-- `components/ui/` — reusable visual primitives (Spotlight, GlowingEffect, MovingBorder, Timeline, CardSpotlight, etc.) sourced from **Aceternity UI** and **Magic UI**
-- `components/portfolio.tsx` — top-level wrapper that lazy-loads all sections with `next/dynamic`
-- `components/theme-provider.tsx` / `theme-toggle.tsx` — wraps **next-themes** with class-based dark mode
+- `components/sections/` — page sections (Hero, Navbar, Now, TechMarquee, About in `about-bento.tsx`, Projects, Experience, Contact, Footer)
+- `components/ui/` — minimal primitives: `primitives.tsx` (Button, Tag, Dot), `section.tsx` (Section wrapper), `section-header.tsx`, `reveal.tsx` (IntersectionObserver scroll reveal)
+- `components/portfolio.tsx` — top-level wrapper that lazy-loads heavy sections with `next/dynamic`
+- `components/theme-provider.tsx` / `theme-toggle.tsx` — **next-themes**, class strategy, storage key `portfolio-theme`; toggle uses the View Transitions API for a circular theme wipe (flushSync-forced snapshot — see comment in `theme-toggle.tsx`)
 
 ### Data Layer
 
 All content is static — no database or CMS:
 - `data/types.ts` — TypeScript interfaces (`Project`, `TechItem`, `TechCategory`, `Experience`)
-- `data/projects.ts`, `data/experience.ts`, `data/technologies.ts` — content arrays
+- `data/projects.ts`, `data/experience.ts`, `data/technologies.ts`, `data/socials.tsx` — content arrays
 
-### Styling
+### Design System — minimal monochrome
 
-- **Tailwind CSS v4** with `@tailwindcss/postcss`
-- Dark mode via `class` strategy (toggled by next-themes with storage key `portfolio-theme`)
-- Primary accent: `hsl(190 100% 50%)` cyan
-- Custom keyframe animations defined in `tailwind.config.ts`: `marquee`, `moveVertical`, `moveInCircle`, `moveHorizontal`, `grid`, `spotlight`
-- `lib/utils.ts` exports `cn()` (clsx + tailwind-merge), `shouldAnimate()` (respects `prefers-reduced-motion`), and `throttle()`
+`app/globals.css` is the source of truth (there is **no** `tailwind.config.ts`; Tailwind v4 reads the `@theme inline` block):
+
+- Zero-hue tokens: `--paper` (page), `--surface` (cards), `--surface-hover`, `--ink` (text), `--muted`, `--faint`, `--line` (hairline borders), `--line-strong`. Exposed as Tailwind utilities (`bg-paper`, `text-ink`, `border-line`, …)
+- Dark mode via `.dark` class (`@custom-variant`), toggled by next-themes
+- Depth comes from 1px hairline borders and spacing — no colored accents, no hard shadows
+- Shared rhythm: sections use `<Section>` (hairline top rule, `max-w-5xl px-6 py-24`); cards use the `.card` / `.card-hover` CSS classes; form inputs use `.field`
+- Motion: CSS-only (`.fade-up` load stagger, `.reveal` scroll entrance via the `Reveal` component, `.marquee` loop, `.link-underline` micro-interaction). One shared easing family (`--ease-out`, `--ease-spring`)
+- Fonts: Geist (`--font-display`) + Geist Mono (`--font-mono`); mono is reserved for small uppercase labels and meta text
 
 ### Key Patterns
 
+- Keep it quiet: prefer hairlines, whitespace, and small hover transitions (color, 0.5–2px translate) over decoration
 - Heavy sections are lazy-loaded via `next/dynamic` in `portfolio.tsx`
-- Animations use Framer Motion for component-level motion, Tailwind keyframes for CSS-only loops
-- Always check `shouldAnimate()` before triggering motion to respect reduced-motion preference
+- Always check `shouldAnimate()` (`lib/utils.ts`) before JS-driven motion; a global `prefers-reduced-motion` kill-switch also lives in `globals.css`
+- Scroll-driven behavior (nav scroll-spy, section index, counters, progress bar) uses plain scroll listeners / IntersectionObserver — no animation libraries
+- Keyboard shortcuts (`components/kbd-shortcuts.tsx`): H/N/S/A/W/J/C jump to sections, T toggles theme, ? shows the cheat-sheet
 - Path alias `@/*` maps to the repo root (`tsconfig.json`)
 - Security and cache headers are set in `next.config.ts` (do not remove them)

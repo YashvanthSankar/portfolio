@@ -1,16 +1,14 @@
 "use client";
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/navbar";
-import { SpotlightHero } from "@/components/sections/hero";
+import { Hero } from "@/components/sections/hero";
 import { ScrollProgressBar } from "@/components/sections/footer";
 import { SectionIndex } from "@/components/section-index";
 import { KbdShortcuts } from "@/components/kbd-shortcuts";
-import { MobileProgress } from "@/components/mobile-progress";
+import { BackToTop } from "@/components/mobile-progress";
 
 const skeleton = (h: string) => (
-  <div
-    className={`${h} border-t-[2.5px] border-[var(--border-ink)] bg-[var(--surface)] animate-pulse`}
-  />
+  <div className={`${h} border-t border-line bg-surface/60 animate-pulse`} />
 );
 
 const NowSection = dynamic(
@@ -21,16 +19,16 @@ const TechMarquee = dynamic(
   () => import("@/components/sections/tech-marquee").then((m) => ({ default: m.TechMarquee })),
   { ssr: false, loading: () => skeleton("h-[420px]") }
 );
-const AboutBento = dynamic(
-  () => import("@/components/sections/about-bento").then((m) => ({ default: m.AboutBento })),
+const AboutSection = dynamic(
+  () => import("@/components/sections/about-bento").then((m) => ({ default: m.AboutSection })),
   { loading: () => skeleton("h-[600px]") }
 );
 const ProjectsSection = dynamic(
   () => import("@/components/sections/projects").then((m) => ({ default: m.ProjectsSection })),
   { loading: () => skeleton("h-[700px]") }
 );
-const ExperienceTimeline = dynamic(
-  () => import("@/components/sections/experience").then((m) => ({ default: m.ExperienceTimeline })),
+const ExperienceSection = dynamic(
+  () => import("@/components/sections/experience").then((m) => ({ default: m.ExperienceSection })),
   { loading: () => skeleton("h-[700px]") }
 );
 const ContactSection = dynamic(
@@ -47,18 +45,16 @@ export function Portfolio() {
     <main id="main-content" className="relative min-h-screen">
       <ScrollProgressBar />
       <SectionIndex />
-      <MobileProgress />
+      <BackToTop />
       <KbdShortcuts />
-      {/* Global brutalist grid background */}
-      <div className="fixed inset-0 -z-10 bg-brutal-grid" aria-hidden="true" />
 
       <Navbar />
-      <SpotlightHero />
+      <Hero />
       <NowSection />
       <TechMarquee />
-      <AboutBento />
+      <AboutSection />
       <ProjectsSection />
-      <ExperienceTimeline />
+      <ExperienceSection />
       <ContactSection />
       <Footer />
     </main>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef, useEffect } from "react";
 import type { IconType } from "react-icons";
 import { FaAws, FaMobileAlt, FaSearch, FaShieldAlt } from "react-icons/fa";
 import { TbApi, TbDatabase } from "react-icons/tb";
@@ -12,10 +11,9 @@ import {
   SiSupabase, SiTailwindcss, SiTypescript, SiVercel,
 } from "react-icons/si";
 import { technologyCategories } from "@/data/technologies";
-import { gsap } from "@/lib/gsap";
-import { shouldAnimate } from "@/lib/utils";
-import { SectionBorder } from "@/components/ui/section-border";
+import { Section } from "@/components/ui/section";
 import { SectionHeader } from "@/components/ui/section-header";
+import { Reveal } from "@/components/ui/reveal";
 
 const monoIcons: Record<string, IconType> = {
   javascript: SiJavascript, typescript: SiTypescript, python: SiPython,
@@ -38,152 +36,65 @@ const allTech: Tech[] = technologyCategories.flatMap((c) => c.items);
 const rowA = allTech.filter((_, i) => i % 2 === 0);
 const rowB = allTech.filter((_, i) => i % 2 === 1);
 
-function TechChip({ item, variant = "surface" }: { item: Tech; variant?: "surface" | "ink" }) {
+function TechChip({ item }: { item: Tech }) {
   const Icon = monoIcons[item.icon] ?? TbDatabase;
-  const isInk = variant === "ink";
   return (
-    <span
-      className={`inline-flex items-stretch shrink-0 border-2 border-[var(--border-ink)] shadow-[2px_2px_0_0_var(--border-ink)] font-mono text-[13px] font-semibold ${
-        isInk ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--surface)] text-[var(--ink)]"
-      }`}
-    >
-      <span
-        className={`inline-flex items-center justify-center px-2.5 border-r-2 border-[var(--border-ink)] ${
-          isInk ? "bg-[var(--paper)] text-[var(--ink)]" : "bg-[var(--ink)] text-[var(--paper)]"
-        }`}
-      >
-        <Icon className="h-4 w-4" aria-hidden="true" />
-      </span>
-      <span className="inline-flex items-center px-3 py-1.5 whitespace-nowrap">
-        {item.name}
-      </span>
+    <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-1.5 text-[13px] text-muted transition-colors duration-200 hover:border-line-strong hover:text-ink">
+      <Icon className="h-3.5 w-3.5 text-faint" aria-hidden="true" />
+      <span className="whitespace-nowrap">{item.name}</span>
     </span>
   );
 }
 
 function MarqueeRow({
   items,
-  direction = "left",
-  speed = 60,
-  variant = "surface",
+  reverse = false,
+  duration = 55,
 }: {
   items: Tech[];
-  direction?: "left" | "right";
-  speed?: number;
-  variant?: "surface" | "ink";
+  reverse?: boolean;
+  duration?: number;
 }) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const wrap = wrapRef.current;
-    const track = trackRef.current;
-    if (!wrap || !track) return;
-    if (!shouldAnimate()) return;
-
-    let tween: gsap.core.Tween | null = null;
-    let cancelled = false;
-
-    const start = () => {
-      if (cancelled) return;
-      // Half of the duplicated track is the loop distance
-      const half = track.scrollWidth / 2;
-      if (half < 10) {
-        // Children not laid out yet — try again next frame
-        requestAnimationFrame(start);
-        return;
-      }
-      const duration = half / speed;
-      const from = direction === "left" ? 0 : -half;
-      const to = direction === "left" ? -half : 0;
-
-      tween?.kill();
-      tween = gsap.fromTo(
-        track,
-        { x: from },
-        { x: to, duration, ease: "none", repeat: -1 }
-      );
-    };
-
-    // Wait for fonts so chip widths are stable, then start
-    if (typeof document !== "undefined" && "fonts" in document) {
-      document.fonts.ready.then(() => requestAnimationFrame(start));
-    } else {
-      requestAnimationFrame(start);
-    }
-
-    const onEnter = () => tween?.timeScale(0.2);
-    const onLeave = () => tween?.timeScale(1);
-    wrap.addEventListener("mouseenter", onEnter);
-    wrap.addEventListener("mouseleave", onLeave);
-
-    // Re-measure on resize
-    const ro = new ResizeObserver(start);
-    ro.observe(track);
-
-    return () => {
-      cancelled = true;
-      tween?.kill();
-      wrap.removeEventListener("mouseenter", onEnter);
-      wrap.removeEventListener("mouseleave", onLeave);
-      ro.disconnect();
-    };
-  }, [direction, speed]);
+  const track = (hidden: boolean) => (
+    <div className="marquee-track" aria-hidden={hidden || undefined}>
+      {items.map((item) => (
+        <TechChip key={item.name} item={item} />
+      ))}
+    </div>
+  );
 
   return (
-    <div ref={wrapRef} className="relative overflow-hidden">
-      {/* Edge fades */}
-      <div
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
-        style={{ background: "linear-gradient(to right, var(--paper), transparent)" }}
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
-        style={{ background: "linear-gradient(to left, var(--paper), transparent)" }}
-        aria-hidden="true"
-      />
-
-      <div
-        ref={trackRef}
-        className="flex gap-3 py-3 will-change-transform"
-        style={{ width: "max-content" }}
-      >
-        {/* Render twice for seamless loop */}
-        {[...items, ...items].map((item, i) => (
-          <TechChip key={`${item.name}-${i}`} item={item} variant={variant} />
-        ))}
-      </div>
+    <div
+      className={`marquee py-1 ${reverse ? "marquee-reverse" : ""}`}
+      style={{ "--duration": `${duration}s` } as React.CSSProperties}
+    >
+      {track(false)}
+      {track(true)}
     </div>
   );
 }
 
 export function TechMarquee() {
   return (
-    <SectionBorder id="technologies" label="// stack" innerClassName="px-6 sm:px-10 py-16 md:py-24">
-      <SectionHeader
-        label="technologies"
-        title={
-          <>
-            Engineering{" "}
-            <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] -rotate-1">
-              Toolkit.
-            </span>
-          </>
-        }
-        description="The tools, frameworks, and languages I reach for to ship modern, opinionated software."
-      />
-
-      <div className="space-y-4 -mx-6 sm:-mx-10">
-        <MarqueeRow items={rowA} direction="left" speed={45} variant="surface" />
-        <MarqueeRow items={rowB} direction="right" speed={38} variant="ink" />
-        <MarqueeRow items={rowA} direction="left" speed={52} variant="surface" />
+    <Section id="technologies" innerClassName="px-0 sm:px-0 max-w-none">
+      <div className="mx-auto max-w-5xl px-6">
+        <SectionHeader
+          label="Stack"
+          title="Tools I reach for."
+          description="Opinionated about a few, comfortable with most — always picking up the next one."
+        />
       </div>
 
-      <p className="mt-10 max-w-md font-mono text-xs text-[var(--muted)] leading-relaxed">
-        <span className="font-bold text-[var(--ink)] uppercase tracking-[0.18em]">Hover</span> to slow,
-        opinionated about a few — comfortable with most. Always picking up the next one.
-      </p>
-    </SectionBorder>
+      <Reveal className="space-y-3">
+        <MarqueeRow items={rowA} duration={60} />
+        <MarqueeRow items={rowB} reverse duration={50} />
+      </Reveal>
+
+      <div className="mx-auto max-w-5xl px-6">
+        <p className="mt-10 font-mono text-[11px] tracking-wide text-faint">
+          Hover to pause
+        </p>
+      </div>
+    </Section>
   );
 }

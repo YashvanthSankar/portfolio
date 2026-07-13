@@ -13,8 +13,6 @@ const ContactSchema = z.object({
   website: z.string().max(0).optional().or(z.literal("")),
 });
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   const ip = getClientIp(req.headers);
   const limit = rateLimit(`contact:${ip}`, { limit: 3, windowMs: 60 * 60 * 1000 });
@@ -59,6 +57,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Email service unavailable" }, { status: 503 });
   }
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: "Portfolio Contact <contact@yashvanth.com>",
     to: "yashvanthsankar@gmail.com",

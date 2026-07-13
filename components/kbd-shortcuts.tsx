@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
 /**
  * Global keyboard shortcuts. Single-letter taps (no modifier) jump
  * around the site like a power-user palette. Ignores typing into
- * inputs/textareas. Shows a tiny corner hint on first key tap.
+ * inputs/textareas. Press ? to see the cheat-sheet.
  *
  *   H → home  ·  N → now  ·  S → stack  ·  A → about
  *   W → work  ·  J → journey  ·  C → contact  ·  T → toggle theme
@@ -26,7 +26,6 @@ export function KbdShortcuts() {
   const { resolvedTheme, setTheme } = useTheme();
   const [hintOpen, setHintOpen] = useState(false);
   const [pulse, setPulse] = useState<string | null>(null);
-  const seen = useRef(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -41,7 +40,6 @@ export function KbdShortcuts() {
       if (k === "?") {
         e.preventDefault();
         setHintOpen((p) => !p);
-        seen.current = true;
         return;
       }
       if (k === "escape") {
@@ -61,12 +59,6 @@ export function KbdShortcuts() {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
         setPulse(k.toUpperCase());
         setTimeout(() => setPulse(null), 600);
-        // First-time tap shows the hint pill briefly
-        if (!seen.current) {
-          seen.current = true;
-          setHintOpen(true);
-          setTimeout(() => setHintOpen(false), 3200);
-        }
       }
     };
 
@@ -80,10 +72,10 @@ export function KbdShortcuts() {
       {pulse && (
         <div
           aria-hidden="true"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] pointer-events-none"
+          className="pointer-events-none fixed bottom-6 left-1/2 z-[60] -translate-x-1/2"
         >
           <span
-            className="inline-flex items-center justify-center min-w-12 h-12 px-3 border-[2.5px] border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] font-display font-bold text-2xl shadow-[5px_5px_0_0_var(--ink)] animate-[reveal-up_400ms_var(--ease-spring)_forwards]"
+            className="inline-flex h-11 min-w-11 items-center justify-center rounded-xl bg-ink px-3 text-lg font-semibold text-paper shadow-lg animate-[reveal-up_300ms_var(--ease-out)_forwards]"
             style={{ opacity: 0 }}
           >
             {pulse}
@@ -91,28 +83,28 @@ export function KbdShortcuts() {
         </div>
       )}
 
-      {/* Hint pill — bottom-right corner */}
+      {/* Cheat-sheet — bottom-left, toggled with ? */}
       <div
-        className={`hidden md:flex fixed bottom-6 right-6 z-[55] flex-col items-end gap-2 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+        className={`fixed bottom-5 left-5 z-[55] hidden transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] md:block ${
           hintOpen
-            ? "opacity-100 translate-y-0 pointer-events-auto"
-            : "opacity-0 translate-y-2 pointer-events-none"
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-2 opacity-0"
         }`}
       >
-        <div className="border-[2.5px] border-[var(--ink)] bg-[var(--surface)] shadow-[5px_5px_0_0_var(--ink)] p-4 max-w-xs">
-          <div className="flex items-center justify-between gap-4 mb-3">
-            <span className="font-mono text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--muted)]">
+        <div className="card w-56 p-4 shadow-lg">
+          <div className="mb-3 flex items-center justify-between">
+            <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">
               Shortcuts
             </span>
             <button
               onClick={() => setHintOpen(false)}
               aria-label="Close shortcuts"
-              className="font-mono text-[10px] font-bold text-[var(--ink)] hover:underline"
+              className="font-mono text-[11px] text-muted transition-colors hover:text-ink"
             >
               esc
             </button>
           </div>
-          <ul className="space-y-1.5 text-xs">
+          <ul className="space-y-1.5">
             {[
               ["H", "Home"],
               ["N", "Now"],
@@ -125,8 +117,8 @@ export function KbdShortcuts() {
               ["?", "Toggle this"],
             ].map(([k, l]) => (
               <li key={k} className="flex items-center justify-between gap-3">
-                <span className="text-[var(--ink)] font-display font-semibold">{l}</span>
-                <kbd className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 border-2 border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] font-mono text-[10px] font-bold shadow-[2px_2px_0_0_var(--ink)]">
+                <span className="text-[13px] text-muted">{l}</span>
+                <kbd className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-line bg-surface-hover px-1.5 font-mono text-[10px] font-medium text-ink">
                   {k}
                 </kbd>
               </li>
@@ -134,17 +126,6 @@ export function KbdShortcuts() {
           </ul>
         </div>
       </div>
-
-      {/* Tiny "?" trigger — fixed bottom-right when hint closed */}
-      <button
-        onClick={() => setHintOpen(true)}
-        aria-label="Show keyboard shortcuts"
-        className={`hidden md:inline-flex fixed bottom-6 right-6 z-[54] items-center justify-center w-9 h-9 border-2 border-[var(--ink)] bg-[var(--surface)] text-[var(--ink)] font-display font-bold text-sm shadow-[3px_3px_0_0_var(--ink)] transition-[transform,box-shadow,opacity] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_0_var(--ink)] ${
-          hintOpen ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
-      >
-        ?
-      </button>
     </>
   );
 }

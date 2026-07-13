@@ -25,7 +25,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   }, []);
 
   if (!mounted) {
-    return <div className="w-10 h-10" aria-hidden="true" />;
+    return <div className="h-9 w-9" aria-hidden="true" />;
   }
 
   const isDark = resolvedTheme === "dark";
@@ -81,12 +81,8 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       onClick={handleToggle}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
       className={cn(
-        "group relative inline-flex items-center justify-center w-10 h-10 overflow-hidden",
-        "border-2 border-[var(--border-ink)] bg-[var(--surface)]",
-        "shadow-[3px_3px_0_0_var(--border-ink)]",
-        "transition-[transform,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]",
-        "hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_0_var(--border-ink)] hover:bg-[var(--surface-alt)]",
-        "active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_0_var(--border-ink)]",
+        "relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full",
+        "text-muted transition-colors duration-200 hover:bg-surface-hover hover:text-ink",
         className
       )}
     >
@@ -98,7 +94,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         }}
         aria-hidden="true"
       >
-        <Sun className="w-4 h-4" />
+        <Sun className="h-4 w-4" />
       </span>
       <span
         className="absolute inset-0 flex items-center justify-center transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
@@ -108,7 +104,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         }}
         aria-hidden="true"
       >
-        <Moon className="w-4 h-4" />
+        <Moon className="h-4 w-4" />
       </span>
     </button>
   );

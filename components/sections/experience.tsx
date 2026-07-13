@@ -1,26 +1,10 @@
 "use client";
 
-import { Timeline } from "@/components/ui/timeline";
-import { SectionBorder } from "@/components/ui/section-border";
-import { GraduationCap, Briefcase, Code2 } from "lucide-react";
 import { experience } from "@/data/experience";
-import { Experience } from "@/data/types";
-import { BrutalTag } from "@/components/ui/brutal";
-
-/**
- * Header bg + icon glyph both vary per entry type. Education uses
- * surface-alt (warm beige) so it reads as the "softer" marker in the set;
- * work uses the accent. Icon differentiates sub-types.
- */
-function ExpIcon({ type, title }: { type: string; title: string }) {
-  const cn = "w-4 h-4";
-  const titleLower = title.toLowerCase();
-  if (type === "education") return <GraduationCap className={cn} aria-hidden="true" />;
-  if (titleLower.includes("web") || titleLower.includes("dev")) {
-    return <Code2 className={cn} aria-hidden="true" />;
-  }
-  return <Briefcase className={cn} aria-hidden="true" />;
-}
+import { Section } from "@/components/ui/section";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Reveal } from "@/components/ui/reveal";
+import { Tag, Dot } from "@/components/ui/primitives";
 
 function isOngoing(period: string): boolean {
   // Match patterns like "2024-2029", "2024-Present"
@@ -33,90 +17,71 @@ function isOngoing(period: string): boolean {
   return !isNaN(endYear) && endYear >= currentYear;
 }
 
-function ExpCard({ item }: { item: Experience }) {
-  const headerBg =
-    item.type === "education"
-      ? "bg-[var(--surface-alt)] text-[var(--ink)]"
-      : "bg-[var(--accent)] text-[var(--accent-ink)]";
-
-  const ongoing = isOngoing(item.period);
-  const typeLabel = item.type === "education" ? "EDU" : "WORK";
-
+export function ExperienceSection() {
   return (
-    <article className="group bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] shadow-brutal brutal-card-hover overflow-hidden">
-      <div className={`flex items-center gap-3 px-5 py-3 border-b-[2.5px] border-[var(--border-ink)] ${headerBg}`}>
-        <div className="inline-flex items-center justify-center w-9 h-9 border-2 border-[var(--border-ink)] bg-[var(--paper)] text-[var(--ink)] shadow-[2px_2px_0_0_var(--border-ink)]">
-          <ExpIcon type={item.type} title={item.title} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="font-display font-bold text-base truncate">{item.title}</h3>
-          {item.organization && (
-            <p className="font-mono text-xs font-semibold opacity-90">{item.organization}</p>
-          )}
-        </div>
-        <span className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[10px] font-bold tracking-[0.2em] uppercase shrink-0">
-          {ongoing && (
-            <span className="relative flex h-2 w-2 items-center justify-center" aria-label="ongoing">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full border-2 border-current opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-current" />
-            </span>
-          )}
-          {typeLabel}
-        </span>
-      </div>
+    <Section id="experience">
+      <SectionHeader
+        label="Journey"
+        title="Where I've been."
+        description="Studying, shipping, learning. The chapters that brought me here."
+      />
 
-      <div className="p-5">
-        <p className="text-sm md:text-base text-[var(--ink)] leading-[1.65] mb-4">
-          {item.description}
-        </p>
+      <ol className="divide-y divide-line border-t border-line">
+        {experience.map((item, i) => {
+          const ongoing = isOngoing(item.period);
+          return (
+            <Reveal as="li" key={`${item.title}-${i}`} delay={i * 60}>
+              <div className="grid gap-3 py-10 md:grid-cols-[180px_1fr] md:gap-10">
+                {/* Period */}
+                <div className="flex items-start gap-2.5 pt-0.5">
+                  <span className="font-mono text-[13px] tabular-nums tracking-wide text-muted">
+                    {item.period}
+                  </span>
+                  {ongoing && <Dot className="mt-[5px] text-ink" />}
+                </div>
 
-        {item.bullets && (
-          <ul className="space-y-2 mb-4">
-            {item.bullets.map((b, idx) => (
-              <li key={idx} className="flex items-start gap-3 text-sm text-[var(--ink)]">
-                <span
-                  className="mt-1.5 w-2.5 h-2.5 bg-[var(--ink)] border-2 border-[var(--border-ink)] shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:rotate-45"
-                  aria-hidden="true"
-                />
-                <span className="leading-[1.6]">{b}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+                {/* Body */}
+                <div>
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <h3 className="text-base font-medium text-ink">{item.title}</h3>
+                    {item.organization && (
+                      <span className="text-sm text-faint">{item.organization}</span>
+                    )}
+                    <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
+                      {item.type === "education" ? "Education" : "Work"}
+                    </span>
+                  </div>
 
-        {item.tags && item.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1 border-t-2 border-dashed border-[var(--border-ink)]/30 mt-3 pt-3">
-            {item.tags.map((tag) => (
-              <BrutalTag key={tag}>{tag}</BrutalTag>
-            ))}
-          </div>
-        )}
-      </div>
-    </article>
-  );
-}
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+                    {item.description}
+                  </p>
 
-export function ExperienceTimeline() {
-  const grouped = experience.reduce((acc, item) => {
-    if (!acc[item.period]) acc[item.period] = [];
-    acc[item.period].push(item);
-    return acc;
-  }, {} as Record<string, Experience[]>);
+                  {item.bullets && (
+                    <ul className="mt-4 space-y-1.5">
+                      {item.bullets.map((b, idx) => (
+                        <li key={idx} className="flex gap-2.5 text-sm leading-relaxed text-muted">
+                          <span className="select-none text-faint" aria-hidden="true">
+                            –
+                          </span>
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
 
-  const timelineData = Object.entries(grouped).map(([period, items]) => ({
-    title: period,
-    content: (
-      <div className="space-y-5">
-        {items.map((item, i) => (
-          <ExpCard key={i} item={item} />
-        ))}
-      </div>
-    ),
-  }));
-
-  return (
-    <SectionBorder id="experience" label="// journey">
-      <Timeline data={timelineData} />
-    </SectionBorder>
+                  {item.tags && item.tags.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {item.tags.map((tag) => (
+                        <Tag key={tag}>{tag}</Tag>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Reveal>
+          );
+        })}
+      </ol>
+    </Section>
   );
 }
