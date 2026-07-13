@@ -10,10 +10,8 @@ const ContactSchema = z.object({
   email: z.string().trim().email("Invalid email").max(200),
   message: z.string().trim().min(10, "Message too short").max(4000, "Message too long"),
   /* Honeypot — must be empty. Hidden from real users via CSS. */
-  website: z.string().max(0).optional().or(z.literal("")),
+  website: z.string().max(200).optional(),
 });
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   const ip = getClientIp(req.headers);
@@ -54,18 +52,26 @@ export async function POST(req: Request) {
 
   const { name, email, message } = parsed.data;
 
-  if (!process.env.RESEND_API_KEY) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
     console.error("RESEND_API_KEY missing");
     return NextResponse.json({ error: "Email service unavailable" }, { status: 503 });
   }
+  const resend = new Resend(apiKey);
 
-  const { error } = await resend.emails.send({
-    from: "Portfolio Contact <contact@yashvanth.com>",
-    to: "yashvanthsankar@gmail.com",
-    replyTo: email,
-    subject: `Portfolio message from ${name}`,
-    text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
-  });
+  let error: unknown;
+  try {
+    ({ error } = await resend.emails.send({
+      from: "Portfolio Contact <contact@yashvanth.com>",
+      to: "yashvanthsankar@gmail.com",
+      replyTo: email,
+      subject: `Portfolio message from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+    }));
+  } catch (cause) {
+    console.error("Resend transport error:", cause);
+    return NextResponse.json({ error: "Failed to send" }, { status: 502 });
+  }
 
   if (error) {
     console.error("Resend error:", error);

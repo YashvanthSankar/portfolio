@@ -2,48 +2,24 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { RefreshCw, Home } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => console.error(error), [error]);
 
   return (
-    <div className="min-h-screen bg-brutal-grid flex items-center justify-center px-6 py-16">
-      <div className="relative max-w-lg w-full bg-[var(--surface)] border-[2.5px] border-[var(--ink)] p-8 sm:p-12 shadow-[10px_10px_0_0_var(--ink)]">
-        <div className="absolute -top-4 -left-4 inline-flex items-center gap-2 px-3 py-1 bg-[var(--ink)] text-[var(--paper)] border-[2.5px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] font-mono font-bold text-[11px] tracking-[0.22em] uppercase -rotate-sticker-2">
-          <span className="w-1.5 h-1.5 bg-[var(--paper)]" />
-          Error 500
-        </div>
-
-        <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] mb-4">
-          Something broke.
-        </h1>
-        <p className="text-sm text-[var(--muted)] mb-8 leading-relaxed">
-          An unexpected error occurred. The page failed to render correctly.
-          {error.digest && (
-            <span className="block mt-2 font-mono text-xs">digest: {error.digest}</span>
-          )}
+    <main id="main-content" className="site-container flex min-h-screen items-center py-20">
+      <div className="max-w-2xl">
+        <span className="eyebrow">Something went wrong</span>
+        <h1 className="mt-7 text-[clamp(3rem,8vw,6rem)] font-medium leading-[0.94] tracking-[-0.065em]">A temporary interruption.</h1>
+        <p className="mt-6 max-w-lg text-base leading-7 text-[var(--muted)]">
+          The page could not finish loading. Try once more, or return home.
         </p>
-
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button onClick={reset} className="brutal-btn">
-            <RefreshCw className="w-4 h-4" />
-            Try again
-          </button>
-          <Link href="/" className="brutal-btn brutal-btn-secondary">
-            <Home className="w-4 h-4" />
-            Go home
-          </Link>
+        <div className="mt-9 flex flex-wrap gap-3">
+          <button type="button" onClick={reset} className="button-primary"><RotateCcw className="h-4 w-4" />Try again</button>
+          <Link href="/" className="button-secondary"><ArrowLeft className="h-4 w-4" />Go home</Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

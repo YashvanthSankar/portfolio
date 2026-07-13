@@ -138,13 +138,13 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           storageKey="portfolio-theme"
-          defaultTheme="light"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--surface)] focus:text-[var(--ink)] focus:border-2 focus:border-[var(--ink)] focus:shadow-[4px_4px_0_0_var(--ink)] focus:text-sm focus:font-bold"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-[var(--ink)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--paper)]"
           >
             Skip to main content
           </a>
