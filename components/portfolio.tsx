@@ -1,66 +1,86 @@
 "use client";
+
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import { Navbar } from "@/components/sections/navbar";
-import { SpotlightHero } from "@/components/sections/hero";
+import { Hero } from "@/components/sections/hero";
+import { SelectedWork } from "@/components/sections/projects";
 import { ScrollProgressBar } from "@/components/sections/footer";
 import { SectionIndex } from "@/components/section-index";
 import { KbdShortcuts } from "@/components/kbd-shortcuts";
 import { MobileProgress } from "@/components/mobile-progress";
+import { ScrollTrigger } from "@/lib/gsap";
 
-const skeleton = (h: string) => (
+/**
+ * Skeletons carry the same min-height as the real section so swapping a
+ * dynamic chunk in doesn't shift layout under ScrollTrigger's measurements.
+ */
+const skeleton = (minHeight: number) => (
   <div
-    className={`${h} border-t-[2.5px] border-[var(--border-ink)] bg-[var(--surface)] animate-pulse`}
+    style={{ minHeight }}
+    className="border-t border-[var(--line-1)] bg-[var(--bg-0)]"
   />
 );
 
+const About = dynamic(
+  () => import("@/components/sections/about").then((m) => ({ default: m.About })),
+  { loading: () => skeleton(900) }
+);
+const ExperienceSection = dynamic(
+  () =>
+    import("@/components/sections/experience").then((m) => ({
+      default: m.ExperienceSection,
+    })),
+  { loading: () => skeleton(700) }
+);
 const NowSection = dynamic(
   () => import("@/components/sections/now").then((m) => ({ default: m.NowSection })),
-  { loading: () => skeleton("h-[400px]") }
+  { loading: () => skeleton(560) }
 );
-const TechMarquee = dynamic(
-  () => import("@/components/sections/tech-marquee").then((m) => ({ default: m.TechMarquee })),
-  { ssr: false, loading: () => skeleton("h-[420px]") }
-);
-const AboutBento = dynamic(
-  () => import("@/components/sections/about-bento").then((m) => ({ default: m.AboutBento })),
-  { loading: () => skeleton("h-[600px]") }
-);
-const ProjectsSection = dynamic(
-  () => import("@/components/sections/projects").then((m) => ({ default: m.ProjectsSection })),
-  { loading: () => skeleton("h-[700px]") }
-);
-const ExperienceTimeline = dynamic(
-  () => import("@/components/sections/experience").then((m) => ({ default: m.ExperienceTimeline })),
-  { loading: () => skeleton("h-[700px]") }
+const Stack = dynamic(
+  () => import("@/components/sections/stack").then((m) => ({ default: m.Stack })),
+  { loading: () => skeleton(800) }
 );
 const ContactSection = dynamic(
-  () => import("@/components/sections/contact").then((m) => ({ default: m.ContactSection })),
-  { loading: () => skeleton("h-[500px]") }
+  () =>
+    import("@/components/sections/contact").then((m) => ({ default: m.ContactSection })),
+  { loading: () => skeleton(760) }
 );
 const Footer = dynamic(
   () => import("@/components/sections/footer").then((m) => ({ default: m.Footer })),
-  { loading: () => skeleton("h-24") }
+  { loading: () => skeleton(600) }
 );
 
 export function Portfolio() {
+  /* Late-arriving chunks change document height; one debounced refresh
+     keeps every trigger's start/end honest. */
+  useEffect(() => {
+    const id = window.setTimeout(() => ScrollTrigger.refresh(), 400);
+    return () => window.clearTimeout(id);
+  }, []);
+
   return (
-    <main id="main-content" className="relative min-h-screen">
+    <>
       <ScrollProgressBar />
+      <Navbar />
       <SectionIndex />
       <MobileProgress />
       <KbdShortcuts />
-      {/* Global brutalist grid background */}
-      <div className="fixed inset-0 -z-10 bg-brutal-grid" aria-hidden="true" />
 
-      <Navbar />
-      <SpotlightHero />
-      <NowSection />
-      <TechMarquee />
-      <AboutBento />
-      <ProjectsSection />
-      <ExperienceTimeline />
-      <ContactSection />
-      <Footer />
-    </main>
+      <main id="main-content" className="relative">
+        {/* Hero stays pinned at z-0 while the content below scrolls over it */}
+        <Hero />
+
+        <div className="relative z-10">
+          <SelectedWork />
+          <About />
+          <ExperienceSection />
+          <NowSection />
+          <Stack />
+          <ContactSection />
+          <Footer />
+        </div>
+      </main>
+    </>
   );
 }

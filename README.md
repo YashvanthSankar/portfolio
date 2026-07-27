@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# yashvanth.com
 
-## Getting Started
+Personal portfolio — a dark, scroll-driven site with a WebGL hero, built to be
+fast first and cinematic second.
 
-First, run the development server:
+**Live:** [yashvanth.com](https://yashvanth.com)
+
+## Stack
+
+| | |
+|---|---|
+| Framework | Next.js 16 (App Router), React 19, TypeScript |
+| Styling | Tailwind CSS v4 (CSS-first tokens, no config file) |
+| Motion | GSAP + ScrollTrigger + SplitText, Lenis smooth scroll |
+| Graphics | Raw WebGL — one shader, no three.js |
+| Type | Geist Sans / Geist Mono / Instrument Serif |
+| Mail | Resend |
+| Hosting | Vercel |
+
+## Running locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+RESEND_API_KEY=re_…   # contact form; without it /api/contact returns 503
+GITHUB_TOKEN=ghp_…    # optional, only for `npm run repos`
+```
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev      # development server
+npm run build    # production build
+npm run start    # serve the production build
+npm run lint     # ESLint
+npm run repos    # refresh public/repos.json from the GitHub API
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How it's put together
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/               routes, metadata, OG images, contact API
+components/
+  gl/              WebGL hero canvas + GLSL shader
+  providers/       Lenis + ScrollTrigger wiring, useScrollTo()
+  sections/        hero, work, about, experience, now, stack, contact, footer
+  ui/              section header, project cover, text scramble
+data/              all site content (projects, experience, stack, socials)
+lib/               gsap setup, split-text reveals, rate limiter, helpers
+```
 
-## Deploy on Vercel
+A few decisions worth knowing:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **The hero canvas never blocks the page.** It initialises on idle after
+  first paint, pauses when scrolled away or backgrounded, and sits on top of a
+  CSS gradient that shows through if WebGL is unavailable.
+- **Motion is opt-out by default.** Every reveal, pin, and scrub is gated on
+  `prefers-reduced-motion`, and hidden state is applied from JS so content is
+  still readable if scripts fail.
+- **Project screenshots are optional.** Without an image, a generative
+  typographic cover is derived from the project title.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Editing content
+
+Everything lives in `data/`. Add a project to `data/projects.ts`, a role to
+`data/experience.ts`, tools to `data/technologies.ts`. The "Now" section is
+inline in `components/sections/now.tsx` — update `lastUpdated` when you change
+it.
+
+## License
+
+Content and design © Yashvanth Sankar. Code is free to learn from.

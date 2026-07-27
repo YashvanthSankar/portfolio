@@ -15,118 +15,78 @@ export default async function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#FAFAFA",
+          background: "#0A0A0B",
           backgroundImage:
-            "linear-gradient(rgba(11,11,12,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(11,11,12,0.05) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-          padding: "64px 72px",
+            "radial-gradient(60% 70% at 20% 25%, rgba(200,240,75,0.14), transparent 60%), radial-gradient(50% 60% at 82% 80%, rgba(200,240,75,0.06), transparent 55%)",
+          padding: "68px 76px",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
-          color: "#0B0B0C",
+          color: "#F4F4F2",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              padding: "10px 18px",
-              background: "#F0F0F2",
-              border: "3px solid #0B0B0C",
-              boxShadow: "6px 6px 0 0 #0B0B0C",
-              fontWeight: 700,
-              fontSize: 20,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              transform: "rotate(-2deg)",
-            }}
-          >
-            <div style={{ width: 12, height: 12, background: "#0B0B0C" }} />
-            GITHUB / REPOS
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ width: 10, height: 10, borderRadius: 5, background: "#C8F04B" }} />
+            <div
+              style={{
+                display: "flex",
+                fontSize: 19,
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "#9E9EA6",
+              }}
+            >
+              GitHub / Repositories
+            </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              padding: "10px 18px",
-              background: "#FFFFFF",
-              border: "3px solid #0B0B0C",
-              boxShadow: "6px 6px 0 0 #0B0B0C",
-              fontWeight: 600,
-              fontSize: 20,
-            }}
-          >
+          <div style={{ display: "flex", fontSize: 19, color: "#9E9EA6" }}>
             yashvanth.com/work
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 124, fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 0.9, color: "#0B0B0C", display: "flex" }}>
-            My
+          <div
+            style={{
+              display: "flex",
+              fontSize: 130,
+              fontWeight: 600,
+              letterSpacing: "-0.05em",
+              lineHeight: 0.92,
+            }}
+          >
+            Selected
           </div>
-          <div style={{ display: "flex", marginTop: 8 }}>
+          <div style={{ display: "flex", alignItems: "flex-end" }}>
             <div
               style={{
-                fontSize: 124,
-                fontWeight: 700,
-                letterSpacing: "-0.05em",
-                lineHeight: 0.9,
-                color: "#FAFAFA",
-                background: "#0B0B0C",
-                border: "4px solid #0B0B0C",
-                boxShadow: "10px 10px 0 0 #0B0B0C",
-                padding: "0 28px",
-                transform: "rotate(-1deg)",
                 display: "flex",
+                fontSize: 130,
+                fontWeight: 600,
+                letterSpacing: "-0.05em",
+                lineHeight: 0.92,
               }}
             >
-              Work.
+              work
+            </div>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 130,
+                fontWeight: 600,
+                lineHeight: 0.92,
+                color: "#C8F04B",
+              }}
+            >
+              .
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div
-            style={{
-              display: "flex",
-              padding: "10px 18px",
-              background: "#0B0B0C",
-              color: "#FAFAFA",
-              border: "3px solid #0B0B0C",
-              boxShadow: "4px 4px 0 0 #0B0B0C",
-              fontWeight: 600,
-              fontSize: 22,
-            }}
-          >
-            Open source
-          </div>
-          <div
-            style={{
-              display: "flex",
-              padding: "10px 18px",
-              background: "#FFFFFF",
-              border: "3px solid #0B0B0C",
-              boxShadow: "4px 4px 0 0 #0B0B0C",
-              fontWeight: 600,
-              fontSize: 22,
-              transform: "rotate(-2deg)",
-            }}
-          >
-            20+ projects
-          </div>
-          <div
-            style={{
-              display: "flex",
-              padding: "10px 18px",
-              background: "#F0F0F2",
-              color: "#0B0B0C",
-              border: "3px solid #0B0B0C",
-              boxShadow: "4px 4px 0 0 #0B0B0C",
-              fontWeight: 600,
-              fontSize: 22,
-              transform: "rotate(1.5deg)",
-            }}
-          >
-            Sorted by stars
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div style={{ display: "flex", width: "100%", height: 1, background: "rgba(244,244,242,0.12)" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
+            <div style={{ display: "flex", fontSize: 24 }}>Open source</div>
+            <div style={{ display: "flex", fontSize: 24 }}>30+ repositories</div>
+            <div style={{ display: "flex", fontSize: 24, color: "#5C5C64" }}>Sorted by stars</div>
           </div>
         </div>
       </div>

@@ -1,235 +1,193 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import Image from "next/image";
-import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { shouldAnimate } from "@/lib/utils";
+import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { ArrowUpRight, Github } from "lucide-react";
+import { gsap } from "@/lib/gsap";
 import { projects } from "@/data/projects";
+import type { Project } from "@/data/types";
 import { SectionHeader } from "@/components/ui/section-header";
-import { SectionBorder } from "@/components/ui/section-border";
-import { BrutalButton, BrutalTag } from "@/components/ui/brutal";
+import { ProjectCover } from "@/components/ui/project-cover";
+import { fadeUp, splitReveal } from "@/lib/split-reveal";
 
-function ProjectCard({ project, index }: { project: (typeof projects)[0]; index: number }) {
-  const [hovered, setHovered] = useState(false);
-  const [imgOk, setImgOk] = useState(true);
+function ProjectPanel({
+  project,
+  index,
+}: {
+  project: Project;
+  index: number;
+}) {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const num = String(index + 1).padStart(2, "0");
 
-  // Pull the host out of live URL for the browser-chrome bar
-  const host = project.live
-    ? (() => {
-        try {
-          return new URL(project.live).host;
-        } catch {
-          return "preview";
-        }
-      })()
-    : "local";
+  useEffect(() => {
+    const cleanups = [
+      splitReveal(titleRef.current, {
+        type: "lines",
+        stagger: 0.07,
+        start: "top 78%",
+      }),
+      fadeUp("[data-panel-meta]", {
+        trigger: bodyRef.current,
+        start: "top 78%",
+        delay: 0.15,
+        y: 18,
+      }),
+    ];
+    return () => cleanups.forEach((fn) => fn());
+  }, []);
+
+  const href = project.live ?? project.github;
 
   return (
     <article
-      data-project-card
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setHovered(true)}
-      onBlur={() => setHovered(false)}
-      className="group relative flex flex-col bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] shadow-brutal brutal-card-hover overflow-hidden"
-      style={{ opacity: 0 }}
+      data-work-panel
+      className="md:sticky md:top-0"
+      style={{ zIndex: index + 1 }}
     >
-      {/* Number — hangs above as a sticker */}
-      <div className="absolute -top-3 -left-3 z-20 inline-flex items-center justify-center w-12 h-12 border-[2.5px] border-[var(--border-ink)] bg-[var(--ink)] text-[var(--paper)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-base -rotate-3">
-        {num}
-      </div>
+      <div className="border-t border-[var(--line-1)] bg-[var(--bg-0)] md:min-h-[100svh] md:origin-top">
+        <div className="mx-auto grid max-w-[var(--container)] items-center gap-10 px-[var(--gutter)] py-16 md:min-h-[100svh] md:grid-cols-12 md:gap-16 md:py-24">
+          {/* Text column */}
+          <div ref={bodyRef} className="md:col-span-5">
+            <div data-panel-meta className="mb-6 flex items-center gap-3" style={{ opacity: 0 }}>
+              <span className="meta text-[var(--accent)]">{num}</span>
+              <span className="h-px w-8 bg-[var(--line-2)]" />
+              <span className="meta">{project.tags[0]}</span>
+            </div>
 
-      {/* Browser-chrome preview pane */}
-      <div className="relative border-b-[2.5px] border-[var(--border-ink)] bg-[var(--surface-alt)]">
-        {/* Browser chrome */}
-        <div className="flex items-center gap-2 px-3 py-2 border-b-2 border-[var(--border-ink)] bg-[var(--paper)]">
-          <span className="flex gap-1.5">
-            <span className="w-2.5 h-2.5 border-2 border-[var(--border-ink)] bg-[var(--paper)]" />
-            <span className="w-2.5 h-2.5 border-2 border-[var(--border-ink)] bg-[var(--paper)]" />
-            <span className="w-2.5 h-2.5 border-2 border-[var(--border-ink)] bg-[var(--paper)]" />
-          </span>
-          <span className="ml-2 flex-1 truncate font-mono text-[10px] font-bold tracking-wide text-[var(--muted)]">
-            {host}
-          </span>
-        </div>
+            <h3 ref={titleRef} className="display-md mb-5 font-semibold">
+              {project.title}
+            </h3>
 
-        {/* Preview surface */}
-        <div className="relative h-44 md:h-52 overflow-hidden">
-          {project.image && imgOk ? (
-            <Image
-              src={project.image}
-              alt={`${project.title} preview`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-              className={`object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                hovered ? "scale-[1.06]" : "scale-100"
-              }`}
-              onError={() => setImgOk(false)}
-            />
-          ) : (
-            // Type-led fallback — looks intentional, not "missing image"
-            <div className="absolute inset-0 flex flex-col justify-between p-5 bg-[var(--surface-alt)]">
-              <span className="font-mono text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--muted)]">
-                {project.tags[0] ?? "Project"}
-              </span>
-              <h4
-                className={`font-display font-bold leading-[0.95] tracking-[-0.04em] text-[var(--ink)] transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                  hovered ? "-translate-y-0.5" : ""
-                }`}
-                style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)" }}
-              >
-                {project.title}
-              </h4>
-              <div className="flex items-end justify-between gap-3">
-                <span className="font-mono text-[10px] text-[var(--muted)]">{`// ${num}`}</span>
-                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[var(--ink)]">
-                  {project.live ? "live" : "local"}
-                </span>
+            <div data-panel-meta style={{ opacity: 0 }}>
+              <p className="lead mb-8 max-w-md text-[var(--text-2)]">
+                {project.description}
+              </p>
+
+              <ul className="mb-9 flex flex-wrap gap-x-5 gap-y-2">
+                {project.tags.map((tag) => (
+                  <li key={tag} className="meta text-[var(--text-2)]">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {project.live && (
+                  <a
+                    href={project.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm btn-outline"
+                  >
+                    Visit live
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </a>
+                )}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm btn-ghost"
+                  >
+                    <Github className="h-3.5 w-3.5" />
+                    Source
+                  </a>
+                )}
               </div>
             </div>
-          )}
-
-          {/* Hover overlay — appears as a translucent ink wash with a CTA */}
-          <div
-            className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-out ${
-              hovered ? "opacity-100" : "opacity-0"
-            }`}
-            aria-hidden="true"
-          >
-            <span className="absolute inset-0 bg-[var(--ink)]/55" />
-            <span
-              className={`relative inline-flex items-center gap-2 px-4 py-2 border-[2.5px] border-[var(--paper)] bg-[var(--ink)] text-[var(--paper)] font-display font-bold text-sm tracking-wide shadow-[4px_4px_0_0_var(--paper)] transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                hovered ? "translate-y-0" : "translate-y-2"
-              }`}
-            >
-              {project.live ? "Visit live" : project.github ? "View source" : "Open project"}
-              <ArrowUpRight className="w-4 h-4" />
-            </span>
           </div>
 
-          {/* Click-through links overlaying the preview */}
-          {project.live && (
-            <a
-              href={project.live}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${project.title} live site`}
-              className="absolute inset-0 z-10"
-            />
-          )}
-          {!project.live && project.github && (
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${project.title} on GitHub`}
-              className="absolute inset-0 z-10"
-            />
-          )}
-        </div>
-      </div>
-
-      {/* Body */}
-      <div className="flex flex-col flex-1 p-5 gap-4">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-display font-bold text-base md:text-lg text-[var(--ink)] leading-tight">
-            {project.title}
-          </h3>
-          <div className="flex items-center gap-1.5 shrink-0">
-            {project.github && (
+          {/* Cover */}
+          <div className="md:col-span-7">
+            {href ? (
               <a
-                href={project.github}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`${project.title} on GitHub`}
-                className="inline-flex items-center justify-center w-8 h-8 border-2 border-[var(--border-ink)] bg-[var(--paper)] text-[var(--ink)] shadow-[2px_2px_0_0_var(--border-ink)] transition-[transform,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_4px_0_0_var(--border-ink)] hover:bg-[var(--surface-alt)]"
-                onClick={(e) => e.stopPropagation()}
+                aria-label={`${project.title} — open project`}
+                className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-colors duration-300 hover:border-[var(--line-2)]"
               >
-                <Github className="w-4 h-4" />
+                <ProjectCover project={project} index={index} />
               </a>
-            )}
-            {project.live && (
-              <a
-                href={project.live}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${project.title} live site`}
-                className="inline-flex items-center justify-center w-8 h-8 border-2 border-[var(--border-ink)] bg-[var(--paper)] text-[var(--ink)] shadow-[2px_2px_0_0_var(--border-ink)] transition-[transform,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_4px_0_0_var(--border-ink)] hover:bg-[var(--surface-alt)]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ExternalLink className="w-4 h-4" />
-              </a>
+            ) : (
+              <div className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)]">
+                <ProjectCover project={project} index={index} />
+              </div>
             )}
           </div>
-        </div>
-
-        <p className="text-sm text-[var(--ink)] leading-[1.6] flex-1">
-          {project.description}
-        </p>
-
-        <div className="flex flex-wrap gap-1.5 pt-2 border-t-2 border-dashed border-[var(--border-ink)]/30">
-          {project.tags.map((tag) => (
-            <BrutalTag key={tag}>{tag}</BrutalTag>
-          ))}
         </div>
       </div>
     </article>
   );
 }
 
-export function ProjectsSection() {
-  const gridRef = useRef<HTMLDivElement>(null);
+export function SelectedWork() {
+  const stackRef = useRef<HTMLDivElement>(null);
 
+  /* Outgoing panels recede as the next one slides over them. */
   useEffect(() => {
-    if (!shouldAnimate()) return;
-    const ctx = gsap.context(() => {
-      const cards = document.querySelectorAll<HTMLElement>("[data-project-card]");
-      if (cards.length) {
-        ScrollTrigger.batch(cards, {
-          start: "top 88%",
-          onEnter(batch) {
-            gsap.fromTo(
-              batch,
-              { opacity: 0, y: 40 },
-              { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "power3.out" }
-            );
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+      const panels = gsap.utils.toArray<HTMLElement>("[data-work-panel]", stackRef.current);
+
+      panels.forEach((panel, i) => {
+        const next = panels[i + 1];
+        if (!next) return;
+        gsap.to(panel.firstElementChild, {
+          scale: 0.955,
+          opacity: 0.45,
+          ease: "none",
+          scrollTrigger: {
+            trigger: next,
+            start: "top bottom",
+            end: "top top",
+            scrub: 0.5,
           },
-          once: true,
         });
-      }
-    }, gridRef);
-    return () => ctx.revert();
+      });
+    });
+
+    return () => mm.revert();
   }, []);
 
   return (
-    <SectionBorder id="projects" label="// work" innerClassName="px-6 sm:px-10 py-16 md:py-24">
-      <SectionHeader
-        label="selected work"
-        title={
-          <>
-            Featured{" "}
-            <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] rotate-1">
-              projects.
-            </span>
-          </>
-        }
-        description="Things I've shipped across web apps, AI tooling, and quiet automation."
-      />
+    <section id="projects" className="relative z-10 bg-[var(--bg-0)]">
+      <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] pt-[var(--section-pad)]">
+        <SectionHeader
+          index="01"
+          label="selected work"
+          title={
+            <>
+              Things I&apos;ve shipped, and{" "}
+              <span className="serif-accent">why they matter</span>.
+            </>
+          }
+          description="A few projects worth showing in full. Everything else lives on GitHub."
+        />
+      </div>
 
-      <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+      <div ref={stackRef} className="relative">
         {projects.map((project, i) => (
-          <ProjectCard key={project.title} project={project} index={i} />
+          <ProjectPanel key={project.title} project={project} index={i} />
         ))}
       </div>
 
-      <div className="mt-14 flex justify-center">
-        <BrutalButton as="link" href="/work" variant="ink" size="lg">
-          Explore all projects
-          <ArrowUpRight className="w-4 h-4" />
-        </BrutalButton>
+      <div className="relative z-20 border-t border-[var(--line-1)] bg-[var(--bg-0)]">
+        <div className="mx-auto flex max-w-[var(--container)] flex-wrap items-center justify-between gap-6 px-[var(--gutter)] py-14">
+          <p className="lead max-w-sm">
+            Thirty-odd public repositories — tools, experiments, and things built to
+            scratch an itch.
+          </p>
+          <Link href="/work" className="btn btn-outline">
+            Browse all projects
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
-    </SectionBorder>
+    </section>
   );
 }

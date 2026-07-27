@@ -3,29 +3,31 @@ import { Project } from "./types";
 export const projects: Project[] = [
     {
         title: "PrepLoot",
+        kind: "AI Learning Platform",
+        year: "2025",
         description:
-            "An AI-powered learning platform that recommends top YouTube videos for any subject and automatically generates quizzes, notes, and interactive games from the content, so students can watch and learn at the same time while preparing for competitive exams like JEE, NEET, GATE, and UPSC.",
+            "An AI-powered learning platform that recommends the best YouTube lectures for any subject, then generates quizzes, notes, and interactive games from that content — so students preparing for JEE, NEET, GATE, and UPSC learn while they watch.",
         tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL", "Prisma"],
-        image: "/projects/preploot.png",
         github: "https://github.com/YashvanthSankar/preploot",
         live: "https://preploot.vercel.app",
     },
     {
         title: "QwikRead AI",
+        kind: "Browser Extension",
+        year: "2025",
         description:
-            "A lightweight, AI-powered Chrome extension that instantly summarizes articles with a single click",
-        tags: ["Chrome Extensions API", "Google Gemini", "HTML", "CSS", "JavaScript"],
-        image: "/projects/qwikread.png",
+            "A lightweight Chrome extension that summarizes any article in one click. Built around Gemini with a deliberately tiny surface area — no account, no sidebar, no friction.",
+        tags: ["Chrome Extensions API", "Google Gemini", "JavaScript", "CSS"],
         github: "https://github.com/YashvanthSankar/qwikread-ai-extension",
         live: "https://qwikread.vercel.app",
     },
     {
-        title: "Hospital ER Forms Autofiller",
+        title: "ER Forms Autofiller",
+        kind: "Healthcare Automation",
+        year: "2024",
         description:
-            "A Python tool to auto-fill government-mandated patient admission Google Forms from hospital records (CSV). ",
-        tags: ["Python", "Selenium", "Pandas", "Webdriver manager"],
-        image: "/projects/hospital.png",
+            "A Python tool that fills government-mandated patient admission forms straight from hospital CSV records. Built for an emergency room drowning in manual data entry — hours of typing collapsed into a single command.",
+        tags: ["Python", "Selenium", "Pandas", "Automation"],
         github: "https://github.com/YashvanthSankar/hospital-er-forms-autofiller",
-        live: undefined, // Explicitly undefined to match type optionality if strict
     },
 ];

@@ -1,91 +1,58 @@
 [
   {
-    "name": "amazon-in-price-tracker",
-    "description": "A simple Node.js CLI tool that monitors the price of a product on Amazon.in and sends an email alert when the price drops below your desired threshold.",
-    "url": "https://github.com/YashvanthSankar/amazon-in-price-tracker",
-    "language": "JavaScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-07-04T16:52:05Z",
-    "updated_at": "2025-07-04T18:00:42Z"
-  },
-  {
-    "name": "auramarket-genai",
+    "name": "vedaai",
     "description": null,
-    "url": "https://github.com/YashvanthSankar/auramarket-genai",
-    "language": "JavaScript",
+    "url": "https://github.com/YashvanthSankar/vedaai",
+    "language": "TypeScript",
     "stars": 0,
     "forks": 0,
     "topics": [],
-    "created_at": "2025-07-15T17:45:31Z",
-    "updated_at": "2025-07-18T14:52:21Z"
+    "created_at": "2026-05-26T13:43:27Z",
+    "updated_at": "2026-05-28T09:07:15Z"
   },
   {
-    "name": "calculator",
+    "name": "rag-playground",
     "description": null,
-    "url": "https://github.com/YashvanthSankar/calculator",
-    "language": "JavaScript",
+    "url": "https://github.com/YashvanthSankar/rag-playground",
+    "language": "TypeScript",
     "stars": 0,
     "forks": 0,
     "topics": [],
-    "created_at": "2022-01-25T02:57:26Z",
-    "updated_at": "2025-06-11T15:35:45Z"
+    "created_at": "2026-05-20T14:26:34Z",
+    "updated_at": "2026-05-20T17:04:29Z"
   },
   {
-    "name": "cheatsheets-md",
-    "description": "A curated collection of concise markdown cheatsheets to help students quickly revise core concepts.",
-    "url": "https://github.com/YashvanthSankar/cheatsheets-md",
-    "language": null,
-    "stars": 7,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-07-21T13:34:01Z",
-    "updated_at": "2025-12-16T18:09:52Z"
-  },
-  {
-    "name": "DAA_practice_cs2004",
-    "description": "Implementations for Design & Analysis of Algorithms (CS2004) course using C++",
-    "url": "https://github.com/YashvanthSankar/DAA_practice_cs2004",
-    "language": "C++",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-12-19T16:14:42Z",
-    "updated_at": "2025-12-19T16:18:38Z"
-  },
-  {
-    "name": "DSA_practice_cs1006",
-    "description": "Implementations of Data Structures & Algorithms (CS1006) course using C",
-    "url": "https://github.com/YashvanthSankar/DSA_practice_cs1006",
-    "language": "C",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-12-19T16:20:53Z",
-    "updated_at": "2025-12-19T16:22:02Z"
-  },
-  {
-    "name": "ECell-IIITDMK-Website",
+    "name": "tigai",
     "description": null,
-    "url": "https://github.com/YashvanthSankar/ECell-IIITDMK-Website",
-    "language": "JavaScript",
+    "url": "https://github.com/YashvanthSankar/tigai",
+    "language": "TypeScript",
     "stars": 0,
     "forks": 0,
     "topics": [],
-    "created_at": "2025-07-04T07:31:56Z",
-    "updated_at": "2025-07-18T06:11:47Z"
+    "created_at": "2026-05-14T14:36:38Z",
+    "updated_at": "2026-05-20T14:23:34Z"
   },
   {
-    "name": "ECELL-WEBSITE",
-    "description": "Official ECELL-IIITDMK Website ",
-    "url": "https://github.com/YashvanthSankar/ECELL-WEBSITE",
+    "name": "superfinz",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/superfinz",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 1,
+    "topics": [],
+    "created_at": "2026-03-28T05:04:15Z",
+    "updated_at": "2026-04-21T05:54:52Z"
+  },
+  {
+    "name": "cheatsheets-md-website",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/cheatsheets-md-website",
     "language": "JavaScript",
     "stars": 0,
     "forks": 0,
     "topics": [],
-    "created_at": "2025-07-19T14:39:53Z",
-    "updated_at": "2025-08-09T16:53:37Z"
+    "created_at": "2025-07-22T11:42:46Z",
+    "updated_at": "2026-04-18T13:33:05Z"
   },
   {
     "name": "esummit26",
@@ -99,6 +66,64 @@
     "updated_at": "2026-02-01T11:34:03Z"
   },
   {
+    "name": "scan2save",
+    "description": "Walk into any store, scan the QR, and unlock personalized offers designed just for you.",
+    "url": "https://github.com/YashvanthSankar/scan2save",
+    "language": "TypeScript",
+    "stars": 1,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-12-28T05:38:33Z",
+    "updated_at": "2026-01-07T12:51:01Z"
+  },
+  {
+    "name": "remotion-overlay",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/remotion-overlay",
+    "language": "Python",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-12-27T15:57:50Z",
+    "updated_at": "2026-01-07T11:09:20Z"
+  },
+  {
+    "name": "YashvanthSankar",
+    "description": "Config files for my GitHub profile.",
+    "url": "https://github.com/YashvanthSankar/YashvanthSankar",
+    "language": null,
+    "stars": 0,
+    "forks": 0,
+    "topics": [
+      "config",
+      "github-config"
+    ],
+    "created_at": "2022-01-25T02:53:38Z",
+    "updated_at": "2026-01-04T04:19:08Z"
+  },
+  {
+    "name": "nexgenbnp",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/nexgenbnp",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-08-08T17:20:50Z",
+    "updated_at": "2025-12-31T15:18:53Z"
+  },
+  {
+    "name": "library-management-app",
+    "description": "nextjs, shadcn/ui, next-auth, express, postgresql",
+    "url": "https://github.com/YashvanthSankar/library-management-app",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-08-15T14:54:31Z",
+    "updated_at": "2025-12-25T05:15:10Z"
+  },
+  {
     "name": "ganesh-chaturthi-chatbot",
     "description": null,
     "url": "https://github.com/YashvanthSankar/ganesh-chaturthi-chatbot",
@@ -110,6 +135,116 @@
     "updated_at": "2025-12-25T05:12:47Z"
   },
   {
+    "name": "preploot",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/preploot",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 2,
+    "topics": [],
+    "created_at": "2025-10-05T13:58:52Z",
+    "updated_at": "2025-12-25T05:07:29Z"
+  },
+  {
+    "name": "OOP_cs2000",
+    "description": "Implementations of Object Oriented Programming (CS2000) course using C++",
+    "url": "https://github.com/YashvanthSankar/OOP_cs2000",
+    "language": "C++",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-12-19T16:28:57Z",
+    "updated_at": "2025-12-19T16:30:42Z"
+  },
+  {
+    "name": "DSA_practice_cs1006",
+    "description": "Implementations of Data Structures & Algorithms (CS1006) course using C",
+    "url": "https://github.com/YashvanthSankar/DSA_practice_cs1006",
+    "language": "C",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-12-19T16:20:53Z",
+    "updated_at": "2025-12-19T16:22:02Z"
+  },
+  {
+    "name": "DAA_practice_cs2004",
+    "description": "Implementations for Design & Analysis of Algorithms (CS2004) course using C++",
+    "url": "https://github.com/YashvanthSankar/DAA_practice_cs2004",
+    "language": "C++",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-12-19T16:14:42Z",
+    "updated_at": "2025-12-19T16:18:38Z"
+  },
+  {
+    "name": "cheatsheets-md",
+    "description": "A curated collection of concise markdown cheatsheets to help students quickly revise core concepts.",
+    "url": "https://github.com/YashvanthSankar/cheatsheets-md",
+    "language": null,
+    "stars": 7,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-07-21T13:34:01Z",
+    "updated_at": "2025-12-16T18:09:52Z"
+  },
+  {
+    "name": "maze-engine-and-path-analyzer",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/maze-engine-and-path-analyzer",
+    "language": "C++",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-10-18T15:28:12Z",
+    "updated_at": "2025-12-02T09:32:14Z"
+  },
+  {
+    "name": "refile-backend",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/refile-backend",
+    "language": "Python",
+    "stars": 0,
+    "forks": 1,
+    "topics": [],
+    "created_at": "2025-10-28T04:10:47Z",
+    "updated_at": "2025-10-29T13:16:09Z"
+  },
+  {
+    "name": "quiz-generation-for-preploot",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/quiz-generation-for-preploot",
+    "language": "Python",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-10-05T13:49:12Z",
+    "updated_at": "2025-10-09T05:02:34Z"
+  },
+  {
+    "name": "udaan-fest",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/udaan-fest",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 1,
+    "topics": [],
+    "created_at": "2025-09-14T06:01:53Z",
+    "updated_at": "2025-09-15T16:02:53Z"
+  },
+  {
+    "name": "auramarket-genai",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/auramarket-genai",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-07-15T17:45:31Z",
+    "updated_at": "2025-07-18T14:52:21Z"
+  },
+  {
     "name": "hospital-er-forms-autofiller",
     "description": "A Python tool to auto-fill government-mandated patient admission Google Forms from hospital records (CSV).",
     "url": "https://github.com/YashvanthSankar/hospital-er-forms-autofiller",
@@ -119,6 +254,17 @@
     "topics": [],
     "created_at": "2025-07-14T12:24:23Z",
     "updated_at": "2025-07-18T14:51:55Z"
+  },
+  {
+    "name": "tech-affairs-iiitdm-landingpage",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/tech-affairs-iiitdm-landingpage",
+    "language": "HTML",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-05-26T16:07:48Z",
+    "updated_at": "2025-07-12T14:25:34Z"
   },
   {
     "name": "igniters-hackathon-cp-submission",
@@ -143,83 +289,6 @@
     "updated_at": "2025-07-10T19:32:22Z"
   },
   {
-    "name": "library-management-app",
-    "description": "nextjs, shadcn/ui, next-auth, express, postgresql",
-    "url": "https://github.com/YashvanthSankar/library-management-app",
-    "language": "JavaScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-08-15T14:54:31Z",
-    "updated_at": "2025-12-25T05:15:10Z"
-  },
-  {
-    "name": "maze-engine-and-path-analyzer",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/maze-engine-and-path-analyzer",
-    "language": "C++",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-10-18T15:28:12Z",
-    "updated_at": "2025-12-02T09:32:14Z"
-  },
-  {
-    "name": "movie-search-app",
-    "description": "A simple React + Tailwind app to search movies using the TMDB API, which uses Appwrite to display trending movies.",
-    "url": "https://github.com/YashvanthSankar/movie-search-app",
-    "language": "JavaScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-06-19T12:03:26Z",
-    "updated_at": "2025-06-19T12:43:53Z"
-  },
-  {
-    "name": "nexgenbnp",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/nexgenbnp",
-    "language": "TypeScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-08-08T17:20:50Z",
-    "updated_at": "2025-12-31T15:18:53Z"
-  },
-  {
-    "name": "OOP_cs2000",
-    "description": "Implementations of Object Oriented Programming (CS2000) course using C++",
-    "url": "https://github.com/YashvanthSankar/OOP_cs2000",
-    "language": "C++",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-12-19T16:28:57Z",
-    "updated_at": "2025-12-19T16:30:42Z"
-  },
-  {
-    "name": "preploot",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/preploot",
-    "language": "JavaScript",
-    "stars": 0,
-    "forks": 2,
-    "topics": [],
-    "created_at": "2025-10-05T13:58:52Z",
-    "updated_at": "2025-12-25T05:07:29Z"
-  },
-  {
-    "name": "quiz-generation-for-preploot",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/quiz-generation-for-preploot",
-    "language": "Python",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-10-05T13:49:12Z",
-    "updated_at": "2025-10-09T05:02:34Z"
-  },
-  {
     "name": "qwikread-ai-extension",
     "description": "Summarize any article instantly using Google's Gemini API \u2014 right from your browser tab.",
     "url": "https://github.com/YashvanthSankar/qwikread-ai-extension",
@@ -231,15 +300,15 @@
     "updated_at": "2025-07-08T15:05:48Z"
   },
   {
-    "name": "random-password-generator",
-    "description": "Random password generator using JavaScript",
-    "url": "https://github.com/YashvanthSankar/random-password-generator",
+    "name": "amazon-in-price-tracker",
+    "description": "A simple Node.js CLI tool that monitors the price of a product on Amazon.in and sends an email alert when the price drops below your desired threshold.",
+    "url": "https://github.com/YashvanthSankar/amazon-in-price-tracker",
     "language": "JavaScript",
     "stars": 0,
     "forks": 0,
     "topics": [],
-    "created_at": "2022-01-25T07:58:03Z",
-    "updated_at": "2025-06-11T16:48:07Z"
+    "created_at": "2025-07-04T16:52:05Z",
+    "updated_at": "2025-07-04T18:00:42Z"
   },
   {
     "name": "react-firebase-todo-app",
@@ -253,39 +322,6 @@
     "updated_at": "2025-07-03T18:51:05Z"
   },
   {
-    "name": "refile-backend",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/refile-backend",
-    "language": "Python",
-    "stars": 0,
-    "forks": 2,
-    "topics": [],
-    "created_at": "2025-10-28T04:10:47Z",
-    "updated_at": "2025-10-29T13:16:09Z"
-  },
-  {
-    "name": "remotion-overlay",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/remotion-overlay",
-    "language": "Python",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-12-27T15:57:50Z",
-    "updated_at": "2026-01-07T11:09:20Z"
-  },
-  {
-    "name": "scan2save",
-    "description": "Walk into any store, scan the QR, and unlock personalized offers designed just for you.",
-    "url": "https://github.com/YashvanthSankar/scan2save",
-    "language": "TypeScript",
-    "stars": 1,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-12-28T05:38:33Z",
-    "updated_at": "2026-01-07T12:51:01Z"
-  },
-  {
     "name": "static-multipage-cloudhosting-site",
     "description": "Cloud hosting website",
     "url": "https://github.com/YashvanthSankar/static-multipage-cloudhosting-site",
@@ -297,28 +333,6 @@
     "updated_at": "2025-06-19T15:33:53Z"
   },
   {
-    "name": "tech-affairs-iiitdm-landingpage",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/tech-affairs-iiitdm-landingpage",
-    "language": "HTML",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-05-26T16:07:48Z",
-    "updated_at": "2025-07-12T14:25:34Z"
-  },
-  {
-    "name": "Technical-Affairs-IIITDM",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/Technical-Affairs-IIITDM",
-    "language": "JavaScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2025-06-25T14:42:23Z",
-    "updated_at": "2025-08-11T17:35:39Z"
-  },
-  {
     "name": "tic-tac-toe",
     "description": "Tic Tac Toe game made using JavaScript",
     "url": "https://github.com/YashvanthSankar/tic-tac-toe",
@@ -328,5 +342,49 @@
     "topics": [],
     "created_at": "2025-06-11T15:09:30Z",
     "updated_at": "2025-06-19T15:26:15Z"
+  },
+  {
+    "name": "movie-search-app",
+    "description": "A simple React + Tailwind app to search movies using the TMDB API, which uses Appwrite to display trending movies.",
+    "url": "https://github.com/YashvanthSankar/movie-search-app",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2025-06-19T12:03:26Z",
+    "updated_at": "2025-06-19T12:43:53Z"
+  },
+  {
+    "name": "random-password-generator",
+    "description": "Random password generator using JavaScript",
+    "url": "https://github.com/YashvanthSankar/random-password-generator",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2022-01-25T07:58:03Z",
+    "updated_at": "2025-06-11T16:48:07Z"
+  },
+  {
+    "name": "calculator",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/calculator",
+    "language": "JavaScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2022-01-25T02:57:26Z",
+    "updated_at": "2025-06-11T15:35:45Z"
+  },
+  {
+    "name": "yashvanthsankar.github.io",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/yashvanthsankar.github.io",
+    "language": "CSS",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2022-02-10T07:23:55Z",
+    "updated_at": "2025-06-08T06:11:41Z"
   }
 ]

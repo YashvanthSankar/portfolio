@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
+import { SmoothScroll } from "@/components/providers/smooth-scroll";
+import { Cursor } from "@/components/cursor";
 
 const geistSans = Geist({
   variable: "--font-display",
@@ -18,12 +19,18 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+/* Editorial counterweight — used on 2–4 emphasized words per section. */
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["italic"],
+  display: "swap",
+});
+
 export const viewport: Viewport = {
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAFAFA" },
-    { media: "(prefers-color-scheme: dark)", color: "#0B0B0C" },
-  ],
+  themeColor: "#0A0A0B",
 };
 
 export const metadata: Metadata = {
@@ -133,23 +140,16 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} font-sans antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          storageKey="portfolio-theme"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--bg-1)] focus:text-[var(--text-1)] focus:border focus:border-[var(--accent)] focus:rounded-[2px] focus:text-sm focus:font-medium"
         >
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--surface)] focus:text-[var(--ink)] focus:border-2 focus:border-[var(--ink)] focus:shadow-[4px_4px_0_0_var(--ink)] focus:text-sm focus:font-bold"
-          >
-            Skip to main content
-          </a>
-          {children}
-        </ThemeProvider>
+          Skip to main content
+        </a>
+        <SmoothScroll>{children}</SmoothScroll>
+        <Cursor />
         <Analytics />
       </body>
     </html>

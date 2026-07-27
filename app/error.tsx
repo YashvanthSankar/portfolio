@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { RefreshCw, Home } from "lucide-react";
+import { Home, RefreshCw } from "lucide-react";
 
 export default function Error({
   error,
@@ -16,30 +16,32 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-brutal-grid flex items-center justify-center px-6 py-16">
-      <div className="relative max-w-lg w-full bg-[var(--surface)] border-[2.5px] border-[var(--ink)] p-8 sm:p-12 shadow-[10px_10px_0_0_var(--ink)]">
-        <div className="absolute -top-4 -left-4 inline-flex items-center gap-2 px-3 py-1 bg-[var(--ink)] text-[var(--paper)] border-[2.5px] border-[var(--ink)] shadow-[3px_3px_0_0_var(--ink)] font-mono font-bold text-[11px] tracking-[0.22em] uppercase -rotate-sticker-2">
-          <span className="w-1.5 h-1.5 bg-[var(--paper)]" />
-          Error 500
+    <div className="flex min-h-screen items-center bg-[var(--bg-0)] px-[var(--gutter)]">
+      <div className="mx-auto w-full max-w-[var(--container)]">
+        <div className="mb-8 flex items-center gap-3">
+          <span className="meta text-[var(--accent)]">500</span>
+          <span className="h-px w-8 bg-[var(--line-2)]" />
+          <span className="meta">something broke</span>
         </div>
 
-        <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-[-0.04em] text-[var(--ink)] mb-4">
-          Something broke.
+        <h1 className="display-lg mb-6 max-w-2xl">
+          That didn&apos;t <span className="serif-accent">render</span>.
         </h1>
-        <p className="text-sm text-[var(--muted)] mb-8 leading-relaxed">
-          An unexpected error occurred. The page failed to render correctly.
-          {error.digest && (
-            <span className="block mt-2 font-mono text-xs">digest: {error.digest}</span>
-          )}
-        </p>
 
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button onClick={reset} className="brutal-btn">
-            <RefreshCw className="w-4 h-4" />
+        <p className="lead mb-3 max-w-md">
+          An unexpected error occurred while loading this page.
+        </p>
+        {error.digest && (
+          <p className="meta mb-10">digest: {error.digest}</p>
+        )}
+
+        <div className="mt-10 flex flex-wrap items-center gap-3">
+          <button onClick={reset} className="btn btn-primary">
+            <RefreshCw className="h-4 w-4" />
             Try again
           </button>
-          <Link href="/" className="brutal-btn brutal-btn-secondary">
-            <Home className="w-4 h-4" />
+          <Link href="/" className="btn btn-outline">
+            <Home className="h-4 w-4" />
             Go home
           </Link>
         </div>

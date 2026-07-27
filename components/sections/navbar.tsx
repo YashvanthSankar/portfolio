@@ -1,356 +1,325 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { throttle, cn } from "@/lib/utils";
-import { Home, Folder, User, Briefcase, Mail, Download, Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { BrutalButton } from "@/components/ui/brutal";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import { cn, throttle } from "@/lib/utils";
+import { useScrollTo } from "@/components/providers/smooth-scroll";
 import { socials } from "@/data/socials";
 
 const navItems = [
-  { id: "home", label: "Home", icon: Home },
-  { id: "about", label: "About", icon: User },
-  { id: "projects", label: "Work", icon: Folder },
-  { id: "experience", label: "Experience", icon: Briefcase },
-  { id: "contact", label: "Contact", icon: Mail },
+  { id: "projects", label: "Work" },
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "technologies", label: "Stack" },
+  { id: "contact", label: "Contact" },
 ];
 
-export function Navbar() {
+interface NavbarProps {
+  /** `page` links back to `/` instead of scroll-spying sections. */
+  variant?: "home" | "page";
+}
+
+export function Navbar({ variant = "home" }: NavbarProps) {
   const [active, setActive] = useState("home");
+  const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [pendingScrollId, setPendingScrollId] = useState<string | null>(null);
+  const lastY = useRef(0);
+  const scrollTo = useScrollTo();
 
+  /* Hide on scroll-down, reveal on scroll-up (with hysteresis). */
   useEffect(() => {
     const onScroll = throttle(() => {
-      setScrolled(window.scrollY > 48);
+      const y = window.scrollY;
+      setScrolled(y > 24);
+
+      if (Math.abs(y - lastY.current) > 8) {
+        setHidden(y > 140 && y > lastY.current);
+        lastY.current = y;
+      }
+
+      if (variant !== "home") return;
+      const probe = window.innerHeight * 0.35;
+      let current = "home";
       for (const item of navItems) {
         const el = document.getElementById(item.id);
         if (!el) continue;
-        const { top, bottom } = el.getBoundingClientRect();
-        if (top <= 100 && bottom >= 100) {
-          setActive(item.id);
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= probe && rect.bottom > probe) {
+          current = item.id;
           break;
         }
       }
-    }, 16);
+      setActive(current);
+    }, 100);
+
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [variant]);
 
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth >= 768) setMenuOpen(false);
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
+  /* Lock body scroll while the panel is open. */
   useEffect(() => {
     if (!menuOpen) return;
     const scrollY = window.scrollY;
-    const prevHtml = document.documentElement.style.overflow;
-    const prevBody = document.body.style.overflow;
-    const prevPos = document.body.style.position;
-    const prevTop = document.body.style.top;
-    const prevWidth = document.body.style.width;
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
+    const { style } = document.body;
+    const prev = {
+      overflow: style.overflow,
+      position: style.position,
+      top: style.top,
+      width: style.width,
+    };
+    style.overflow = "hidden";
+    style.position = "fixed";
+    style.top = `-${scrollY}px`;
+    style.width = "100%";
     return () => {
-      document.documentElement.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-      document.body.style.position = prevPos;
-      document.body.style.top = prevTop;
-      document.body.style.width = prevWidth;
+      style.overflow = prev.overflow;
+      style.position = prev.position;
+      style.top = prev.top;
+      style.width = prev.width;
       window.scrollTo(0, scrollY);
     };
   }, [menuOpen]);
 
   useEffect(() => {
-    if (menuOpen || !pendingScrollId) return;
-    const timer = window.setTimeout(() => {
-      document.getElementById(pendingScrollId)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      setPendingScrollId(null);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [menuOpen, pendingScrollId]);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
-  const scrollTo = (id: string) => {
-    if (menuOpen) {
-      setPendingScrollId(id);
-      setMenuOpen(false);
-      return;
-    }
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const go = (id: string) => {
+    setMenuOpen(false);
+    // Wait a frame so the scroll lock is released before Lenis moves.
+    requestAnimationFrame(() => scrollTo(`#${id}`));
   };
 
   return (
     <>
       <header
-        className={cn("sticky inset-x-0 top-0 z-50 transition-all duration-200", scrolled ? "py-3" : "py-4")}
+        className={cn(
+          "fixed inset-x-0 top-0 z-40 transition-[transform,background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
+          scrolled && !menuOpen
+            ? "border-b border-[var(--line-1)] bg-[color-mix(in_srgb,var(--bg-0)_82%,transparent)] backdrop-blur-xl"
+            : "border-b border-transparent"
+        )}
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div
-            className={cn(
-              "flex items-center justify-between gap-2 px-3 py-2",
-              "border-[2.5px] border-[var(--border-ink)] bg-[var(--surface)]",
-              "shadow-brutal"
-            )}
-          >
+        <div className="mx-auto flex h-[72px] max-w-[var(--container)] items-center justify-between px-[var(--gutter)]">
+          {/* Wordmark */}
+          {variant === "home" ? (
             <button
-              onClick={() => scrollTo("home")}
-              aria-label="Go to top"
-              className="logo-frame relative h-10 w-10 shrink-0 border-2 border-[var(--ink)] overflow-hidden shadow-[3px_3px_0_0_var(--ink)] transition-transform duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-x-[2px] hover:-translate-y-[2px] active:translate-x-[1px] active:translate-y-[1px]"
+              onClick={() => scrollTo(0, { updateHash: false })}
+              aria-label="Back to top"
+              className="group flex items-baseline gap-2"
             >
-              <span className="logo-mark" aria-hidden="true" />
+              <span className="font-display text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-1)]">
+                Yashvanth
+              </span>
+              <span className="h-[5px] w-[5px] translate-y-[-2px] rounded-full bg-[var(--accent)] transition-shadow duration-300 group-hover:shadow-[var(--glow-accent)]" />
             </button>
+          ) : (
+            <Link href="/" aria-label="Back to home" className="group flex items-baseline gap-2">
+              <span className="font-display text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-1)]">
+                Yashvanth
+              </span>
+              <span className="h-[5px] w-[5px] translate-y-[-2px] rounded-full bg-[var(--accent)] transition-shadow duration-300 group-hover:shadow-[var(--glow-accent)]" />
+            </Link>
+          )}
 
-            <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
-              {navItems.map((item) => {
-                const isActive = active === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => scrollTo(item.id)}
-                    aria-current={isActive ? "page" : undefined}
-                    className={cn(
-                      "group relative px-3 py-1.5 font-display font-semibold text-sm",
-                      "border-2 border-transparent",
-                      "transition-[transform,background-color,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]",
-                      isActive
-                        ? "bg-[var(--accent)] text-[var(--accent-ink)] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)]"
-                        : "text-[var(--ink)] hover:-translate-y-[2px] hover:border-[var(--border-ink)] hover:bg-[var(--surface-alt)] hover:shadow-[3px_3px_0_0_var(--border-ink)]"
-                    )}
-                  >
-                    {item.label}
-                  </button>
-                );
-              })}
-            </nav>
-
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <div className="hidden md:block">
-                <BrutalButton as="a" href="/YashvanthS_Resume.pdf" download variant="ghost" size="sm">
-                  <Download className="w-3.5 h-3.5" />
-                  Resume
-                </BrutalButton>
-              </div>
-              <div className="hidden md:block">
-                <BrutalButton variant="primary" size="sm" onClick={() => scrollTo("contact")}>
-                  Let&apos;s talk
-                </BrutalButton>
-              </div>
-
-              <button
-                onClick={() => setMenuOpen((p) => !p)}
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={menuOpen}
-                className="md:hidden inline-flex items-center justify-center w-10 h-10 border-2 border-[var(--border-ink)] bg-[var(--accent)] text-[var(--accent-ink)] shadow-[3px_3px_0_0_var(--border-ink)]"
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {menuOpen ? (
-                    <motion.span
-                      key="x"
-                      initial={{ opacity: 0, rotate: -90 }}
-                      animate={{ opacity: 1, rotate: 0 }}
-                      exit={{ opacity: 0, rotate: 90 }}
-                      transition={{ duration: 0.15 }}
-                      className="flex"
-                    >
-                      <X className="w-4 h-4" />
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="menu"
-                      initial={{ opacity: 0, rotate: 90 }}
-                      animate={{ opacity: 1, rotate: 0 }}
-                      exit={{ opacity: 0, rotate: -90 }}
-                      transition={{ duration: 0.15 }}
-                      className="flex"
-                    >
-                      <Menu className="w-4 h-4" />
-                    </motion.span>
+          {/* Desktop nav */}
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
+            {variant === "home" ? (
+              navItems.map((item) => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    go(item.id);
+                  }}
+                  aria-current={active === item.id ? "page" : undefined}
+                  className={cn(
+                    "px-3 py-1.5 font-mono text-[12px] tracking-[0.02em] transition-colors duration-200",
+                    active === item.id
+                      ? "text-[var(--accent)]"
+                      : "text-[var(--text-2)] hover:text-[var(--text-1)]"
                   )}
-                </AnimatePresence>
+                >
+                  {item.label}
+                </a>
+              ))
+            ) : (
+              <>
+                <Link
+                  href="/"
+                  className="px-3 py-1.5 font-mono text-[12px] text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
+                >
+                  Home
+                </Link>
+                <a
+                  href="https://github.com/YashvanthSankar"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 font-mono text-[12px] text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
+                >
+                  GitHub
+                </a>
+              </>
+            )}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <a
+              href="/YashvanthS_Resume.pdf"
+              download
+              className="btn btn-sm btn-ghost hidden md:inline-flex"
+            >
+              Résumé
+            </a>
+            {variant === "home" ? (
+              <button
+                onClick={() => go("contact")}
+                className="btn btn-sm btn-primary hidden md:inline-flex"
+              >
+                Let&apos;s talk
+                <ArrowUpRight className="h-3.5 w-3.5" />
               </button>
-            </div>
+            ) : (
+              <Link href="/#contact" className="btn btn-sm btn-primary hidden md:inline-flex">
+                Let&apos;s talk
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            )}
+
+            <button
+              onClick={() => setMenuOpen((p) => !p)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-[var(--line-2)] text-[var(--text-1)] transition-colors duration-200 hover:bg-[var(--bg-1)] md:hidden"
+            >
+              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
         </div>
       </header>
 
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.nav
-            key="panel"
-            initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
-            animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
-            exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
-            transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed inset-0 z-[60] md:hidden flex h-dvh w-screen flex-col overflow-hidden bg-[var(--paper)]"
-            aria-label="Mobile navigation"
-          >
-            {/* Background watermark — giant typographic wallpaper */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 flex items-end justify-end overflow-hidden select-none"
-            >
-              <span
-                className="font-display font-bold leading-[0.85] tracking-[-0.06em] text-[var(--ink)] opacity-[0.04] whitespace-nowrap -mr-12 -mb-8"
-                style={{ fontSize: "clamp(14rem, 50vw, 28rem)" }}
-              >
-                YASH.
-              </span>
-            </div>
-            {/* Background grid texture */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-[0.4]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(11,11,12,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(11,11,12,0.04) 1px, transparent 1px)",
-                backgroundSize: "40px 40px",
-              }}
-            />
-
-            {/* Top strip — meta */}
-            <div className="relative flex items-center justify-between px-6 pt-[max(env(safe-area-inset-top),1.25rem)] pb-4 border-b-[2.5px] border-[var(--ink)]">
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.18, duration: 0.4 }}
-                className="flex items-center gap-2"
-              >
-                <span className="inline-flex items-center gap-1.5 px-2 py-1 border-2 border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] font-mono text-[9px] font-bold tracking-[0.22em] uppercase">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--paper)] opacity-70" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--paper)]" />
-                  </span>
-                  menu · open
-                </span>
-              </motion.div>
-              <motion.button
-                initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
-                animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
-                transition={{ delay: 0.18, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-                onClick={() => setMenuOpen(false)}
-                aria-label="Close menu"
-                className="inline-flex items-center justify-center w-11 h-11 border-[2.5px] border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] shadow-[4px_4px_0_0_var(--ink)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0_0_var(--ink)] transition-transform duration-150"
-              >
-                <X className="w-5 h-5" />
-              </motion.button>
-            </div>
-
-            {/* Big editorial nav list */}
-            <ul className="relative flex-1 flex flex-col justify-center px-6 gap-1 overflow-y-auto py-6">
-              {navItems.map((item, i) => {
-                const isActive = active === item.id;
-                const num = String(i + 1).padStart(2, "0");
-                return (
-                  <motion.li
-                    key={item.id}
-                    initial={{ opacity: 0, x: -40, skewX: 4 }}
-                    animate={{ opacity: 1, x: 0, skewX: 0 }}
-                    exit={{ opacity: 0, x: -40 }}
-                    transition={{
-                      delay: 0.22 + i * 0.06,
-                      duration: 0.45,
-                      ease: [0.32, 0.72, 0, 1],
-                    }}
-                  >
-                    <button
-                      onClick={() => scrollTo(item.id)}
-                      aria-current={isActive ? "page" : undefined}
-                      className={cn(
-                        "group relative w-full flex items-baseline gap-4 py-3 text-left border-b-2 border-dashed border-[var(--ink)]/20",
-                        "transition-colors duration-200"
-                      )}
-                    >
-                      <span className="font-mono text-[11px] font-bold tabular-nums tracking-[0.18em] text-[var(--muted)] group-hover:text-[var(--ink)] transition-colors duration-200">
-                        / {num}
-                      </span>
-                      <span
-                        className={cn(
-                          "font-display font-bold leading-[0.95] tracking-[-0.04em] transition-[color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
-                          "group-hover:translate-x-2 group-active:translate-x-1",
-                          isActive ? "text-[var(--ink)]" : "text-[var(--ink)]/85"
-                        )}
-                        style={{ fontSize: "clamp(2.4rem, 11vw, 4rem)" }}
-                      >
-                        {item.label}
-                      </span>
-                      {isActive && (
-                        <span
-                          className="ml-auto self-center font-mono text-[9px] font-bold tracking-[0.22em] uppercase text-[var(--paper)] bg-[var(--ink)] px-2 py-1 border-2 border-[var(--ink)] shadow-[2px_2px_0_0_var(--ink)]"
-                          aria-hidden="true"
-                        >
-                          here
-                        </span>
-                      )}
-                      {/* hover underline that draws in */}
-                      <span
-                        aria-hidden="true"
-                        className="absolute left-0 right-0 bottom-0 h-[3px] bg-[var(--ink)] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
-                      />
-                    </button>
-                  </motion.li>
-                );
-              })}
-            </ul>
-
-            {/* Bottom strip — socials, time, CTAs, theme */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 24 }}
-              transition={{ delay: 0.5, duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-              className="relative px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-5 border-t-[2.5px] border-[var(--ink)] bg-[var(--paper)]"
-            >
-              {/* Socials row */}
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <span className="font-mono text-[9px] font-bold tracking-[0.22em] uppercase text-[var(--muted)]">
-                  follow ↗
-                </span>
-                <div className="flex items-center gap-1.5">
-                  {socials.slice(0, 5).map((s) => (
-                    <a
-                      key={s.name}
-                      href={s.href}
-                      {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
-                      aria-label={s.name}
-                      className="inline-flex items-center justify-center w-9 h-9 border-2 border-[var(--ink)] bg-[var(--surface)] text-[var(--ink)] shadow-[2px_2px_0_0_var(--ink)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_0_var(--ink)] transition-transform duration-150"
-                    >
-                      <span className="w-3.5 h-3.5">{s.icon}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* CTA row */}
-              <div className="grid grid-cols-2 gap-3">
-                <BrutalButton variant="primary" onClick={() => scrollTo("contact")}>
-                  Let&apos;s talk
-                </BrutalButton>
-                <BrutalButton as="a" href="/YashvanthS_Resume.pdf" download variant="secondary">
-                  <Download className="w-4 h-4" />
-                  Resume
-                </BrutalButton>
-              </div>
-
-              {/* Footer line */}
-              <div className="mt-4 flex items-center justify-between font-mono text-[9px] tracking-[0.22em] uppercase text-[var(--muted)]">
-                <span>portfolio · 2026</span>
-                <span>chennai · ist</span>
-              </div>
-            </motion.div>
-          </motion.nav>
+      {/* Mobile panel — CSS clip-path wipe, no animation library */}
+      <nav
+        aria-label="Mobile navigation"
+        aria-hidden={!menuOpen}
+        className={cn(
+          "fixed inset-0 z-[60] flex h-dvh w-screen flex-col bg-[var(--bg-0)] transition-[clip-path] duration-500 ease-[cubic-bezier(0.83,0,0.17,1)] md:hidden",
+          menuOpen ? "pointer-events-auto" : "pointer-events-none"
         )}
-      </AnimatePresence>
+        style={{
+          clipPath: menuOpen ? "inset(0% 0% 0% 0%)" : "inset(0% 0% 100% 0%)",
+        }}
+      >
+        <div className="flex items-center justify-between border-b border-[var(--line-1)] px-[var(--gutter)] pb-4 pt-[max(env(safe-area-inset-top),1.25rem)]">
+          <span className="meta">menu</span>
+          <button
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-[var(--line-2)] text-[var(--text-1)]"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <ul className="flex flex-1 flex-col justify-center gap-1 overflow-y-auto px-[var(--gutter)] py-6">
+          {(variant === "home"
+            ? navItems
+            : [
+                { id: "__home", label: "Home" },
+                { id: "__github", label: "GitHub" },
+              ]
+          ).map((item, i) => {
+            const num = String(i + 1).padStart(2, "0");
+            const inner = (
+              <>
+                <span className="meta w-8 shrink-0 pt-3 text-[var(--text-3)]">{num}</span>
+                <span className="display-md font-medium transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
+                  {item.label}
+                </span>
+              </>
+            );
+            const rowClass =
+              "group flex w-full items-baseline gap-4 border-b border-[var(--line-1)] py-4 text-left";
+
+            if (item.id === "__home") {
+              return (
+                <li key={item.id}>
+                  <Link href="/" onClick={() => setMenuOpen(false)} className={rowClass}>
+                    {inner}
+                  </Link>
+                </li>
+              );
+            }
+            if (item.id === "__github") {
+              return (
+                <li key={item.id}>
+                  <a
+                    href="https://github.com/YashvanthSankar"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMenuOpen(false)}
+                    className={rowClass}
+                  >
+                    {inner}
+                  </a>
+                </li>
+              );
+            }
+            return (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    go(item.id);
+                  }}
+                  className={rowClass}
+                >
+                  {inner}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="border-t border-[var(--line-1)] px-[var(--gutter)] pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-5">
+          <div className="mb-4 flex items-center justify-between">
+            <span className="meta">elsewhere</span>
+            <div className="flex items-center gap-3">
+              {socials.slice(0, 5).map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
+                  aria-label={s.name}
+                  className="h-4 w-4 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
+          </div>
+          <a href="/YashvanthS_Resume.pdf" download className="btn btn-outline w-full">
+            Download résumé
+          </a>
+        </div>
+      </nav>
     </>
   );
 }

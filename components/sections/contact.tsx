@@ -1,58 +1,30 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Send, Loader2, Check, Mail, MapPin, Zap } from "lucide-react";
-import { gsap } from "@/lib/gsap";
-import { shouldAnimate } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, Check, Loader2, Send } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
-import { SectionBorder } from "@/components/ui/section-border";
-import { BrutalButton } from "@/components/ui/brutal";
 import { socials } from "@/data/socials";
+import { fadeUp } from "@/lib/split-reveal";
+import { useMagnetic } from "@/lib/use-magnetic";
+
+const EMAIL = "yashvanthsankar@gmail.com";
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", message: "", website: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [snap, setSnap] = useState(false);
 
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  /* Brutal snap — one hard frame on status change, no easing */
-  useEffect(() => {
-    if (status !== "sent" && status !== "error") return;
-    setSnap(true);
-    const t = setTimeout(() => setSnap(false), 220);
-    return () => clearTimeout(t);
-  }, [status]);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const submitRef = useMagnetic<HTMLDivElement>(0.15, 5);
 
   useEffect(() => {
-    if (!shouldAnimate()) return;
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: sectionRef.current, start: "top 80%", once: true },
-      });
-      tl.fromTo(leftRef.current, { opacity: 0, x: -28 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" })
-        .fromTo(
-          formRef.current,
-          { opacity: 0, x: 28 },
-          { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" },
-          "-=0.45"
-        );
-
-      const icons = leftRef.current?.querySelectorAll("[data-social-icon]");
-      if (icons?.length) {
-        tl.fromTo(
-          icons,
-          { opacity: 0, scale: 0.7, y: 8 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.35, stagger: 0.05, ease: "back.out(1.7)" },
-          "-=0.3"
-        );
-      }
-    }, sectionRef);
-    return () => ctx.revert();
+    const cleanup = fadeUp("[data-contact-el]", {
+      trigger: gridRef.current,
+      start: "top 82%",
+      stagger: 0.08,
+      y: 22,
+    });
+    return cleanup;
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,246 +51,189 @@ export function ContactSection() {
     }
   };
 
+  const field =
+    "w-full rounded-[var(--radius)] border border-[var(--line-1)] bg-[var(--bg-1)] px-4 py-3 text-sm text-[var(--text-1)] placeholder:text-[var(--text-3)] transition-colors duration-200 focus:border-[var(--accent)] focus:outline-none";
+
   return (
-    <SectionBorder id="contact" label="// contact" innerClassName="px-6 sm:px-10 py-16 md:py-24">
-      <SectionHeader
-        label="get in touch"
-        title={
-          <>
-            Let&apos;s{" "}
-            <span className="inline-block bg-[var(--accent)] text-[var(--accent-ink)] border-[3px] border-[var(--border-ink)] px-3 shadow-[6px_6px_0_0_var(--border-ink)] -rotate-1">
-              build.
-            </span>
-          </>
-        }
-        description="Have a project in mind? Drop me a message and let's make something worth showing off."
-      />
+    <section
+      id="contact"
+      className="relative z-10 border-t border-[var(--line-1)] bg-[var(--bg-0)]"
+    >
+      <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] py-[var(--section-pad)]">
+        <SectionHeader
+          index="06"
+          label="contact"
+          title={
+            <>
+              Got something worth <span className="serif-accent">building</span>?
+            </>
+          }
+          description="Freelance work, full-time roles, or an idea you want a second opinion on — my inbox is open."
+        />
 
-      <div ref={sectionRef} className="grid md:grid-cols-5 gap-6 md:gap-8">
-        {/* Left info */}
-        <div ref={leftRef} className="md:col-span-2 space-y-5" style={{ opacity: 0 }}>
-          <a
-            href="mailto:yashvanthsankar@gmail.com"
-            className="flex items-center gap-4 p-5 bg-[var(--ink)] text-[var(--paper)] border-[2.5px] border-[var(--border-ink)] shadow-brutal brutal-card-hover"
+        <div ref={gridRef} className="grid gap-12 md:grid-cols-12 md:gap-16">
+          {/* Left rail */}
+          <div className="md:col-span-4">
+            <div data-contact-el style={{ opacity: 0 }}>
+              <p className="meta mb-3">Direct</p>
+              <a
+                href={`mailto:${EMAIL}`}
+                className="link-line mb-10 inline-block text-lg font-medium tracking-[-0.01em] text-[var(--text-1)]"
+              >
+                {EMAIL}
+              </a>
+            </div>
+
+            <div data-contact-el className="border-t border-[var(--line-1)] pt-6" style={{ opacity: 0 }}>
+              <p className="meta mb-4">Elsewhere</p>
+              <ul className="space-y-3">
+                {socials
+                  .filter((s) => !s.noBlank)
+                  .map((s) => (
+                    <li key={s.name}>
+                      <a
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group inline-flex items-center gap-3 text-sm text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
+                      >
+                        <span className="h-3.5 w-3.5 text-[var(--text-3)] transition-colors duration-200 group-hover:text-[var(--accent)]">
+                          {s.icon}
+                        </span>
+                        {s.name}
+                        <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+                      </a>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Form */}
+          <form
+            data-contact-el
+            onSubmit={handleSubmit}
+            className="md:col-span-8"
+            style={{ opacity: 0 }}
+            noValidate
           >
-            <div className="inline-flex items-center justify-center w-11 h-11 shrink-0 bg-[var(--accent)] text-[var(--accent-ink)] border-2 border-[var(--border-ink)] shadow-[2px_2px_0_0_var(--border-ink)]">
-              <Mail className="w-5 h-5" aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] mb-1 opacity-70">email</p>
-              <p className="font-display font-bold truncate">yashvanthsankar@gmail.com</p>
-            </div>
-          </a>
-
-          <div className="flex items-center gap-4 p-5 bg-[var(--surface-alt)] border-[2.5px] border-[var(--border-ink)] shadow-brutal">
-            <div className="inline-flex items-center justify-center w-11 h-11 shrink-0 bg-[var(--paper)] border-2 border-[var(--border-ink)] shadow-[2px_2px_0_0_var(--border-ink)]">
-              <MapPin className="w-5 h-5" aria-hidden="true" />
-            </div>
-            <div>
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] mb-1">location</p>
-              <p className="font-display font-bold text-[var(--ink)]">Chennai, India</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 px-4 py-3 bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] shadow-brutal">
-            <Zap className="w-4 h-4 shrink-0" aria-hidden="true" />
-            <span className="font-display font-bold text-sm">Available for opportunities</span>
-          </div>
-
-          <div>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] mb-3 text-[var(--ink)]">connect</p>
-            <div className="flex flex-wrap gap-2">
-              {socials.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  {...(!link.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
-                  aria-label={link.name}
-                  data-social-icon
-                  className="inline-flex items-center justify-center w-10 h-10 border-2 border-[var(--border-ink)] bg-[var(--surface)] text-[var(--ink)] shadow-[3px_3px_0_0_var(--border-ink)] hover:-translate-x-[1px] hover:-translate-y-[1px] hover:shadow-[4px_4px_0_0_var(--border-ink)] hover:bg-[var(--highlight)] transition-transform duration-150"
-                  style={{ opacity: 0 }}
-                >
-                  <span className="w-4 h-4">{link.icon}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className={`relative md:col-span-3 bg-[var(--surface)] border-[2.5px] border-[var(--border-ink)] p-6 md:p-8 space-y-5 ${
-            snap
-              ? "shadow-[12px_12px_0_0_var(--border-ink)] translate-x-[-2px] translate-y-[-2px]"
-              : "shadow-brutal"
-          }`}
-          style={{ opacity: 0, transition: snap ? "none" : undefined }}
-          noValidate
-        >
-          {/* Honeypot: hidden from users, catches bots */}
-          <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
-            <label htmlFor="website">Website (leave blank)</label>
-            <input
-              type="text"
-              id="website"
-              name="website"
-              tabIndex={-1}
-              autoComplete="off"
-              value={form.website}
-              onChange={(e) => setForm({ ...form, website: e.target.value })}
-            />
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-5">
-            <div>
-              <label htmlFor="name" className="block font-display font-bold text-sm mb-2">
-                Name <span className="text-[var(--accent)]">*</span>
-              </label>
+            {/* Honeypot — hidden from users, catches bots */}
+            <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
+              <label htmlFor="website">Website (leave blank)</label>
               <input
                 type="text"
-                id="name"
-                autoComplete="name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Jane Doe"
-                className="brutal-input"
-                required
-                maxLength={80}
+                id="website"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={form.website}
+                onChange={(e) => setForm({ ...form, website: e.target.value })}
               />
             </div>
-            <div>
-              <label htmlFor="email" className="block font-display font-bold text-sm mb-2">
-                Email <span className="text-[var(--accent)]">*</span>
-              </label>
-              <input
-                type="email"
-                id="email"
-                autoComplete="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="jane@example.com"
-                className="brutal-input"
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label htmlFor="name" className="meta mb-2 block">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  autoComplete="name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="Jane Doe"
+                  className={field}
+                  required
+                  maxLength={80}
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="meta mb-2 block">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  autoComplete="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="jane@example.com"
+                  className={field}
+                  required
+                  maxLength={200}
+                />
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <div className="mb-2 flex items-baseline justify-between">
+                <label htmlFor="message" className="meta">
+                  Message
+                </label>
+                <span className="meta tabular-nums" aria-live="polite">
+                  {form.message.length} / 4000
+                </span>
+              </div>
+              <textarea
+                id="message"
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                placeholder="Tell me about your project, idea, or question…"
+                rows={7}
+                className={`${field} resize-none`}
                 required
-                maxLength={200}
+                minLength={10}
+                maxLength={4000}
               />
             </div>
-          </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label htmlFor="message" className="block font-display font-bold text-sm">
-                Message <span className="text-[var(--accent)]">*</span>
-              </label>
-              <span
-                className={`font-mono text-[10px] font-bold tracking-[0.18em] uppercase tabular-nums transition-colors duration-200 ${
-                  form.message.length >= 4000
-                    ? "text-[var(--ink)]"
-                    : form.message.length >= 3600
-                    ? "text-[var(--ink)]"
-                    : form.message.length >= 10
-                    ? "text-[var(--muted)]"
-                    : "text-[var(--muted)]/60"
-                }`}
-                aria-live="polite"
-              >
-                {form.message.length} / 4000
-                {form.message.length > 0 && form.message.length < 10 && (
-                  <span className="ml-2 text-[var(--ink)]">· {10 - form.message.length} more</span>
-                )}
-              </span>
-            </div>
-            <textarea
-              id="message"
-              value={form.message}
-              onChange={(e) => setForm({ ...form, message: e.target.value })}
-              placeholder="Tell me about your project, idea, or question…"
-              rows={6}
-              className="brutal-input resize-none"
-              required
-              minLength={10}
-              maxLength={4000}
-            />
-            {/* Live progress bar — segmented brutal style */}
-            <div
-              className="mt-2 flex gap-0.5 h-1"
-              aria-hidden="true"
-            >
-              {Array.from({ length: 20 }).map((_, i) => {
-                const filled = (form.message.length / 4000) * 20;
-                const active = i < Math.round(filled);
-                return (
-                  <span
-                    key={i}
-                    className={`flex-1 transition-colors duration-150 ${
-                      active ? "bg-[var(--ink)]" : "bg-[var(--surface-alt)] border border-[var(--border-ink)]/30"
-                    }`}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          <AnimatePresence>
             {status === "error" && (
-              <motion.p
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
+              <p
                 role="alert"
-                className="px-4 py-3 bg-[var(--accent)] text-[var(--accent-ink)] border-[2.5px] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-sm"
+                className="mt-5 rounded-[var(--radius)] border border-[var(--line-2)] bg-[var(--bg-1)] px-4 py-3 text-sm text-[var(--text-1)]"
               >
                 {errorMsg || "Something went wrong. Try again."}
-              </motion.p>
+              </p>
             )}
             {status === "sent" && (
-              <motion.p
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
+              <p
                 role="status"
-                className="px-4 py-3 bg-[var(--ink)] text-[var(--paper)] border-[2.5px] border-[var(--border-ink)] shadow-[3px_3px_0_0_var(--border-ink)] font-display font-bold text-sm"
+                className="mt-5 rounded-[var(--radius)] border border-[var(--accent)] bg-[var(--accent-dim)] px-4 py-3 text-sm text-[var(--text-1)]"
               >
                 Message sent. I&apos;ll get back to you shortly.
-              </motion.p>
+              </p>
             )}
-          </AnimatePresence>
 
-          <BrutalButton
-            variant="primary"
-            size="lg"
-            type="submit"
-            disabled={status === "sending" || status === "sent"}
-            className="w-full disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {status === "idle" && (
-              <>
-                <Send className="w-4 h-4" /> Send message
-              </>
-            )}
-            {status === "sending" && (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" /> Sending…
-              </>
-            )}
-            {status === "sent" && (
-              <>
-                <Check className="w-4 h-4" /> Sent!
-              </>
-            )}
-            {status === "error" && (
-              <>
-                <Send className="w-4 h-4" /> Try again
-              </>
-            )}
-          </BrutalButton>
-
-          <p className="text-xs font-mono text-[var(--muted)] text-center">
-            Rate-limited to 3 messages per hour. Protected by a honeypot, not a CAPTCHA.
-          </p>
-        </form>
+            <div className="mt-7 flex flex-wrap items-center gap-5">
+              <div ref={submitRef} className="magnetic inline-flex">
+                <button
+                  type="submit"
+                  disabled={status === "sending" || status === "sent"}
+                  className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {status === "sending" ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Sending
+                    </>
+                  ) : status === "sent" ? (
+                    <>
+                      <Check className="h-4 w-4" /> Sent
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" /> Send message
+                    </>
+                  )}
+                </button>
+              </div>
+              <p className="meta max-w-[16rem] leading-relaxed">
+                Rate-limited to 3 per hour. Protected by a honeypot, not a CAPTCHA.
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
-    </SectionBorder>
+    </section>
   );
 }

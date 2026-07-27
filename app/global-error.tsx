@@ -9,39 +9,75 @@ export default function GlobalError({
 }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif", background: "#FAFAFA", color: "#0B0B0C", margin: 0 }}>
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
-          <div
-            style={{
-              maxWidth: 520,
-              width: "100%",
-              background: "#FFFFFF",
-              border: "2.5px solid #0B0B0C",
-              padding: "40px",
-              boxShadow: "10px 10px 0 0 #0B0B0C",
-            }}
-          >
-            <h1 style={{ fontSize: "40px", fontWeight: 700, letterSpacing: "-0.04em", margin: "0 0 16px" }}>
-              Fatal error.
+      <body
+        style={{
+          fontFamily: "ui-sans-serif, system-ui, sans-serif",
+          background: "#0A0A0B",
+          color: "#F4F4F2",
+          margin: 0,
+        }}
+      >
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            padding: "24px 32px",
+          }}
+        >
+          <div style={{ maxWidth: 560, width: "100%" }}>
+            <p
+              style={{
+                fontFamily: "ui-monospace, monospace",
+                fontSize: 11,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "#C8F04B",
+                margin: "0 0 24px",
+              }}
+            >
+              Fatal error
+            </p>
+            <h1
+              style={{
+                fontSize: 44,
+                fontWeight: 600,
+                letterSpacing: "-0.035em",
+                lineHeight: 1.05,
+                margin: "0 0 20px",
+              }}
+            >
+              The app failed to load.
             </h1>
-            <p style={{ color: "#6B6B70", marginBottom: "24px" }}>
-              The entire app failed to render. Reloading may fix it.
+            <p style={{ color: "#9E9EA6", lineHeight: 1.7, margin: "0 0 8px" }}>
+              Reloading may fix it.
             </p>
             {error.digest && (
-              <p style={{ fontFamily: "ui-monospace, monospace", fontSize: "12px", color: "#6B6B70", marginBottom: "24px" }}>
+              <p
+                style={{
+                  fontFamily: "ui-monospace, monospace",
+                  fontSize: 12,
+                  color: "#5C5C64",
+                  margin: "0 0 28px",
+                }}
+              >
                 digest: {error.digest}
               </p>
             )}
             <button
               onClick={reset}
               style={{
-                padding: "12px 20px",
-                background: "#0B0B0C",
-                color: "#FAFAFA",
-                border: "2.5px solid #0B0B0C",
-                fontWeight: 600,
+                marginTop: 20,
+                height: 48,
+                padding: "0 22px",
+                background: "#C8F04B",
+                color: "#0A0A0B",
+                border: "none",
+                borderRadius: 2,
+                fontFamily: "ui-monospace, monospace",
+                fontSize: 13,
+                letterSpacing: "0.04em",
                 cursor: "pointer",
-                boxShadow: "6px 6px 0 0 #0B0B0C",
               }}
             >
               Reload
