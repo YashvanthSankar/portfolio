@@ -107,10 +107,14 @@ export function Hero() {
           </span>
         </div>
 
-        {/* Name — masked char rise */}
+        {/* Name — masked char rise. Every glyph is its own element so it can
+            be staggered, which makes assistive tech spell the name out one
+            letter at a time; the visual split is therefore hidden and the
+            name given once as a real (absolutely positioned) text node. */}
         <h1 className="display-xl mb-7 select-none">
+          <span className="sr-only">{NAME_LINES.join(" ")}.</span>
           {NAME_LINES.map((line, li) => (
-            <span key={line} data-hero-line className="block py-[0.12em]">
+            <span key={line} data-hero-line aria-hidden="true" className="block py-[0.12em]">
               {line.split("").map((char, ci) => (
                 <span
                   key={`${line}-${ci}`}
@@ -181,9 +185,11 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll cue — right-aligned so it never collides with the meta strip */}
+      {/* Scroll cue — right-aligned so it clears the meta strip on the left,
+          and stacked above the fixed "?" shortcuts button, which occupies
+          the bottom 60px of this same corner. */}
       <div
-        className="pointer-events-none absolute bottom-8 right-[var(--gutter)] z-10 hidden lg:block"
+        className="pointer-events-none absolute bottom-20 right-[var(--gutter)] z-10 hidden lg:block"
         aria-hidden="true"
       >
         <span className="meta flex items-center gap-2 text-[var(--text-3)]">

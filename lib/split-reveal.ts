@@ -154,7 +154,13 @@ export function scoped(
 
 /**
  * Plain fade-and-rise for elements that don't need text splitting —
- * cards, rows, chips. Same reduced-motion contract as `splitReveal`.
+ * cards, rows, chips. Same reduced-motion contract as `splitReveal`:
+ * the content ends up visible either way.
+ *
+ * Unlike `splitReveal`, callers of this one ship `style={{ opacity: 0 }}`
+ * in their markup, so "do nothing" is NOT a safe reduced-motion branch —
+ * it leaves whole sections permanently blank. When motion is off we skip
+ * the tween but still perform the reveal.
  *
  * A string target is resolved within `trigger`, so each instance of a
  * repeated component only ever animates its own elements.
@@ -177,11 +183,16 @@ export function fadeUp(
     start?: string;
   } = {}
 ): Cleanup {
-  if (!targets || !shouldAnimate()) return NOOP;
+  if (!targets) return NOOP;
 
   const resolved =
     typeof targets === "string" ? scoped(targets, trigger) : targets;
   if (Array.isArray(resolved) && resolved.length === 0) return NOOP;
+
+  if (!shouldAnimate()) {
+    gsap.set(resolved, { autoAlpha: 1, y: 0 });
+    return NOOP;
+  }
 
   const tween = gsap.fromTo(
     resolved,

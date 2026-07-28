@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
+import { sections } from "@/data/sections";
 import { socials } from "@/data/socials";
 import { fadeUp, scoped } from "@/lib/split-reveal";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
@@ -44,13 +45,11 @@ const colophon = [
   { label: "Hosting", value: "Vercel" },
 ];
 
+/* Every chapter but the hero, then the one route that isn't a chapter. */
 const sitemap = [
-  { label: "Work", href: "/#projects" },
-  { label: "About", href: "/#about" },
-  { label: "Experience", href: "/#experience" },
-  { label: "Now", href: "/#now" },
-  { label: "Stack", href: "/#technologies" },
-  { label: "Contact", href: "/#contact" },
+  ...sections
+    .filter((s) => s.id !== "home")
+    .map((s) => ({ label: s.label, href: `/#${s.id}` })),
   { label: "All projects", href: "/work" },
 ];
 

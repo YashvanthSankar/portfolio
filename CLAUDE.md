@@ -58,11 +58,16 @@ Rules that hold the look together:
   scroll goes through it — never call `scrollIntoView` directly.
 - `lib/gsap.ts` registers ScrollTrigger + SplitText once.
 - `lib/split-reveal.ts` — `splitReveal()` for masked line/char reveals,
-  `fadeUp()` for everything else. Both no-op under reduced motion and
-  re-split after `document.fonts.ready`.
+  `fadeUp()` for everything else. Both re-split/re-measure after
+  `document.fonts.ready`.
 - **Hidden state comes from JS** (`gsap.set(autoAlpha: 0)` / inline
   `style={{ opacity: 0 }}` paired with a reveal). Never hide content in CSS
   that JS must reveal — failed JS must still render readable text.
+- **Reduced motion means "skip the tween", not "skip the reveal".** Callers
+  of `fadeUp()` ship `style={{ opacity: 0 }}`, so a no-op branch leaves whole
+  sections permanently blank. `fadeUp()` therefore still sets `autoAlpha: 1`
+  when motion is off. `splitReveal()` can genuinely no-op — its targets are
+  visible in the markup. Any new reveal helper must follow the same rule.
 - Pins and scrubs live inside `gsap.matchMedia("(min-width: 768px) and
   (prefers-reduced-motion: no-preference)")`. Mobile gets plain reveals.
 
@@ -70,6 +75,11 @@ Rules that hold the look together:
 
 - **Hero** is `sticky top-0 z-0`; the rest of the page (`z-10`, opaque `--bg-0`)
   scrolls over it as a curtain. Hero content scrubs to 15% opacity as it goes.
+  Because it is sticky, its bounding rect reads `(0, viewportHeight)` from
+  everywhere below the fold — so it is excluded from the scroll-spy probe in
+  `lib/use-active-section.ts` (it is the fallback instead), and `scrollTo()`
+  rewrites `#home` to offset `0`. Both are load-bearing; without them the
+  indicators stick on "Intro" and "back to intro" does nothing.
 - **Selected Work** panels are `md:sticky md:top-0` siblings that stack; each
   outgoing panel scales to 0.955 and dims as the next slides over it. Panel
   z-index ascends by index — keep it that way or panels stack wrong.
@@ -78,9 +88,22 @@ Rules that hold the look together:
 ### WebGL hero
 
 `components/gl/hero-canvas.tsx` + `hero-shader.ts`. Raw WebGL, no three.js:
-one program, one fullscreen triangle, three uniforms (`u_time`, `u_res`,
-`u_pointer`). Simplex → fbm → two-pass domain warp; lime appears only on a
-narrow ridge band so it reads as filaments, not a wash.
+one program, one fullscreen triangle, six uniforms (`u_time`, `u_res`,
+`u_pointer`, `u_disturb`, `u_textScale`, `u_textOffset`). Simplex → fbm →
+two-pass domain warp; lime appears only on a narrow ridge band so it reads
+as filaments, not a wash.
+
+The wordmark is **never drawn** — it is a luminance texture used as a relief
+map, sampled through the same warp field so the flow bends around the
+letterforms. `u_disturb` spikes the warp near the pointer, which shreds them
+and lets them re-form. It is scenery, and has to stay legible as such:
+`u_textOffset` anchors it in the empty lower-right quadrant, bleeding off the
+right edge, because centred it lands across "Sankar." and reads as a second
+headline. **Anything that changes hero copy width or the wordmark's fit must
+re-check that it still clears the text down to a ~1024px window**, where the
+role line wraps and is the binding constraint. Coarse pointers keep the
+oversized centred fit — at that scale only two or three letterforms are on
+screen, so it reads as texture rather than a duplicate of the name.
 
 Non-negotiable guarantees: init deferred to `requestIdleCallback` (the hero
 headline is LCP), DPR capped and rendered at 0.8 internal scale, rAF paused
@@ -92,6 +115,14 @@ every failure path degrades silently.
 
 Static content, no CMS — `data/projects.ts`, `data/experience.ts`,
 `data/technologies.ts`, `data/socials.tsx`, types in `data/types.ts`.
+`data/site.ts` holds the identity constants (email, URL, GitHub); anything
+appearing in two places belongs there.
+
+`data/sections.ts` is the page's chapter registry and the **single source of
+truth** for the navbar, the desktop section index, the mobile progress
+cluster, the keyboard shortcuts, and the footer sitemap. Adding a section
+means adding one row there and nothing else — never re-declare the list in
+a component.
 
 Adding a project: append to `data/projects.ts`. `image` is optional — without
 one, `components/ui/project-cover.tsx` generates a typographic cover seeded

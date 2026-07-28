@@ -1,20 +1,21 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/data/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://yashvanth.com'
+  const lastModified = new Date();
 
   return [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+      url: SITE_URL,
+      lastModified,
+      changeFrequency: "monthly",
       priority: 1,
     },
     {
-      url: `${baseUrl}/work`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
+      url: `${SITE_URL}/work`,
+      lastModified,
+      changeFrequency: "weekly",
       priority: 0.8,
     },
-  ]
+  ];
 }

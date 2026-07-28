@@ -163,6 +163,7 @@ export function HeroCanvas() {
       const uPointer = gl.getUniformLocation(program, "u_pointer");
       const uDisturb = gl.getUniformLocation(program, "u_disturb");
       const uTextScale = gl.getUniformLocation(program, "u_textScale");
+      const uTextOffset = gl.getUniformLocation(program, "u_textOffset");
 
       const resize = () => {
         if (!gl || disposed) return;
@@ -175,14 +176,27 @@ export function HeroCanvas() {
         gl.viewport(0, 0, w, h);
         gl.uniform2f(uRes, w, h);
 
-        /* Fit the wordmark across ~78% of the viewport width, preserving
-           its own aspect so the letters never stretch. */
-        const coverage = coarse ? 1.05 : 0.78;
+        /* Fit the wordmark to a share of the viewport width, preserving its
+           own aspect so the letters never stretch.
+         *
+         * Placement matters as much as size. The headline runs down the
+         * left column, so on a pointer device the wordmark is anchored into
+         * the empty lower-right quadrant and allowed to bleed off the right
+         * edge — centred, it lands squarely across "Sankar." and reads as a
+         * duplicated headline instead of scenery behind one.
+         *
+         * A coarse screen has no free column, so it keeps the oversized
+         * centred fit: at that scale only two or three letterforms are on
+         * screen and it reads as texture, never as a second copy. */
         const texAspect = TEX_W / TEX_H;
         const viewAspect = w / h;
+        const coverage = coarse ? 1.05 : 0.46;
         const scaleX = 1 / coverage;
         const scaleY = (scaleX * texAspect) / viewAspect;
         gl.uniform2f(uTextScale, scaleX, scaleY);
+        /* Far enough right to clear the role line where it wraps to two
+           lines on a ~1024px window, which is the tightest desktop case. */
+        gl.uniform2f(uTextOffset, coarse ? 0 : 0.33, coarse ? 0 : -0.215);
       };
       resize();
 

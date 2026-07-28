@@ -5,15 +5,10 @@ import Link from "next/link";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { cn, throttle } from "@/lib/utils";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
+import { useActiveSection } from "@/lib/use-active-section";
+import { navSections } from "@/data/sections";
 import { socials } from "@/data/socials";
-
-const navItems = [
-  { id: "projects", label: "Work" },
-  { id: "about", label: "About" },
-  { id: "experience", label: "Experience" },
-  { id: "technologies", label: "Stack" },
-  { id: "contact", label: "Contact" },
-];
+import { GITHUB_URL } from "@/data/site";
 
 interface NavbarProps {
   /** `page` links back to `/` instead of scroll-spying sections. */
@@ -21,12 +16,15 @@ interface NavbarProps {
 }
 
 export function Navbar({ variant = "home" }: NavbarProps) {
-  const [active, setActive] = useState("home");
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const lastY = useRef(0);
   const scrollTo = useScrollTo();
+
+  /* Shared with SectionIndex and MobileProgress so the three indicators
+     can never disagree about which chapter the reader is in. */
+  const { active } = useActiveSection({ enabled: variant === "home" });
 
   /* Hide on scroll-down, reveal on scroll-up (with hysteresis). */
   useEffect(() => {
@@ -38,26 +36,15 @@ export function Navbar({ variant = "home" }: NavbarProps) {
         setHidden(y > 140 && y > lastY.current);
         lastY.current = y;
       }
-
-      if (variant !== "home") return;
-      const probe = window.innerHeight * 0.35;
-      let current = "home";
-      for (const item of navItems) {
-        const el = document.getElementById(item.id);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= probe && rect.bottom > probe) {
-          current = item.id;
-          break;
-        }
-      }
-      setActive(current);
     }, 100);
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [variant]);
+    return () => {
+      onScroll.cancel();
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   /* Lock body scroll while the panel is open. */
   useEffect(() => {
@@ -140,7 +127,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
           {/* Desktop nav */}
           <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
             {variant === "home" ? (
-              navItems.map((item) => (
+              navSections.map((item) => (
                 <a
                   key={item.id}
                   href={`#${item.id}`}
@@ -168,7 +155,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
                   Home
                 </Link>
                 <a
-                  href="https://github.com/YashvanthSankar"
+                  href={GITHUB_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3 py-1.5 font-mono text-[12px] text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
@@ -239,7 +226,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
 
         <ul className="flex flex-1 flex-col justify-center gap-1 overflow-y-auto px-[var(--gutter)] py-6">
           {(variant === "home"
-            ? navItems
+            ? navSections
             : [
                 { id: "__home", label: "Home" },
                 { id: "__github", label: "GitHub" },
@@ -270,7 +257,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
               return (
                 <li key={item.id}>
                   <a
-                    href="https://github.com/YashvanthSankar"
+                    href={GITHUB_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMenuOpen(false)}

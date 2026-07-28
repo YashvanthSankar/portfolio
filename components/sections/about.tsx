@@ -5,10 +5,10 @@ import Image from "next/image";
 import { Check, Copy } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
+import { useIsoLayoutEffect } from "@/lib/use-iso-layout-effect";
 import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp, splitReveal } from "@/lib/split-reveal";
-
-const EMAIL = "yashvanthsankar@gmail.com";
+import { EMAIL } from "@/data/site";
 
 const stats = [
   { label: "Projects shipped", value: 15, suffix: "+" },
@@ -26,21 +26,27 @@ function Counter({
   suffix?: string;
   float?: boolean;
 }) {
-  const animate = shouldAnimate();
-  const [count, setCount] = useState(() => (animate ? 0 : target));
+  /* Start at the final value so SSR, hydration and a JS-less visit all
+     agree — `shouldAnimate()` reads true on the server, so deciding the
+     initial value from it mismatches under reduced motion. The pre-paint
+     effect below rewinds to zero only when we're actually going to count. */
+  const [count, setCount] = useState(target);
   const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
+  const frame = useRef(0);
+
+  useIsoLayoutEffect(() => {
+    if (shouldAnimate()) setCount(0);
+  }, []);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !animate) return;
+    if (!el || !shouldAnimate()) return;
+
     const st = ScrollTrigger.create({
       trigger: el,
       start: "top 88%",
       once: true,
       onEnter() {
-        if (started.current) return;
-        started.current = true;
         const duration = 1500;
         const startTime = performance.now();
         const tick = (now: number) => {
@@ -48,13 +54,17 @@ function Counter({
           const eased = 1 - Math.pow(1 - t, 4);
           const v = eased * target;
           setCount(float ? Math.round(v * 100) / 100 : Math.round(v));
-          if (t < 1) requestAnimationFrame(tick);
+          if (t < 1) frame.current = requestAnimationFrame(tick);
         };
-        requestAnimationFrame(tick);
+        frame.current = requestAnimationFrame(tick);
       },
     });
-    return () => st.kill();
-  }, [target, animate, float]);
+
+    return () => {
+      cancelAnimationFrame(frame.current);
+      st.kill();
+    };
+  }, [target, float]);
 
   return (
     <span ref={ref} className="tabular-nums">
@@ -66,13 +76,32 @@ function Counter({
 
 function CopyEmail() {
   const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+  }, []);
+
+  /* `navigator.clipboard` is undefined on any non-secure origin, so this
+     has to be guarded — an unhandled rejection here would leave the button
+     stuck reading "Copy" with no indication anything happened. */
+  const copy = async () => {
+    try {
+      await navigator.clipboard?.writeText(EMAIL);
+      setCopied(true);
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* Clipboard denied or unavailable — the address is right there as a
+         selectable mailto link, so there's nothing useful to say. */
+    }
+  };
+
   return (
     <button
-      onClick={() => {
-        navigator.clipboard.writeText(EMAIL);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }}
+      type="button"
+      onClick={copy}
+      aria-label={copied ? "Email address copied" : "Copy email address"}
       className="meta inline-flex items-center gap-2 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
     >
       {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}

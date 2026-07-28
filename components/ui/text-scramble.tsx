@@ -1,12 +1,8 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { shouldAnimate } from "@/lib/utils";
-
-// Use layout effect on the client and a no-op on the server to silence the
-// SSR warning while still running synchronously before paint on the client.
-const useIsoLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+import { useIsoLayoutEffect } from "@/lib/use-iso-layout-effect";
 
 interface TextScrambleProps {
   text: string;
@@ -137,12 +133,10 @@ export function TextScramble({
   };
 
   return (
-    <span
-      className={className}
-      onMouseEnter={handleEnter}
-      onFocus={handleEnter}
-      aria-label={text}
-    >
+    <span className={className} onMouseEnter={handleEnter} onFocus={handleEnter}>
+      {/* `aria-label` is ignored on a role-less <span>, so the accessible
+          copy has to be a real text node that the scramble never touches. */}
+      <span className="sr-only">{text}</span>
       <span aria-hidden="true">{output}</span>
       {showCaret && done && <span className="scramble-caret" aria-hidden="true" />}
     </span>

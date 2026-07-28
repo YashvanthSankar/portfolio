@@ -28,7 +28,8 @@ uniform float     u_time;
 uniform vec2      u_pointer;
 uniform float     u_disturb;   // 0 → calm, 1 → cursor actively shredding
 uniform sampler2D u_text;
-uniform vec2      u_textScale; // aspect fit for the wordmark texture
+uniform vec2      u_textScale;  // aspect fit for the wordmark texture
+uniform vec2      u_textOffset; // where its centre sits, in screen uv
 
 const vec3 BG_0   = vec3(0.039, 0.039, 0.043); // #0A0A0B
 const vec3 BG_2   = vec3(0.086, 0.086, 0.098); // #161619
@@ -99,21 +100,25 @@ void main() {
    * pressed into the field, and their slopes bend the flow around them.
    * What you read is the wave deforming, not type sitting on top.
    * ────────────────────────────────────────────────────────────────── */
-  vec2 tuv = (uv - 0.5) * u_textScale + 0.5;
+  vec2 tuv = (uv - 0.5 - u_textOffset) * u_textScale + 0.5;
   bool inText = tuv.x > 0.0 && tuv.x < 1.0 && tuv.y > 0.0 && tuv.y < 1.0;
+
+  /* It is scenery behind a headline, not a second headline — held well
+     under the strength the type in front of it carries. */
+  const float GAIN = 0.7;
 
   float relief = 0.0;
   vec2  slope  = vec2(0.0);
   if (inText) {
     vec2 texel = vec2(3.0 / 2048.0, 3.0 / 512.0);
-    relief = texture2D(u_text, tuv).r;
+    relief = texture2D(u_text, tuv).r * GAIN;
     /* Central differences → the surface normal of the stamped edge. */
     slope = vec2(
       texture2D(u_text, tuv + vec2(texel.x, 0.0)).r -
       texture2D(u_text, tuv - vec2(texel.x, 0.0)).r,
       texture2D(u_text, tuv + vec2(0.0, texel.y)).r -
       texture2D(u_text, tuv - vec2(0.0, texel.y)).r
-    );
+    ) * GAIN;
   }
 
   /* Cursor smears the stamp — the deeper the disturbance, the more the

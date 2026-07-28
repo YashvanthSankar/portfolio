@@ -11,6 +11,7 @@ import {
 } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
+import { HERO_ID } from "@/data/sections";
 
 type ScrollTarget = string | number | HTMLElement;
 
@@ -81,9 +82,16 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       window.history.replaceState(null, "", target);
     }
 
+    /* The hero is `sticky top-0`, so from anywhere below the fold its
+       bounding rect reads (0, viewportHeight) — both Lenis and
+       `scrollIntoView` therefore resolve "go to the hero" as "you are
+       already there" and nothing moves. It is the first thing in the
+       document, so ask for the top of the page by position instead. */
+    const dest: ScrollTarget = target === `#${HERO_ID}` ? 0 : target;
+
     if (lenis) {
-      lenis.scrollTo(target, {
-        offset: typeof target === "number" ? 0 : offset,
+      lenis.scrollTo(dest, {
+        offset: typeof dest === "number" ? 0 : offset,
         duration: immediate ? 0 : 1.15,
         immediate,
       });
@@ -91,12 +99,11 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     }
 
     /* No Lenis (reduced motion / not mounted) — native fallback. */
-    if (typeof target === "number") {
-      window.scrollTo({ top: target, behavior: "auto" });
+    if (typeof dest === "number") {
+      window.scrollTo({ top: dest, behavior: "auto" });
       return;
     }
-    const el =
-      typeof target === "string" ? document.querySelector(target) : target;
+    const el = typeof dest === "string" ? document.querySelector(dest) : dest;
     el?.scrollIntoView({ behavior: "auto", block: "start" });
   }, []);
 

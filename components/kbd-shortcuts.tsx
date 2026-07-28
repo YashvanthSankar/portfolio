@@ -1,33 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { sections, shortcutMap } from "@/data/sections";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 
 /**
  * Single-letter jumps, no modifier — a power-user palette for the page.
  * Ignores typing inside inputs. First tap surfaces the hint panel once.
- *
- *   W → work · A → about · E → experience · N → now
- *   S → stack · C → contact · H → home · ? → toggle hint
+ * The letters themselves live in `data/sections.ts`.
  */
-const map: Record<string, string> = {
-  h: "home",
-  w: "projects",
-  a: "about",
-  e: "experience",
-  n: "now",
-  s: "technologies",
-  c: "contact",
-};
-
 const hints: Array<[string, string]> = [
-  ["H", "Home"],
-  ["W", "Work"],
-  ["A", "About"],
-  ["E", "Experience"],
-  ["N", "Now"],
-  ["S", "Stack"],
-  ["C", "Contact"],
+  ...sections.map(
+    (s) => [s.key.toUpperCase(), s.id === "home" ? "Home" : s.label] as [string, string]
+  ),
   ["?", "Toggle this"],
 ];
 
@@ -35,6 +20,8 @@ export function KbdShortcuts() {
   const [hintOpen, setHintOpen] = useState(false);
   const [pulse, setPulse] = useState<string | null>(null);
   const seen = useRef(false);
+  const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scrollTo = useScrollTo();
 
   useEffect(() => {
@@ -57,21 +44,28 @@ export function KbdShortcuts() {
         setHintOpen(false);
         return;
       }
-      if (k in map) {
+      if (k in shortcutMap) {
         e.preventDefault();
-        scrollTo(`#${map[k]}`);
+        scrollTo(`#${shortcutMap[k]}`);
         setPulse(k.toUpperCase());
-        setTimeout(() => setPulse(null), 600);
+        /* Restart rather than stack — hammering keys would otherwise let
+           an earlier timer clear the flash for a later keypress. */
+        if (pulseTimer.current) clearTimeout(pulseTimer.current);
+        pulseTimer.current = setTimeout(() => setPulse(null), 600);
         if (!seen.current) {
           seen.current = true;
           setHintOpen(true);
-          setTimeout(() => setHintOpen(false), 3200);
+          hintTimer.current = setTimeout(() => setHintOpen(false), 3200);
         }
       }
     };
 
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      if (pulseTimer.current) clearTimeout(pulseTimer.current);
+      if (hintTimer.current) clearTimeout(hintTimer.current);
+    };
   }, [scrollTo]);
 
   return (

@@ -24,7 +24,6 @@ export function Cursor() {
     if (!dot || !ring) return;
 
     const root = document.documentElement;
-    root.classList.add("custom-cursor");
 
     let targetX = window.innerWidth / 2;
     let targetY = window.innerHeight / 2;
@@ -42,6 +41,10 @@ export function Cursor() {
         ringY = targetY;
         dot.style.opacity = "1";
         ring.style.opacity = "1";
+        /* Only now is there something to replace the native cursor with.
+           Hiding it on mount instead leaves the pointer invisible for as
+           long as the reader doesn't move the mouse. */
+        root.classList.add("custom-cursor");
       }
       dot.style.transform = `translate3d(${targetX - 3}px, ${targetY - 3}px, 0)`;
       ring.dataset.hover = (e.target as Element | null)?.closest?.(INTERACTIVE)

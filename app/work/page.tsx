@@ -6,6 +6,7 @@ import { Footer, ScrollProgressBar } from "@/components/sections/footer";
 import { Navbar } from "@/components/sections/navbar";
 import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp } from "@/lib/split-reveal";
+import { GITHUB_URL } from "@/data/site";
 
 interface Repo {
   name: string;
@@ -156,7 +157,7 @@ export default function WorkPage() {
           {!loading && !error && (
             <div className="mt-12 flex justify-center">
               <a
-                href="https://github.com/YashvanthSankar"
+                href={GITHUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-outline"

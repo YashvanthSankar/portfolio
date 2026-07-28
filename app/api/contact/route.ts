@@ -2,15 +2,18 @@ import { Resend } from "resend";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { EMAIL } from "@/data/site";
 
 export const runtime = "nodejs";
 
 const ContactSchema = z.object({
   name: z.string().trim().min(2, "Name too short").max(80, "Name too long"),
-  email: z.string().trim().email("Invalid email").max(200),
+  email: z.string().trim().max(200).pipe(z.email("Invalid email")),
   message: z.string().trim().min(10, "Message too short").max(4000, "Message too long"),
-  /* Honeypot — must be empty. Hidden from real users via CSS. */
-  website: z.string().max(0).optional().or(z.literal("")),
+  /* Honeypot. Deliberately permissive: rejecting a filled trap here would
+     make the schema fail and hand the bot a 400 that tells it exactly what
+     went wrong. Accept it, then drop it silently below. */
+  website: z.string().max(200).optional(),
 });
 
 export async function POST(req: Request) {
@@ -45,8 +48,9 @@ export async function POST(req: Request) {
     );
   }
 
-  /* Silent drop for bot submissions hitting the honeypot. */
-  if (parsed.data.website) {
+  /* Silent drop for bot submissions hitting the honeypot — indistinguishable
+     from a real send, so there's no signal to adapt against. */
+  if (parsed.data.website?.trim()) {
     return NextResponse.json({ success: true });
   }
 
@@ -62,7 +66,7 @@ export async function POST(req: Request) {
 
   const { error } = await resend.emails.send({
     from: "Portfolio Contact <contact@yashvanth.com>",
-    to: "yashvanthsankar@gmail.com",
+    to: EMAIL,
     replyTo: email,
     subject: `Portfolio message from ${name}`,
     text: `Name: ${name}\nEmail: ${email}\n\n${message}`,

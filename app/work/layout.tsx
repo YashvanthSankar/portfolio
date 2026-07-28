@@ -1,37 +1,26 @@
-export const metadata = {
-  title: "My Work | GitHub Repositories & Projects",
-  description: "Explore my comprehensive collection of GitHub repositories showcasing full-stack development, AI projects, and open-source contributions across various technologies.",
-  keywords: [
-    "GitHub repositories",
-    "open source projects",
-    "full-stack development",
-    "React projects",
-    "Next.js projects",
-    "AI projects",
-    "machine learning",
-    "web development portfolio",
-    "code portfolio"
-  ],
-  alternates: {
-    canonical: '/work',
-  },
+import type { Metadata } from "next";
+import { NAME, SITE_URL } from "@/data/site";
+
+const DESCRIPTION =
+  "Every public repository — tools, experiments, and things built to scratch an itch.";
+
+export const metadata: Metadata = {
+  title: "All projects",
+  description: DESCRIPTION,
+  alternates: { canonical: "/work" },
   openGraph: {
-    title: "My Work | Yashvanth S - GitHub Repositories",
-    description: "Explore my comprehensive collection of GitHub repositories showcasing full-stack development, AI projects, and open-source contributions.",
-    url: 'https://yashvanth.com/work',
+    title: `All projects · ${NAME}`,
+    description: DESCRIPTION,
+    url: `${SITE_URL}/work`,
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'My Work | Yashvanth S - GitHub Repositories',
-    description: 'Explore my comprehensive collection of GitHub repositories showcasing full-stack development projects.',
+    card: "summary_large_image",
+    title: `All projects · ${NAME}`,
+    description: DESCRIPTION,
   },
 };
 
-export default function WorkLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function WorkLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <script
@@ -40,20 +29,11 @@ export default function WorkLayout({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "name": "Portfolio Projects - Yashvanth S",
-            "description": "Explore my portfolio of full-stack development projects, AI applications, and web development work.",
-            "url": "https://yashvanth.com/work",
-            "mainEntity": {
-              "@type": "ItemList",
-              "name": "Portfolio Projects",
-              "description": "A collection of my development projects and work"
-            },
-            "author": {
-              "@type": "Person",
-              "name": "Yashvanth S",
-              "url": "https://yashvanth.com"
-            }
-          })
+            name: `All projects · ${NAME}`,
+            description: DESCRIPTION,
+            url: `${SITE_URL}/work`,
+            author: { "@type": "Person", name: NAME, url: SITE_URL },
+          }),
         }}
       />
       {children}

@@ -4,17 +4,35 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Check, Loader2, Send } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { socials } from "@/data/socials";
+import { EMAIL } from "@/data/site";
 import { fadeUp } from "@/lib/split-reveal";
 import { useMagnetic } from "@/lib/use-magnetic";
 
-const EMAIL = "yashvanthsankar@gmail.com";
+type FieldName = "name" | "email" | "message";
+type Errors = Partial<Record<FieldName, string>>;
+
+const ORDER: FieldName[] = ["name", "email", "message"];
+
+/* Mirrors app/api/contact/route.ts. The server is still the authority —
+   this only saves a round-trip to be told what we already knew. */
+function validate(form: Record<FieldName, string>): Errors {
+  const errors: Errors = {};
+  if (form.name.trim().length < 2) errors.name = "Please enter your name.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+    errors.email = "That doesn't look like an email address.";
+  if (form.message.trim().length < 10)
+    errors.message = "A little more detail — at least 10 characters.";
+  return errors;
+}
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", message: "", website: "" });
+  const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const gridRef = useRef<HTMLDivElement>(null);
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const submitRef = useMagnetic<HTMLDivElement>(0.15, 5);
 
   useEffect(() => {
@@ -27,8 +45,46 @@ export function ContactSection() {
     return cleanup;
   }, []);
 
+  useEffect(
+    () => () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current);
+    },
+    []
+  );
+
+  const resetLater = (ms: number) => {
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => setStatus("idle"), ms);
+  };
+
+  /* Clear a field's error as soon as the reader starts fixing it —
+     leaving it up while they type reads as though it's still wrong. */
+  const setField =
+    (key: FieldName | "website") =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { value } = e.target;
+      setForm((prev) => ({ ...prev, [key]: value }));
+      if (key === "website") return;
+      setErrors((prev) => {
+        if (!prev[key]) return prev;
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const found = validate(form);
+    setErrors(found);
+    if (Object.keys(found).length > 0) {
+      setStatus("idle");
+      setErrorMsg(null);
+      document.getElementById(ORDER.find((k) => found[k]) as string)?.focus();
+      return;
+    }
+
     setStatus("sending");
     setErrorMsg(null);
     try {
@@ -38,21 +94,31 @@ export function ContactSection() {
         body: JSON.stringify(form),
       });
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(data.error || "Request failed");
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+          issues?: string[];
+        };
+        throw new Error(data.issues?.join(" · ") || data.error || "Request failed");
       }
       setStatus("sent");
       setForm({ name: "", email: "", message: "", website: "" });
-      setTimeout(() => setStatus("idle"), 4000);
+      resetLater(4000);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 5000);
+      resetLater(5000);
     }
   };
 
   const field =
-    "w-full rounded-[var(--radius)] border border-[var(--line-1)] bg-[var(--bg-1)] px-4 py-3 text-sm text-[var(--text-1)] placeholder:text-[var(--text-3)] transition-colors duration-200 focus:border-[var(--accent)] focus:outline-none";
+    "w-full rounded-[var(--radius)] border bg-[var(--bg-1)] px-4 py-3 text-sm text-[var(--text-1)] placeholder:text-[var(--text-3)] transition-colors duration-200 focus:outline-none";
+  const fieldClass = (name: FieldName) =>
+    `${field} ${
+      errors[name]
+        ? "border-[var(--accent)]"
+        : "border-[var(--line-1)] focus:border-[var(--accent)]"
+    }`;
+  const describedBy = (name: FieldName) => (errors[name] ? `${name}-error` : undefined);
 
   return (
     <section
@@ -127,7 +193,7 @@ export function ContactSection() {
                 tabIndex={-1}
                 autoComplete="off"
                 value={form.website}
-                onChange={(e) => setForm({ ...form, website: e.target.value })}
+                onChange={setField("website")}
               />
             </div>
 
@@ -141,12 +207,19 @@ export function ContactSection() {
                   id="name"
                   autoComplete="name"
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onChange={setField("name")}
                   placeholder="Jane Doe"
-                  className={field}
+                  className={fieldClass("name")}
                   required
                   maxLength={80}
+                  aria-invalid={Boolean(errors.name)}
+                  aria-describedby={describedBy("name")}
                 />
+                {errors.name && (
+                  <p id="name-error" role="alert" className="meta mt-2 text-[var(--accent)]">
+                    {errors.name}
+                  </p>
+                )}
               </div>
               <div>
                 <label htmlFor="email" className="meta mb-2 block">
@@ -157,12 +230,19 @@ export function ContactSection() {
                   id="email"
                   autoComplete="email"
                   value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  onChange={setField("email")}
                   placeholder="jane@example.com"
-                  className={field}
+                  className={fieldClass("email")}
                   required
                   maxLength={200}
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={describedBy("email")}
                 />
+                {errors.email && (
+                  <p id="email-error" role="alert" className="meta mt-2 text-[var(--accent)]">
+                    {errors.email}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -178,14 +258,21 @@ export function ContactSection() {
               <textarea
                 id="message"
                 value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                onChange={setField("message")}
                 placeholder="Tell me about your project, idea, or question…"
                 rows={7}
-                className={`${field} resize-none`}
+                className={`${fieldClass("message")} resize-none`}
                 required
                 minLength={10}
                 maxLength={4000}
+                aria-invalid={Boolean(errors.message)}
+                aria-describedby={describedBy("message")}
               />
+              {errors.message && (
+                <p id="message-error" role="alert" className="meta mt-2 text-[var(--accent)]">
+                  {errors.message}
+                </p>
+              )}
             </div>
 
             {status === "error" && (

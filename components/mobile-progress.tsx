@@ -1,58 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
-import { throttle } from "@/lib/utils";
+import { sections } from "@/data/sections";
+import { useActiveSection } from "@/lib/use-active-section";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
-
-const sections = [
-  { id: "home", label: "Intro" },
-  { id: "projects", label: "Work" },
-  { id: "about", label: "About" },
-  { id: "experience", label: "Experience" },
-  { id: "now", label: "Now" },
-  { id: "technologies", label: "Stack" },
-  { id: "contact", label: "Contact" },
-];
 
 /**
  * Mobile-only progress cluster (bottom-right). Mirrors the desktop
  * scroll-spy but sized for thumbs. Hidden on lg+ where SectionIndex runs.
  */
 export function MobileProgress() {
-  const [active, setActive] = useState("home");
-  const [hidden, setHidden] = useState(true);
+  const { active, past } = useActiveSection({ revealAfter: 340, throttleMs: 110 });
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const scrollTo = useScrollTo();
 
+  /* Dismiss on Escape or on any pointer down outside the cluster — which
+     on a touch screen also covers "the reader started scrolling again". */
   useEffect(() => {
-    const onScroll = throttle(() => {
-      setHidden(window.scrollY < 340);
-
-      const probe = window.innerHeight * 0.33;
-      let bestId = sections[0].id;
-      let bestDelta = Number.POSITIVE_INFINITY;
-      for (const s of sections) {
-        const el = document.getElementById(s.id);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= probe && rect.bottom > probe) {
-          bestId = s.id;
-          break;
-        }
-        const d = Math.abs(rect.top - probe);
-        if (d < bestDelta) {
-          bestDelta = d;
-          bestId = s.id;
-        }
-      }
-      setActive(bestId);
-    }, 110);
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    const onPointerDown = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open]);
 
   const activeIdx = sections.findIndex((s) => s.id === active);
   const activeLabel = sections[activeIdx]?.label ?? "";
@@ -64,8 +44,9 @@ export function MobileProgress() {
 
   return (
     <div
+      ref={rootRef}
       className={`fixed bottom-[max(env(safe-area-inset-bottom),1rem)] right-4 z-[55] flex flex-col items-end gap-2 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:hidden ${
-        hidden ? "pointer-events-none translate-y-3 opacity-0" : "translate-y-0 opacity-100"
+        past ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
       }`}
     >
       {open && (
