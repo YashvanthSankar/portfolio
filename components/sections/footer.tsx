@@ -163,7 +163,7 @@ export function Footer() {
               <li key={s.label}>
                 <Link
                   href={s.href}
-                  className="link-line text-sm text-[var(--text-2)] hover:text-[var(--text-1)]"
+                  className="link-line tap-safe py-1.5 text-sm text-[var(--text-2)] hover:text-[var(--text-1)]"
                 >
                   {s.label}
                 </Link>
@@ -186,14 +186,14 @@ export function Footer() {
 
         <div data-footer-el className="col-span-2 md:col-span-2" style={{ opacity: 0 }}>
           <p className="meta mb-4">Elsewhere</p>
-          <div className="flex flex-wrap gap-4">
+          <div className="tap-row flex flex-wrap gap-4">
             {socials.map((s) => (
               <a
                 key={s.name}
                 href={s.href}
                 {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
                 aria-label={s.name}
-                className="h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
+                className="tap-safe h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
               >
                 {s.icon}
               </a>
@@ -228,7 +228,7 @@ export function Footer() {
           <button
             onClick={() => scrollTo(0, { updateHash: false })}
             aria-label="Scroll to top of page"
-            className="meta group inline-flex items-center gap-2 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
+            className="meta tap-safe group inline-flex items-center gap-2 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             <ArrowUp className="h-3 w-3 transition-transform duration-300 group-hover:-translate-y-0.5" />
             Back to top

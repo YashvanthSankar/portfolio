@@ -139,24 +139,32 @@ export function HeroCanvas() {
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-      /* Wordmark texture */
-      texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        drawWordmark()
-      );
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.uniform1i(gl.getUniformLocation(program, "u_text"), 0);
+      /* Wordmark texture — pointer devices only.
+       *
+       * The imprint exists to be shredded by the cursor. A touch screen has
+       * no cursor, so all it can ever be there is a second, static copy of
+       * the name; and a portrait hero has no empty column to move it into,
+       * so it lands under the headline whatever we do. Skipping it also
+       * spares a phone the 2048x512 rasterise and a 4MB texture upload. */
+      if (!coarse) {
+        texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          drawWordmark()
+        );
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(gl.getUniformLocation(program, "u_text"), 0);
+      }
 
       const uRes = gl.getUniformLocation(program, "u_res");
       const uTime = gl.getUniformLocation(program, "u_time");
@@ -164,6 +172,8 @@ export function HeroCanvas() {
       const uDisturb = gl.getUniformLocation(program, "u_disturb");
       const uTextScale = gl.getUniformLocation(program, "u_textScale");
       const uTextOffset = gl.getUniformLocation(program, "u_textOffset");
+      /* Zero here makes the shader skip the texture entirely — see above. */
+      gl.uniform1f(gl.getUniformLocation(program, "u_textGain"), coarse ? 0 : 0.7);
 
       const resize = () => {
         if (!gl || disposed) return;
@@ -180,23 +190,19 @@ export function HeroCanvas() {
            own aspect so the letters never stretch.
          *
          * Placement matters as much as size. The headline runs down the
-         * left column, so on a pointer device the wordmark is anchored into
-         * the empty lower-right quadrant and allowed to bleed off the right
-         * edge — centred, it lands squarely across "Sankar." and reads as a
-         * duplicated headline instead of scenery behind one.
-         *
-         * A coarse screen has no free column, so it keeps the oversized
-         * centred fit: at that scale only two or three letterforms are on
-         * screen and it reads as texture, never as a second copy. */
+         * left column, so the wordmark is anchored into the empty
+         * lower-right quadrant and allowed to bleed off the right edge —
+         * centred, it lands squarely across "Sankar." and reads as a
+         * duplicated headline instead of scenery behind one. Far enough
+         * right to clear the role line where it wraps to two lines on a
+         * ~1024px window, which is the tightest case that still shows it. */
+        if (coarse) return;
         const texAspect = TEX_W / TEX_H;
         const viewAspect = w / h;
-        const coverage = coarse ? 1.05 : 0.46;
-        const scaleX = 1 / coverage;
+        const scaleX = 1 / 0.46;
         const scaleY = (scaleX * texAspect) / viewAspect;
         gl.uniform2f(uTextScale, scaleX, scaleY);
-        /* Far enough right to clear the role line where it wraps to two
-           lines on a ~1024px window, which is the tightest desktop case. */
-        gl.uniform2f(uTextOffset, coarse ? 0 : 0.33, coarse ? 0 : -0.215);
+        gl.uniform2f(uTextOffset, 0.33, -0.215);
       };
       resize();
 

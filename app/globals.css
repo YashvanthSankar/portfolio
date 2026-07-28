@@ -269,6 +269,45 @@ body::after {
 }
 }
 
+/* ═══════════════════════════ TOUCH TARGETS ══════════════════════════
+ *
+ * The design leans on small marks — 16px social glyphs, hairline links,
+ * compact mono buttons. That reads well under a cursor and is a poor
+ * target for a thumb, so on coarse pointers only, controls grow to the
+ * 44px minimum.
+ *
+ * `.tap-safe` does it with a centred pseudo-element rather than padding,
+ * so the hit area grows without the glyph moving or its row re-flowing.
+ *
+ * Deliberately NOT inside `@layer components`: `.tap-row` has to beat the
+ * `gap-*` utility on the same element, and every layer loses to unlayered
+ * CSS. Layered, the gap silently stayed at 16px and the enlarged targets
+ * overlapped their neighbours — each glyph swallowing the next one's taps.
+ * ═══════════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+  .tap-safe {
+    position: relative;
+  }
+  .tap-safe::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+  /* A row of 16px glyphs 16px apart puts their centres 32px apart, so 44px
+     targets would overlap. 28px tiles them exactly, edge to edge. */
+  .tap-row {
+    gap: 1.75rem;
+  }
+  /* Compact buttons keep their type scale but not their height. */
+  .btn-sm {
+    height: 2.75rem;
+  }
+}
+
 /* ═══════════════════════════ HERO / GL ══════════════════════════════ */
 
 /* Static gradient beneath the canvas — every failure mode lands here */

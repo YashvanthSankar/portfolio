@@ -45,6 +45,14 @@ Utility classes: `.display-xl/lg/md`, `.lead`, `.meta` (mono uppercase label),
 `.serif-accent` (Instrument Serif italic — **2–4 words per section, never
 more**), `.panel`, `.btn` + `.btn-primary/outline/ghost/sm`, `.link-line`.
 
+Touch targets: the design leans on 16px glyphs and hairline links, which are
+poor thumb targets. `.tap-safe` grows a control's hit area to 44px on coarse
+pointers using a centred pseudo-element, so nothing moves or re-flows;
+`.tap-row` widens icon-row gaps so those larger targets tile instead of
+overlapping. Both live **outside `@layer components`** on purpose — `.tap-row`
+has to beat the `gap-*` utility on the same element, and every layer loses to
+unlayered CSS.
+
 Rules that hold the look together:
 - **One accent.** Lime marks state and one CTA per view. Never decorative.
 - **Hairlines, not boxes.** 1px `--line-1`; borders separate, they don't frame.
@@ -101,9 +109,12 @@ and lets them re-form. It is scenery, and has to stay legible as such:
 right edge, because centred it lands across "Sankar." and reads as a second
 headline. **Anything that changes hero copy width or the wordmark's fit must
 re-check that it still clears the text down to a ~1024px window**, where the
-role line wraps and is the binding constraint. Coarse pointers keep the
-oversized centred fit — at that scale only two or three letterforms are on
-screen, so it reads as texture rather than a duplicate of the name.
+role line wraps and is the binding constraint.
+
+Touch devices get no wordmark at all (`u_textGain: 0`, and the texture is
+never built). The imprint exists to be shredded by the cursor, and a portrait
+hero has no empty column to move it into — there it can only ever be a second
+static copy of the name sitting under the headline.
 
 Non-negotiable guarantees: init deferred to `requestIdleCallback` (the hero
 headline is LCP), DPR capped and rendered at 0.8 internal scale, rAF paused

@@ -102,7 +102,7 @@ function CopyEmail() {
       type="button"
       onClick={copy}
       aria-label={copied ? "Email address copied" : "Copy email address"}
-      className="meta inline-flex items-center gap-2 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
+      className="meta tap-safe inline-flex items-center gap-2 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
     >
       {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
       {copied ? "Copied" : "Copy"}
@@ -176,21 +176,30 @@ export function About() {
               Promptli. Right now I&apos;m making AI feel quiet and useful.
             </p>
 
+            {/* These rows wrap rather than hold one line. The address is a
+                single unbreakable token ~187px wide; beside its label, the
+                copy button and the gaps it needs ~315px, which is wider
+                than the column on a 320px screen. Held on one line it
+                widened the whole document and gave the page a horizontal
+                scroll. */}
             <div className="max-w-md space-y-0 border-t border-[var(--line-1)]">
-              <div className="flex items-center justify-between gap-4 border-b border-[var(--line-1)] py-4">
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-[var(--line-1)] py-4">
                 <span className="meta">Email</span>
-                <div className="flex items-center gap-4">
-                  <a href={`mailto:${EMAIL}`} className="link-line text-sm text-[var(--text-1)]">
+                <div className="flex min-w-0 items-center gap-4">
+                  <a
+                    href={`mailto:${EMAIL}`}
+                    className="link-line tap-safe break-all text-sm text-[var(--text-1)]"
+                  >
                     {EMAIL}
                   </a>
                   <CopyEmail />
                 </div>
               </div>
-              <div className="flex items-center justify-between gap-4 border-b border-[var(--line-1)] py-4">
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-[var(--line-1)] py-4">
                 <span className="meta">Based in</span>
                 <span className="text-sm text-[var(--text-1)]">Chennai, India</span>
               </div>
-              <div className="flex items-center justify-between gap-4 border-b border-[var(--line-1)] py-4">
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-[var(--line-1)] py-4">
                 <span className="meta">Status</span>
                 <span className="flex items-center gap-2 text-sm text-[var(--text-1)]">
                   <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />

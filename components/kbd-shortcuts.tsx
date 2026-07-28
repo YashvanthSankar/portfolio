@@ -96,7 +96,7 @@ export function KbdShortcuts() {
             <button
               onClick={() => setHintOpen(false)}
               aria-label="Close shortcuts"
-              className="meta text-[var(--text-2)] transition-colors hover:text-[var(--text-1)]"
+              className="meta tap-safe text-[var(--text-2)] transition-colors hover:text-[var(--text-1)]"
             >
               esc
             </button>
@@ -118,7 +118,7 @@ export function KbdShortcuts() {
       <button
         onClick={() => setHintOpen(true)}
         aria-label="Show keyboard shortcuts"
-        className={`fixed bottom-6 right-6 z-[54] hidden h-9 w-9 items-center justify-center rounded-[var(--radius)] border border-[var(--line-1)] bg-[var(--bg-1)] font-mono text-sm text-[var(--text-2)] transition-[opacity,color,border-color] duration-200 hover:border-[var(--line-2)] hover:text-[var(--text-1)] md:inline-flex ${
+        className={`tap-safe fixed bottom-6 right-6 z-[54] hidden h-9 w-9 items-center justify-center rounded-[var(--radius)] border border-[var(--line-1)] bg-[var(--bg-1)] font-mono text-sm text-[var(--text-2)] transition-[opacity,color,border-color] duration-200 hover:border-[var(--line-2)] hover:text-[var(--text-1)] md:inline-flex ${
           hintOpen ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
       >

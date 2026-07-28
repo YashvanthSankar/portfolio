@@ -6,9 +6,12 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 import { cn, throttle } from "@/lib/utils";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 import { useActiveSection } from "@/lib/use-active-section";
-import { navSections } from "@/data/sections";
+import { navSections, sections, HERO_ID } from "@/data/sections";
 import { socials } from "@/data/socials";
 import { GITHUB_URL } from "@/data/site";
+
+/** The mobile panel carries the whole page; the hero is the wordmark's job. */
+const panelSections = sections.filter((s) => s.id !== HERO_ID);
 
 interface NavbarProps {
   /** `page` links back to `/` instead of scroll-spying sections. */
@@ -137,7 +140,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
                   }}
                   aria-current={active === item.id ? "page" : undefined}
                   className={cn(
-                    "px-3 py-1.5 font-mono text-[12px] tracking-[0.02em] transition-colors duration-200",
+                    "tap-safe px-3 py-1.5 font-mono text-[12px] tracking-[0.02em] transition-colors duration-200",
                     active === item.id
                       ? "text-[var(--accent)]"
                       : "text-[var(--text-2)] hover:text-[var(--text-1)]"
@@ -193,7 +196,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
               onClick={() => setMenuOpen((p) => !p)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-[var(--line-2)] text-[var(--text-1)] transition-colors duration-200 hover:bg-[var(--bg-1)] md:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-[2px] border border-[var(--line-2)] text-[var(--text-1)] transition-colors duration-200 hover:bg-[var(--bg-1)] md:hidden"
             >
               {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
@@ -218,15 +221,18 @@ export function Navbar({ variant = "home" }: NavbarProps) {
           <button
             onClick={() => setMenuOpen(false)}
             aria-label="Close menu"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-[var(--line-2)] text-[var(--text-1)]"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-[2px] border border-[var(--line-2)] text-[var(--text-1)]"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <ul className="flex flex-1 flex-col justify-center gap-1 overflow-y-auto px-[var(--gutter)] py-6">
+          {/* Every chapter, not just the ones the top bar has room for —
+              this panel is the only navigation a phone gets, and the bar's
+              shortlist exists to keep the bar short. */}
           {(variant === "home"
-            ? navSections
+            ? panelSections
             : [
                 { id: "__home", label: "Home" },
                 { id: "__github", label: "GitHub" },
@@ -288,14 +294,14 @@ export function Navbar({ variant = "home" }: NavbarProps) {
         <div className="border-t border-[var(--line-1)] px-[var(--gutter)] pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-5">
           <div className="mb-4 flex items-center justify-between">
             <span className="meta">elsewhere</span>
-            <div className="flex items-center gap-3">
+            <div className="tap-row flex items-center gap-3">
               {socials.slice(0, 5).map((s) => (
                 <a
                   key={s.name}
                   href={s.href}
                   {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
                   aria-label={s.name}
-                  className="h-4 w-4 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
+                  className="tap-safe h-4 w-4 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
                 >
                   {s.icon}
                 </a>

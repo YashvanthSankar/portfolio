@@ -144,7 +144,7 @@ export function ContactSection() {
               <p className="meta mb-3">Direct</p>
               <a
                 href={`mailto:${EMAIL}`}
-                className="link-line mb-10 inline-block text-lg font-medium tracking-[-0.01em] text-[var(--text-1)]"
+                className="link-line tap-safe mb-10 inline-block break-all text-lg font-medium tracking-[-0.01em] text-[var(--text-1)]"
               >
                 {EMAIL}
               </a>
@@ -161,7 +161,7 @@ export function ContactSection() {
                         href={s.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-3 text-sm text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
+                        className="group tap-safe inline-flex items-center gap-3 py-1.5 text-sm text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
                       >
                         <span className="h-3.5 w-3.5 text-[var(--text-3)] transition-colors duration-200 group-hover:text-[var(--accent)]">
                           {s.icon}

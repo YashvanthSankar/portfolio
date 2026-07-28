@@ -166,7 +166,7 @@ export function Hero() {
 
         {/* Meta strip */}
         <div data-hero-rise className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-4">
-          <div className="flex items-center gap-4">
+          <div className="tap-row flex items-center gap-4">
             {socials.slice(0, 5).map((s) => (
               <a
                 key={s.name}
@@ -174,7 +174,7 @@ export function Hero() {
                 href={s.href}
                 {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
                 aria-label={s.name}
-                className="h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
+                className="tap-safe h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
               >
                 {s.icon}
               </a>
