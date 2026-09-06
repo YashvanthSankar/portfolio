@@ -46,13 +46,12 @@ export function DownloadCards() {
     <div className={s.card}>
       <span className={s.badge}>{release.available ? 'Ready for Android' : 'Coming soon'}</span>
       <div className={s.downloadTitle}><Smartphone size={24} /><h3>LilMoney for Android</h3></div>
-      <p className={s.downloadText}>{release.available ? 'Your everyday money, a little easier to keep track of. Download directly to your phone.' : 'We’re getting your download ready. Check back shortly.'}</p>
+      <p className={s.downloadText}>{release.available ? 'Download the app to your Android phone.' : 'We’re getting your download ready. Check back shortly.'}</p>
       {release.available && !loginReady && <p className={s.downloadText}>Early access: we’re finishing our sign-in checks.</p>}
-      {release.available && !ios ? <button type="button" className={s.button} onClick={() => void download()} disabled={busy}>{busy ? 'Starting download…' : 'Download for Android'}<ArrowDownToLine size={18} /></button> : ios ? <p className={s.small}>On an iPhone? Your version is coming soon.</p> : <a className={s.link} href={`mailto:${legalEmail}?subject=LilMoney%20Android%20early%20access`}>Ask us a question<ArrowUpRight size={16} /></a>}
-      {release.available && typeof release.downloadRequests === 'number' && <div className={s.downloadCount} aria-live="polite"><strong>{new Intl.NumberFormat('en-IN').format(release.downloadRequests)}</strong><span>downloads started</span><small>Times the download was started—not the number of installs.</small></div>}
+      {release.available && !ios ? <button type="button" className={s.button} onClick={() => void download()} disabled={busy}>{busy ? 'Starting download…' : 'Download for Android'}<ArrowDownToLine size={18} /></button> : ios ? <p className={s.small}>iPhone — Coming soon.</p> : <a className={s.link} href={`mailto:${legalEmail}?subject=LilMoney%20Android%20early%20access`}>Ask us a question<ArrowUpRight size={16} /></a>}
       {error && <p role="alert" className={s.downloadError}>{error}</p>}
       {release.available && !ios && <details className={s.installHelp}><summary className={s.link}>Need help installing?</summary><ol><li>Tap Download, then open the file from your phone’s Downloads.</li><li>If your phone asks, allow this browser to install LilMoney. Keep Play Protect on.</li><li>Open LilMoney and sign in with Google.</li></ol><p className={s.small}>Tried an earlier test version? You may need to uninstall it first. Entries saved to your account will still be there when you sign back in.</p></details>}
     </div>
-    <div className={s.card}><span className={s.badge}>Coming soon</span><div className={s.downloadTitle}><Smartphone size={24} /><h3>LilMoney for iPhone</h3></div><p className={s.downloadText}>The same simple money habits, on your iPhone. We’re working on it.</p><a className={s.link} href={`mailto:${legalEmail}?subject=LilMoney%20iPhone%20updates`}>Ask about the iPhone app<ArrowUpRight size={16} /></a></div>
+    <div className={s.card}><div className={s.downloadTitle}><Smartphone size={24} /><h3>iPhone</h3></div><p className={s.downloadText}>Coming soon.</p></div>
   </div>;
 }
