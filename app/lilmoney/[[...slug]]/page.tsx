@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = doc ? `${doc.title} · LilMoney` : 'LilMoney — Money tracking, made simple';
   const description = doc?.summary ?? 'Track income, spending and savings in a calm, simple mobile app. Android APK release in preparation. iPhone coming soon.';
   const url = `${legalBase}${key ? `/${key}` : ''}`;
-  const images = [{ url: 'https://yashvanth.com/littlemoney-brand-512.png', width: 512, height: 512, alt: 'LilMoney — blue ribbon L logo' }];
+  const images = [{ url: 'https://yashvanth.com/lilmoney-icon-v2.png', width: 1254, height: 1254, alt: 'LilMoney — blue ribbon L logo' }];
   return { title: { absolute: title }, description, alternates: { canonical: url }, openGraph: { title, description, url, siteName: 'LilMoney', images }, twitter: { card: 'summary', title, description, images } };
 }
 export default async function Page({ params }: Props) {
@@ -25,7 +25,7 @@ export default async function Page({ params }: Props) {
   if (slug && (slug.length > 1 || (key && !Object.hasOwn(legalDocuments, key)))) notFound();
   const doc = key ? legalDocuments[key] : null;
   return <div className={s.site} data-littlemoney><div className={s.container}>
-    <header className={s.header}><Link href="/lilmoney" className={s.brand}><Image src="/littlemoney-brand-512.png" width={44} height={44} alt="" priority />LilMoney</Link><nav className={s.nav} aria-label="LilMoney"><Link href="/lilmoney#download">Get the app</Link><Link href="/lilmoney/support">Help</Link></nav></header>
+    <header className={s.header}><Link href="/lilmoney" className={s.brand}><Image src="/lilmoney-mark-v2.png" width={44} height={44} alt="" priority />LilMoney</Link><nav className={s.nav} aria-label="LilMoney"><Link href="/lilmoney#download">Get the app</Link><Link href="/lilmoney/support">Help</Link></nav></header>
     <main id="main-content">{doc && key ? <article className={s.legal}>
       <Link href="/lilmoney" className={s.link}><ArrowLeft size={16} />Back to LilMoney</Link><h1>{doc.title}</h1><p>{doc.summary}</p><p className={s.small}>Updated {legalUpdated} · Yashvanth S</p>
       <nav className={s.contents} aria-label="On this page">{doc.sections.map(([title], i) => <a href={`#section-${i}`} key={title}>{title}</a>)}</nav>
@@ -39,6 +39,6 @@ export default async function Page({ params }: Props) {
       <section id="download" className={s.section}><h2>A little clarity, in your pocket.</h2><DownloadCards /></section>
       <section className={s.section}><ShieldCheck size={24} color="#285ce7" /><h2 style={{ marginTop:16 }}>Your records. Your choice.</h2><p className={s.lead}>No bank connection needed. No reading your messages. LilMoney records what you choose to add—it doesn’t move your money.</p><Link className={s.link} href="/lilmoney/privacy">How we handle your data<ArrowUpRight size={16} /></Link></section>
     </>}</main>
-    <footer className={s.footer}><div><Link href="/lilmoney" className={s.brand}><Image src="/littlemoney-brand-512.png" width={32} height={32} alt="" />LilMoney</Link><p className={s.small}>Developed by Yashvanth S</p></div><nav className={s.footerLinks} aria-label="Legal and support">{(Object.keys(legalDocuments) as LegalPage[]).map(key => <Link key={key} href={`/lilmoney/${key}`}>{legalDocuments[key].title}</Link>)}</nav></footer>
+    <footer className={s.footer}><div><Link href="/lilmoney" className={s.brand}><Image src="/lilmoney-mark-v2.png" width={32} height={32} alt="" />LilMoney</Link><p className={s.small}>Developed by Yashvanth S</p></div><nav className={s.footerLinks} aria-label="Legal and support">{(Object.keys(legalDocuments) as LegalPage[]).map(key => <Link key={key} href={`/lilmoney/${key}`}>{legalDocuments[key].title}</Link>)}</nav></footer>
   </div></div>;
 }
