@@ -8,6 +8,7 @@ import s from './littlemoney.module.css';
 type Release = { available: boolean; version?: string; downloadRequests?: number | null };
 const api = process.env.NEXT_PUBLIC_LILMONEY_API_URL?.replace(/\/$/, '');
 const endpoint = api && /^https:\/\//.test(api) ? `${api}/api/releases/android` : null;
+const loginReady = process.env.NEXT_PUBLIC_LILMONEY_LOGIN_READY === 'true';
 export function DownloadCards() {
   const [release, setRelease] = useState<Release>({ available: false });
   const [ios, setIos] = useState(false);
@@ -46,9 +47,11 @@ export function DownloadCards() {
       <span className={s.badge}>{release.available ? `Android · v${release.version}` : 'Release in preparation'}</span>
       <div className={s.downloadTitle}><Smartphone size={24} /><h3>LilMoney for Android</h3></div>
       <p className={s.downloadText}>{release.available ? 'Download the APK, then open the file on your Android phone to install LilMoney.' : 'A direct APK download will be available here when the standalone release is ready. The current development build is not a public release.'}</p>
+      {release.available && !loginReady && <p className={s.downloadText}><strong>Early access:</strong> Google sign-in setup is being completed. You can install this build now; signing in may not work yet.</p>}
       {release.available && !ios ? <button type="button" className={s.button} onClick={() => void download()} disabled={busy}>{busy ? 'Starting download…' : 'Download Android APK'}<ArrowDownToLine size={18} /></button> : ios ? <p className={s.small}>You’re on an iPhone or iPad. The iPhone app is coming soon; an APK cannot be installed on this device.</p> : <a className={s.link} href={`mailto:${legalEmail}?subject=LilMoney%20Android%20early%20access`}>Ask about Android early access<ArrowUpRight size={16} /></a>}
       {release.available && typeof release.downloadRequests === 'number' && <div className={s.downloadCount} aria-live="polite"><strong>{new Intl.NumberFormat('en-IN').format(release.downloadRequests)}</strong><span>APK download requests</span><small>Requests started here, not verified installs or unique people.</small></div>}
       {error && <p role="alert" className={s.downloadError}>{error}</p>}
+      {release.available && !ios && <details style={{ marginTop: 20 }}><summary className={s.link}>How to install</summary><ol style={{ paddingLeft: 20, lineHeight: 1.7 }}><li>Download the APK and open it from Downloads.</li><li>If Android asks, allow this browser to install this app. Keep Play Protect enabled.</li><li>If you installed our development build, uninstall that build first. Records already saved to your account stay in Firebase; you’ll need to sign in again.</li></ol></details>}
     </div>
     <div className={s.card}><span className={s.badge}>Coming soon</span><div className={s.downloadTitle}><Smartphone size={24} /><h3>LilMoney for iPhone</h3></div><p className={s.downloadText}>The iPhone version is in development. Installation details will be shared here when it is ready.</p><a className={s.link} href={`mailto:${legalEmail}?subject=LilMoney%20iPhone%20updates`}>Ask about iPhone updates<ArrowUpRight size={16} /></a></div>
   </div>;
