@@ -8,7 +8,6 @@ import s from './littlemoney.module.css';
 type Release = { available: boolean; version?: string; downloadRequests?: number | null };
 const api = process.env.NEXT_PUBLIC_LILMONEY_API_URL?.replace(/\/$/, '');
 const endpoint = api && /^https:\/\//.test(api) ? `${api}/api/releases/android` : null;
-const loginReady = process.env.NEXT_PUBLIC_LILMONEY_LOGIN_READY === 'true';
 export function DownloadCards() {
   const [release, setRelease] = useState<Release>({ available: false });
   const [ios, setIos] = useState(false);
@@ -47,7 +46,6 @@ export function DownloadCards() {
       <span className={s.badge}>{release.available ? 'Ready for Android' : 'Coming soon'}</span>
       <div className={s.downloadTitle}><Smartphone size={24} /><h3>LilMoney for Android</h3></div>
       <p className={s.downloadText}>{release.available ? 'Download the app to your Android phone.' : 'We’re getting your download ready. Check back shortly.'}</p>
-      {release.available && !loginReady && <p className={s.downloadText}>Early access: we’re finishing our sign-in checks.</p>}
       {release.available && !ios ? <button type="button" className={s.button} onClick={() => void download()} disabled={busy}>{busy ? 'Starting download…' : 'Download for Android'}<ArrowDownToLine size={18} /></button> : ios ? <p className={s.small}>iPhone — Coming soon.</p> : <a className={s.link} href={`mailto:${legalEmail}?subject=LilMoney%20Android%20early%20access`}>Ask us a question<ArrowUpRight size={16} /></a>}
       {error && <p role="alert" className={s.downloadError}>{error}</p>}
       {release.available && !ios && <details className={s.installHelp}><summary className={s.link}>Need help installing?</summary><ol><li>Tap Download, then open the file from your phone’s Downloads.</li><li>If your phone asks, allow this browser to install LilMoney. Keep Play Protect on.</li><li>Open LilMoney and sign in with Google.</li></ol><p className={s.small}>Tried an earlier test version? You may need to uninstall it first. Entries saved to your account will still be there when you sign back in.</p></details>}
