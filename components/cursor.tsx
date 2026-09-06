@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { shouldAnimate } from "@/lib/utils";
 
 const INTERACTIVE = 'a, button, input, textarea, select, [data-cursor="hover"]';
@@ -12,10 +13,13 @@ const INTERACTIVE = 'a, button, input, textarea, select, [data-cursor="hover"]';
  * only hidden once this is actually running.
  */
 export function Cursor() {
+  const pathname = usePathname();
+  const nativeCursor = pathname.startsWith('/littlemoney');
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (nativeCursor || document.querySelector('[data-littlemoney]')) return;
     if (!shouldAnimate()) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
 
@@ -76,8 +80,9 @@ export function Cursor() {
       document.removeEventListener("pointerleave", onLeave);
       root.classList.remove("custom-cursor");
     };
-  }, []);
+  }, [nativeCursor]);
 
+  if (nativeCursor) return null;
   return (
     <>
       <div ref={dotRef} className="cursor-dot" style={{ opacity: 0 }} aria-hidden="true" />

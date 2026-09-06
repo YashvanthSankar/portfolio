@@ -5,6 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
 
   return [
+    ...['', '/privacy', '/terms', '/delete-account', '/support'].map(path => ({ url: `${SITE_URL}/littlemoney${path}`, lastModified, changeFrequency: 'monthly' as const, priority: 0.6 })),
     {
       url: SITE_URL,
       lastModified,

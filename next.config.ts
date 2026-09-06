@@ -7,13 +7,17 @@ import type { NextConfig } from "next";
  * - Google Fonts requires fonts.googleapis.com (style) + fonts.gstatic.com (font).
  * - Vercel Insights endpoint is va.vercel-scripts.com + *.vercel-analytics.com.
  */
+const lilMoneyApiOrigin = (() => {
+  try { const url = new URL(process.env.NEXT_PUBLIC_LILMONEY_API_URL || ''); return url.protocol === 'https:' ? url.origin : ''; }
+  catch { return ''; }
+})();
 const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+  `connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com ${lilMoneyApiOrigin}`,
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -22,6 +26,17 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    // Keep the portfolio root intact on its original domains.
+    // The LilMoney alias opens the product at its own root.
+    return {
+      beforeFiles: ['', '/privacy', '/terms', '/delete-account', '/support'].map(path => ({
+        source: path || '/',
+        has: [{ type: 'host' as const, value: 'lilmoney\\.vercel\\.app' }],
+        destination: `/littlemoney${path}`,
+      })),
+    };
+  },
   images: {
     qualities: [75, 85, 95],
     formats: ["image/avif", "image/webp"],
