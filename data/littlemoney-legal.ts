@@ -1,6 +1,6 @@
 // Keep the mobile copy and the website copy in sync.
 export const legalUpdated = '6 September 2026';
-export const legalBase = 'https://yashvanth.com/littlemoney';
+export const legalBase = 'https://yashvanth.com/lilmoney';
 export const legalEmail = 'yashvanth@yashvanth.com';
 export const legalDocuments = {
   "privacy": {
@@ -9,7 +9,7 @@ export const legalDocuments = {
     "sections": [
       [
         "Who runs LilMoney",
-        "LilMoney is developed and operated by Yashvanth S. This policy covers the LilMoney mobile app, its connected web app, and the LilMoney pages at yashvanth.com/littlemoney. For privacy questions, contact yashvanth@yashvanth.com."
+        "LilMoney is developed and operated by Yashvanth S. This policy covers the LilMoney mobile app, its connected web app, and the LilMoney pages at yashvanth.com/lilmoney. For privacy questions, contact yashvanth@yashvanth.com."
       ],
       [
         "Information you choose to share",

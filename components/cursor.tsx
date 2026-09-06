@@ -14,7 +14,7 @@ const INTERACTIVE = 'a, button, input, textarea, select, [data-cursor="hover"]';
  */
 export function Cursor() {
   const pathname = usePathname();
-  const nativeCursor = pathname.startsWith('/littlemoney');
+  const nativeCursor = pathname.startsWith('/lilmoney');
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 

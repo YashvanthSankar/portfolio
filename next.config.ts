@@ -26,6 +26,9 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [{ source: '/littlemoney/:path*', destination: '/lilmoney/:path*', permanent: true }];
+  },
   async rewrites() {
     // Keep the portfolio root intact on its original domains.
     // The LilMoney alias opens the product at its own root.
@@ -33,7 +36,7 @@ const nextConfig: NextConfig = {
       beforeFiles: ['', '/privacy', '/terms', '/delete-account', '/support'].map(path => ({
         source: path || '/',
         has: [{ type: 'host' as const, value: 'lilmoney\\.vercel\\.app' }],
-        destination: `/littlemoney${path}`,
+        destination: `/lilmoney${path}`,
       })),
     };
   },
