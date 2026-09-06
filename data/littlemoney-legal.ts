@@ -16,6 +16,10 @@ export const legalDocuments = {
         "When you sign in with Google, we receive your name, email address, Google account identifier and, if available, profile picture. We store the income, spending, categories, notes, dates, spending limits and savings goals you enter, including changes to savings balances. Any optional profile details you provide are also stored. LilMoney does not receive your Google password."
       ],
       [
+        "Split bills and sharing",
+        "If you split a bill, we store the names, shares, paid amounts and payment records you enter. Use names people are comfortable sharing, and get their permission before entering their private details. Bills belong to your account; other people cannot edit them. If you choose Share breakdown, your selected app receives a text copy of that bill's names and amounts. A sent copy cannot be recalled or updated by LilMoney. Recorded payments do not send money or confirm a bank transfer."
+      ],
+      [
         "Why we use it",
         "We use this information to sign you in, save and show your records across devices, calculate your summaries and charts, respond to support requests and protect the service from misuse. The accuracy of your summaries depends on the entries you add."
       ],

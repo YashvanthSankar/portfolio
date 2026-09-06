@@ -45,6 +45,7 @@ export function DownloadCards() {
     <div className={s.card}>
       <span className={s.badge}>{release.available ? 'Ready for Android' : 'Coming soon'}</span>
       <div className={s.downloadTitle}><Smartphone size={24} /><h3>LilMoney for Android</h3></div>
+      {release.available && release.version && <p className={s.small}>Version {release.version}</p>}
       <p className={s.downloadText}>{release.available ? 'Download the app to your Android phone.' : 'We’re getting your download ready. Check back shortly.'}</p>
       {release.available && !ios ? <button type="button" className={s.button} onClick={() => void download()} disabled={busy}>{busy ? 'Starting download…' : 'Download for Android'}<ArrowDownToLine size={18} /></button> : ios ? <p className={s.small}>iPhone — Coming soon.</p> : <a className={s.link} href={`mailto:${legalEmail}?subject=LilMoney%20Android%20early%20access`}>Ask us a question<ArrowUpRight size={16} /></a>}
       {error && <p role="alert" className={s.downloadError}>{error}</p>}
