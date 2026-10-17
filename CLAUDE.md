@@ -23,8 +23,23 @@ Dark-only, cinematic, scroll-driven. GSAP owns motion; Lenis owns scrolling.
 ### Routes
 
 - `/` → `app/page.tsx` → `components/portfolio.tsx` orchestrates all sections
-- `/work` → every public GitHub repo, client-fetched from `/public/repos.json`
+- `/work` → every public GitHub repo, client-fetched from `/public/repos.json`;
+  language filter, a preview card that trails the pointer, ↑/↓ row navigation
 - `/api/contact` → POST, Zod-validated, rate-limited, sends via **Resend**
+- `/lilmoney/**` → a separate product site (LilMoney) with its own light
+  design system in `app/lilmoney/littlemoney.module.css` and legal copy in
+  `data/littlemoney-legal.ts`. **Out of scope for portfolio styling**: the
+  cursor, page transitions and WebGL never mount there, and nothing in the
+  portfolio's globals should leak in. It inherits the root layout's
+  `authors` / `creator` / `publisher` / `keywords` metadata, which is why
+  those stay the short form "Yashvanth S" while the portfolio title uses
+  `NAME` from `data/site.ts`.
+
+`components/providers/page-transition.tsx` wipes a page-colour curtain
+between `/` and `/work`. It catches internal link clicks at the document
+(capture phase), so no link component knows about it; a same-route hash
+link becomes a `scrollTo()` instead of a navigation. Skipped under reduced
+motion, with a 2.5 s failsafe if a route is slow.
 
 ### Design system
 
@@ -61,16 +76,34 @@ Rules that hold the look together:
 
 ### Motion architecture
 
+- `lib/motion.ts` mirrors the CSS `--ease-*` / `--dur-*` tokens for GSAP
+  (`EASE`, `DUR`, `STAGGER`, `REVEAL_START`, `SCRUB`) and holds
+  **`DESKTOP_MOTION`**, the one media query every pin, scrub and parallax
+  is gated behind. Import it; never retype the string.
 - `components/providers/smooth-scroll.tsx` owns the Lenis instance, drives it
   from `gsap.ticker`, and exposes **`useScrollTo()`**. Every programmatic
   scroll goes through it — never call `scrollIntoView` directly.
 - `lib/gsap.ts` registers ScrollTrigger + SplitText once.
-- `lib/split-reveal.ts` — `splitReveal()` for masked line/char reveals,
-  `fadeUp()` for everything else. Both re-split/re-measure after
-  `document.fonts.ready`.
+- `lib/split-reveal.ts` — `splitReveal()` for line/char reveals, `fadeUp()`
+  for everything else. While webfonts are still loading, `splitReveal()`
+  holds the heading hidden (from JS) and splits once on
+  `document.fonts.ready`, so line breaks are never measured against the
+  fallback font.
+- Pointer hooks, all fine-pointer only and no-ops under reduced motion:
+  `lib/use-char-proximity.ts` (display letters rise, lean away and grow
+  near the pointer — hero headline and footer wordmark share it),
+  `lib/use-repel.ts` (elements spring away from the pointer via
+  `quickSetter`, so a reveal tween keeps ownership of the transform — the
+  stack chips), `lib/use-magnetic.ts` (buttons lean toward it).
+- `components/cursor.tsx` has four ring states: idle, hover, a filled
+  plate that speaks a word for any `data-cursor="view|copy|drag|open"`
+  element, and a rectangle that snaps to any `.btn`. Size and position
+  are eased in JS; only paint transitions live in CSS.
 - **Hidden state comes from JS** (`gsap.set(autoAlpha: 0)` / inline
   `style={{ opacity: 0 }}` paired with a reveal). Never hide content in CSS
-  that JS must reveal — failed JS must still render readable text.
+  that JS must reveal — failed JS must still render readable text. The
+  inline `opacity: 0` targets are covered by a `<noscript>` rule in
+  `app/layout.tsx` that forces them visible when scripts are off.
 - **Reduced motion means "skip the tween", not "skip the reveal".** Callers
   of `fadeUp()` ship `style={{ opacity: 0 }}`, so a no-op branch leaves whole
   sections permanently blank. `fadeUp()` therefore still sets `autoAlpha: 1`
@@ -91,30 +124,69 @@ Rules that hold the look together:
 - **Selected Work** panels are `md:sticky md:top-0` siblings that stack; each
   outgoing panel scales to 0.955 and dims as the next slides over it. Panel
   z-index ascends by index — keep it that way or panels stack wrong.
+- **Ticker** (`components/sections/ticker.tsx`) runs between the hero and
+  Work — pure CSS, `aria-hidden`, still under reduced motion.
+- **Selected Work** panels are full-bleed on desktop: the cover fills the
+  panel and the copy sits bottom-left on a gradient scrim. Phones stack
+  copy under a cover at its own 16/11 proportions.
 - **Footer wordmark** chars rise on a scrub — the closing beat.
 
-### WebGL hero
+### WebGL
 
-`components/gl/hero-canvas.tsx` + `hero-shader.ts`. Raw WebGL, no three.js:
-one program, one fullscreen triangle, six uniforms (`u_time`, `u_res`,
-`u_pointer`, `u_disturb`, `u_textScale`, `u_textOffset`). Simplex → fbm →
-two-pass domain warp; lime appears only on a narrow ridge band so it reads
-as filaments, not a wash.
+Raw WebGL throughout, no three.js. `lib/gl/` holds the shared pieces:
+`program.ts` (compile/link, uniform lookup, the fullscreen triangle),
+`fbo.ts` (RGBA8 render targets and a ping-pong pair — the one format
+WebGL 1 guarantees, so signed values are encoded around 0.5) and
+**`use-gl-surface.ts`**, the single lifecycle every scene runs on. A scene
+is `{ resize, frame, dispose }`; the hook owns the context, the clock, DPR
+cap, render scale, idle build (after fonts if asked), visibility pause,
+context loss, and parking by distance (`loseContext()` when far,
+`restoreContext()` when near — a canvas can only ever hold one context).
+`frame()` may return `false` to say nothing was drawn yet (a texture still
+loading), and `onFirstFrame` is where a DOM fallback gets hidden. Every
+failure path leaves the fallback painted. Listeners are attached once,
+outside the build path, so a restore can never stack a second set.
 
-The wordmark is **never drawn** — it is a luminance texture used as a relief
-map, sampled through the same warp field so the flow bends around the
-letterforms. `u_disturb` spikes the warp near the pointer, which shreds them
-and lets them re-form. It is scenery, and has to stay legible as such:
-`u_textOffset` anchors it in the empty lower-right quadrant, bleeding off the
-right edge, because centred it lands across "Sankar." and reads as a second
-headline. **Anything that changes hero copy width or the wordmark's fit must
-re-check that it still clears the text down to a ~1024px window**, where the
-role line wraps and is the binding constraint.
+Three scenes:
 
-Touch devices get no wordmark at all (`u_textGain: 0`, and the texture is
-never built). The imprint exists to be shredded by the cursor, and a portrait
-hero has no empty column to move it into — there it can only ever be a second
-static copy of the name sitting under the headline.
+- **Hero** — `hero-canvas.tsx` + `hero-scene.ts` + `hero-shader.ts`. Two
+  programs. `FIELD_FRAG` steps a 192-wide trail simulation each frame
+  (pointer velocity splatted in, advected along its own flow plus a drift,
+  decayed with a dead zone so it vanishes fully). `FRAG_SHADER` is the
+  picture: simplex → fbm → two-pass domain warp, with the trail bending the
+  warp; lime appears only on a narrow ridge band, sampled per channel at a
+  small offset so disturbed regions split into a faint spectrum. In the
+  same pass it raymarches **the relic**: a noise-displaced sphere SDF with
+  a dark liquid body, thin-film iridescence (kept to the cool half of the
+  hue wheel — no hot reds), a lime key light and a lime halo. It sits in
+  the right half (`u_relic`, `u_relicSize`), leans toward the pointer
+  (`u_tilt`) and marches fewer steps on phones (`u_quality`). Keep its
+  displacement low-frequency; high-frequency noise makes it read as rock.
+  Ten uniforms: `u_res`, `u_time`, `u_pointer`, `u_disturb`, `u_calm`,
+  `u_field`, `u_relic`, `u_relicSize`, `u_tilt`, `u_quality`.
+  `u_calm` follows the page curtain (hero section progress): the field
+  dims, the relic sinks, and the loop pauses once the hero is fully
+  covered — a sticky hero is "visible" at every scroll position, so
+  visibility alone never pauses it.
+
+  The hero copy is bottom-anchored with "Sankar." stepped in, so the
+  headline overlaps the relic's left edge on desktop. That overlap is
+  deliberate; white display type stays legible over the dark body.
+- **Cover sheets** — `cover-scene.ts` + `cover-shader.ts`, one per
+  Selected Work cover, mounted only on fine-pointer desktops
+  (`useMediaQuery` in `components/ui/project-cover.tsx`). The texture is
+  the generative art rasterised from the shared maths in
+  `lib/cover-art.ts` (or the screenshot `<img>`); the pointer ripples it,
+  scrolling bends it and splits its channels; at rest it draws one clean
+  frame and sleeps. Text plates stay in the DOM above it. A single shared
+  canvas was ruled out: the panels are sticky siblings with ascending
+  z-index, and no one canvas can sit between panel N's image and panel
+  N+1 sliding over it.
+- **Portrait** — `dither-scene.ts` + `dither-shader.ts` in About. An 8×8
+  Bayer print in the page's two tones (lime on the threshold edge) that
+  resolves into the photo over 1.6 s; the pointer un-resolves a soft disc.
+
+At any scroll position at most two contexts are live.
 
 Non-negotiable guarantees: init deferred to `requestIdleCallback` (the hero
 headline is LCP), DPR capped and rendered at 0.8 internal scale, rAF paused
@@ -125,15 +197,23 @@ every failure path degrades silently.
 ### Data
 
 Static content, no CMS — `data/projects.ts`, `data/experience.ts`,
-`data/technologies.ts`, `data/socials.tsx`, types in `data/types.ts`.
-`data/site.ts` holds the identity constants (email, URL, GitHub); anything
-appearing in two places belongs there.
+`data/technologies.ts`, `data/socials.ts`, types in `data/types.ts`.
+`data/site.ts` holds the identity constants (email, URL, GitHub, `NAME`);
+anything appearing in two places belongs there.
+
+Social icons are one `<symbol>` sprite (`components/ui/social-icon.tsx`,
+rendered once by the navbar) and every glyph is a `<SocialIcon icon>`
+`<use>` — they appear in four places and inlining them was a sixth of the
+home page's HTML. The stack's brand icons are decorative and render only
+after hydration (`lib/use-hydrated.ts`) for the same reason.
 
 `data/sections.ts` is the page's chapter registry and the **single source of
 truth** for the navbar, the desktop section index, the mobile progress
 cluster, the keyboard shortcuts, and the footer sitemap. Adding a section
 means adding one row there and nothing else — never re-declare the list in
-a component.
+a component. **Chapter numbers come from `chapterNumber(id)`** (the hero is
+`00`, Work is `01`); never type one by hand, and compare against `HERO_ID`,
+never the literal `"home"`.
 
 Adding a project: append to `data/projects.ts`. `image` is optional — without
 one, `components/ui/project-cover.tsx` generates a typographic cover seeded

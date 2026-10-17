@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { fadeUp } from "@/lib/split-reveal";
+import { REVEAL_START, STAGGER } from "@/lib/motion";
 import { chapterNumber } from "@/data/sections";
 
 /**
@@ -54,8 +55,8 @@ export function NowSection() {
   useEffect(() => {
     const cleanup = fadeUp("[data-now-card]", {
       trigger: ref.current,
-      start: "top 82%",
-      stagger: 0.09,
+      start: REVEAL_START,
+      stagger: STAGGER.loose,
       y: 24,
     });
     return cleanup;

@@ -10,6 +10,7 @@ import { socials } from "@/data/socials";
 import { chapterNumber } from "@/data/sections";
 import { EMAIL } from "@/data/site";
 import { fadeUp } from "@/lib/split-reveal";
+import { REVEAL_START } from "@/lib/motion";
 import { useMagnetic } from "@/lib/use-magnetic";
 
 type FieldName = "name" | "email" | "message";
@@ -106,7 +107,7 @@ export function ContactSection() {
   useEffect(() => {
     const cleanup = fadeUp("[data-contact-el]", {
       trigger: gridRef.current,
-      start: "top 82%",
+      start: REVEAL_START,
       stagger: 0.08,
       y: 22,
     });

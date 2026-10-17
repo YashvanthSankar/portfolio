@@ -10,6 +10,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp } from "@/lib/split-reveal";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { GITHUB_URL } from "@/data/site";
+import repoData from "@/public/repos.json";
 
 interface Repo {
   name: string;
@@ -21,6 +22,16 @@ interface Repo {
   topics: string[];
   updated_at: string;
 }
+
+/* repos.json is written by `npm run repos` and shipped with the deploy, so
+   it only ever changes with a build. Importing it here means no fetch, no
+   skeleton, and no layout shift when the rows arrive. */
+const REPOS: Repo[] = (repoData as Repo[])
+  .slice()
+  .sort(
+    (a, b) =>
+      b.stars - a.stars || new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  );
 
 const ALL = "All";
 
@@ -81,16 +92,6 @@ function RepoRow({
         <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-[var(--text-3)] transition-[transform,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--accent)]" />
       </div>
     </a>
-  );
-}
-
-function SkeletonRow() {
-  return (
-    <div className="grid gap-3 border-b border-[var(--line-1)] px-2 py-7 md:grid-cols-12 md:gap-8">
-      <div className="h-5 w-40 animate-pulse bg-[var(--bg-2)] md:col-span-5" />
-      <div className="h-4 w-full animate-pulse bg-[var(--bg-1)] md:col-span-5" />
-      <div className="h-4 w-24 animate-pulse bg-[var(--bg-1)] md:col-span-2 md:justify-self-end" />
-    </div>
   );
 }
 
@@ -199,9 +200,7 @@ function PreviewCard({ repo, content }: { repo: Repo | null; content: Repo | nul
 }
 
 export default function WorkPage() {
-  const [repos, setRepos] = useState<Repo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const repos = REPOS;
   const [lang, setLang] = useState(ALL);
   const [hovered, setHovered] = useState<Repo | null>(null);
   /* The last row hovered stays rendered in the card while it fades out,
@@ -209,25 +208,6 @@ export default function WorkPage() {
   const [lastHovered, setLastHovered] = useState<Repo | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const preview = useMediaQuery("(min-width: 1024px) and (pointer: fine)");
-
-  useEffect(() => {
-    fetch("/repos.json")
-      .then((r) => {
-        if (!r.ok) throw new Error("Failed to load");
-        return r.json();
-      })
-      .then((data: Repo[]) => {
-        setRepos(
-          data.sort(
-            (a, b) =>
-              b.stars - a.stars ||
-              new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-          )
-        );
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
 
   /* Languages by how many repos use them; the filter row reads as a census. */
   const languages = useMemo(() => {
@@ -245,7 +225,6 @@ export default function WorkPage() {
 
   /* Re-run on every filter: new rows mount hidden and need their reveal. */
   useEffect(() => {
-    if (loading || error) return;
     return fadeUp("[data-repo-row]", {
       trigger: listRef.current,
       start: "top 92%",
@@ -253,7 +232,7 @@ export default function WorkPage() {
       duration: 0.6,
       y: 16,
     });
-  }, [loading, error, lang]);
+  }, [lang]);
 
   /* ↑ / ↓ walk the rows; Enter is the link's own. */
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -291,7 +270,7 @@ export default function WorkPage() {
             description="Every public repository, sorted by stars. Tools, experiments, and things built to scratch an itch."
           />
 
-          {!loading && !error && (
+          {repos.length > 0 && (
             <div className="-mt-8 mb-2 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-b border-[var(--line-1)] pb-5">
               <div
                 role="group"
@@ -313,7 +292,7 @@ export default function WorkPage() {
                       }`}
                     >
                       {name}
-                      <span className="tabular-nums opacity-60">{count}</span>
+                      <span className="tabular-nums">{count}</span>
                     </button>
                   );
                 })}
@@ -327,12 +306,9 @@ export default function WorkPage() {
         </div>
 
         <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] pb-24">
-          {error ? (
+          {repos.length === 0 ? (
             <div className="flex flex-col items-center gap-5 py-24">
-              <p className="lead">Couldn&apos;t load repositories.</p>
-              <button onClick={() => window.location.reload()} className="btn btn-outline">
-                Try again
-              </button>
+              <p className="lead">No repositories yet — run `npm run repos`.</p>
             </div>
           ) : (
             <div
@@ -340,24 +316,22 @@ export default function WorkPage() {
               onKeyDown={onKeyDown}
               className="border-t border-[var(--line-1)]"
             >
-              {loading
-                ? Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
-                : filtered.map((repo, i) => (
-                    <RepoRow
-                      key={repo.name}
-                      repo={repo}
-                      index={i}
-                      onEnter={(r) => {
-                        setHovered(r);
-                        setLastHovered(r);
-                      }}
-                      onLeave={() => setHovered(null)}
-                    />
-                  ))}
+              {filtered.map((repo, i) => (
+                <RepoRow
+                  key={repo.name}
+                  repo={repo}
+                  index={i}
+                  onEnter={(r) => {
+                    setHovered(r);
+                    setLastHovered(r);
+                  }}
+                  onLeave={() => setHovered(null)}
+                />
+              ))}
             </div>
           )}
 
-          {!loading && !error && (
+          {repos.length > 0 && (
             <div className="mt-12 flex flex-wrap items-center justify-between gap-6">
               <p className="meta hidden md:block">↑ ↓ to move · Enter to open</p>
               <a

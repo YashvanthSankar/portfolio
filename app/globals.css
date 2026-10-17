@@ -29,7 +29,7 @@
   /* Text */
   --text-1: #F4F4F2; /* headings, primary */
   --text-2: #9E9EA6; /* body secondary */
-  --text-3: #5C5C64; /* mono meta labels */
+  --text-3: #7A7A83; /* mono meta labels — 4.65:1 on --bg-0, the floor for 11px type */
 
   /* Hairlines */
   --line-1: rgba(244, 244, 242, 0.08);
@@ -43,11 +43,11 @@
     0 0 60px rgba(200, 240, 75, 0.12);
 
   /* Fluid type scale */
-  --display-xl: clamp(3.25rem, 11vw, 10.5rem);
-  --display-lg: clamp(2.25rem, 6vw, 5.25rem);
+  --display-xl: clamp(3.75rem, 13.5vw, 14rem);
+  --display-lg: clamp(2.5rem, 7vw, 6.5rem);
   --display-md: clamp(1.5rem, 3.2vw, 2.75rem);
   --lead: clamp(1.0625rem, 1.4vw, 1.3125rem);
-  --meta: 0.6875rem;
+  --meta: 0.75rem; /* 12px — the legibility floor; the tracking does the "small" */
 
   /* Rhythm */
   --section-pad: clamp(6rem, 14vh, 10rem);
@@ -444,6 +444,17 @@ body::after {
 }
 .pulse-dot {
   animation: pulse-dot 2.2s var(--ease-out) infinite;
+}
+
+/* Ticker — the track holds two copies of its items and scrolls one. */
+@keyframes ticker {
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.ticker-track {
+  animation: ticker 48s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
 }
 
 /* Reduced motion — kill everything */

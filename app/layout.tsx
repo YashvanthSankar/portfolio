@@ -46,7 +46,6 @@ export const metadata: Metadata = {
   description:
     "Full-stack developer & AI engineer building fast, opinionated products for the modern web. React, Next.js, Node.js, Python, ML.",
   keywords: [
-    NAME,
     "Yashvanth S",
     "full-stack developer",
     "AI engineer",
@@ -62,9 +61,11 @@ export const metadata: Metadata = {
     "open source",
     "IIITDM Kancheepuram",
   ],
-  authors: [{ name: NAME }],
-  creator: NAME,
-  publisher: NAME,
+  /* Inherited by /lilmoney's metadata, which must not change — so these
+     stay the short form while the portfolio's own title carries NAME. */
+  authors: [{ name: "Yashvanth S" }],
+  creator: "Yashvanth S",
+  publisher: "Yashvanth S",
   formatDetection: { email: false, address: false, telephone: false },
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
@@ -144,6 +145,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} font-sans antialiased`}
       >
+        {/* Reveal targets ship with `opacity: 0` inline and are shown by
+            JS. Without JS there is nothing to show them, so the stylesheet
+            wins by force and the page reads in full. */}
+        <noscript>
+          <style>{`[style*="opacity:0"],[style*="opacity: 0"]{opacity:1!important}`}</style>
+        </noscript>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--bg-1)] focus:text-[var(--text-1)] focus:border focus:border-[var(--accent)] focus:rounded-[2px] focus:text-sm focus:font-medium"

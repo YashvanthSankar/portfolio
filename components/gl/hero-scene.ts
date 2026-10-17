@@ -9,55 +9,19 @@ import {
 import type { GlScene } from "@/lib/gl/use-gl-surface";
 import { FIELD_FRAG, FRAG_SHADER, VERT_SHADER } from "@/components/gl/hero-shader";
 
-/** Wordmark texture resolution. Power-of-two keeps WebGL 1 happy. */
-const TEX_W = 2048;
-const TEX_H = 512;
-
 /** Width of the trail simulation; its height follows the viewport's aspect. */
 const FIELD_W = 192;
-
-const WORDMARK = "YASHVANTH";
-
-/** Renders the wordmark to an offscreen canvas for use as a luminance mask. */
-function drawWordmark(): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = TEX_W;
-  c.height = TEX_H;
-  const ctx = c.getContext("2d");
-  if (!ctx) return c;
-
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, TEX_W, TEX_H);
-
-  /* Fit the word to the texture width with a small margin. */
-  const family =
-    getComputedStyle(document.body).getPropertyValue("font-family") ||
-    "system-ui, sans-serif";
-  let size = 400;
-  ctx.font = `600 ${size}px ${family}`;
-  const target = TEX_W * 0.94;
-  const measured = ctx.measureText(WORDMARK).width;
-  size = Math.floor(size * (target / measured));
-
-  ctx.font = `600 ${size}px ${family}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = "#fff";
-  ctx.letterSpacing = "-0.03em";
-  ctx.fillText(WORDMARK, TEX_W / 2, TEX_H / 2);
-
-  return c;
-}
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 /**
- * The hero field: two programs, one triangle, two textures. Owns the
- * pointer tracking and the trail simulation; the context, clock and
- * run/pause decisions belong to `useGlSurface`.
+ * The hero field and its relic: two programs, one triangle, one trail
+ * texture. Owns the pointer tracking and the trail simulation; the
+ * context, clock and run/pause decisions belong to `useGlSurface`.
  *
  * `getCalm` reads how far the page curtain has risen (0→1); the field
- * dims with it and the pointer stops splatting once it is covered.
+ * dims with it, the relic sinks, and the pointer stops splatting once
+ * the hero is covered.
  */
 export function createHeroScene(
   gl: WebGLRenderingContext,
@@ -88,11 +52,11 @@ export function createHeroScene(
     "u_pointer",
     "u_disturb",
     "u_calm",
-    "u_text",
-    "u_textScale",
-    "u_textOffset",
-    "u_textGain",
     "u_field",
+    "u_relic",
+    "u_relicSize",
+    "u_tilt",
+    "u_quality",
   ] as const);
   const S = uniforms(gl, sim, [
     "u_field",
@@ -103,35 +67,13 @@ export function createHeroScene(
     "u_time",
   ] as const);
 
-  /* Texture units are fixed for the scene's life: 0 wordmark, 1 trail. */
+  /* The trail texture lives on unit 1 for both programs. */
   gl.useProgram(main);
-  gl.uniform1i(U.u_text, 0);
   gl.uniform1i(U.u_field, 1);
-  /* Zero makes the shader skip the texture entirely — see below. */
-  gl.uniform1f(U.u_textGain, coarse ? 0 : 0.7);
+  /* Phones march fewer steps; the silhouette softens a touch, the cost halves. */
+  gl.uniform1f(U.u_quality, coarse ? 0.6 : 1.0);
   gl.useProgram(sim);
   gl.uniform1i(S.u_field, 1);
-
-  /* Wordmark texture — pointer devices only.
-   *
-   * The imprint exists to be shredded by the cursor. A touch screen has
-   * no cursor, so all it can ever be there is a second, static copy of
-   * the name; and a portrait hero has no empty column to move it into,
-   * so it lands under the headline whatever we do. Skipping it also
-   * spares a phone the 2048x512 rasterise and a 4MB texture upload. */
-  let texture: WebGLTexture | null = null;
-  if (!coarse) {
-    texture = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, drawWordmark());
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  }
 
   let field: PingPong | null = null;
   let fieldH = 0;
@@ -143,8 +85,10 @@ export function createHeroScene(
   /* Instantaneous pointer velocity, in uv per frame, for the splat. */
   const vel = { x: 0, y: 0 };
   let last = { x: 0.5, y: 0.5, t: 0 };
+  /* The relic leans toward the pointer. */
+  const tilt = { x: 0, y: 0 };
 
-  /* How hard the cursor is currently tearing the wordmark apart.
+  /* How hard the cursor is currently disturbing the field.
      Ramps up while the pointer moves, decays when it rests. */
   let disturb = 0;
   let disturbTarget = 0;
@@ -172,23 +116,12 @@ export function createHeroScene(
       gl.useProgram(main);
       gl.uniform2f(U.u_res, w, h);
 
-      /* Fit the wordmark to a share of the viewport width, preserving its
-         own aspect so the letters never stretch.
-       *
-       * Placement matters as much as size. The headline runs down the
-       * left column, so the wordmark is anchored into the empty
-       * lower-right quadrant and allowed to bleed off the right edge —
-       * centred, it lands squarely across "Sankar." and reads as a
-       * duplicated headline instead of scenery behind one. Far enough
-       * right to clear the role line where it wraps to two lines on a
-       * ~1024px window, which is the tightest case that still shows it. */
-      if (!coarse) {
-        const texAspect = TEX_W / TEX_H;
-        const scaleX = 1 / 0.46;
-        const scaleY = (scaleX * texAspect) / aspect;
-        gl.uniform2f(U.u_textScale, scaleX, scaleY);
-        gl.uniform2f(U.u_textOffset, 0.33, -0.215);
-      }
+      /* Placement. The headline runs down the left; the relic sits in the
+         right half, large, and bleeds a little off the edge on narrow
+         desktops. Portrait screens get it smaller, up behind the title. */
+      const portrait = aspect < 0.9;
+      gl.uniform2f(U.u_relic, portrait ? 0.74 : 0.8, portrait ? 0.74 : 0.52);
+      gl.uniform1f(U.u_relicSize, portrait ? 0.44 : 0.4);
 
       /* The trail field follows the viewport's shape so a splat is round. */
       const fh = Math.max(32, Math.round(FIELD_W / aspect));
@@ -196,10 +129,6 @@ export function createHeroScene(
         field?.dispose();
         field = createPingPong(gl, FIELD_W, fh);
         fieldH = fh;
-        /* Building the targets rebinds TEXTURE_2D on whatever unit was
-           active — put the wordmark back where the shader expects it. */
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
       }
     },
 
@@ -220,7 +149,6 @@ export function createHeroScene(
         target.y = ny;
         disturbTarget = 0.35;
       } else {
-        /* Cursor at rest — let the letters knit back together. */
         if (now - lastMove > 260) disturbTarget = 0;
         if (now - lastMove > 60) {
           vel.x *= 0.75;
@@ -231,6 +159,8 @@ export function createHeroScene(
       pointer.x += (target.x - pointer.x) * 0.06;
       pointer.y += (target.y - pointer.y) * 0.06;
       disturb += (disturbTarget * (1 - calm) - disturb) * 0.055;
+      tilt.x += ((pointer.x - 0.5) * 0.7 - tilt.x) * 0.04;
+      tilt.y += ((0.5 - pointer.y) * 0.5 - tilt.y) * 0.04;
 
       /* Pass 1: step the trail. */
       if (field) {
@@ -258,6 +188,7 @@ export function createHeroScene(
       gl.uniform2f(U.u_pointer, pointer.x, pointer.y);
       gl.uniform1f(U.u_disturb, disturb);
       gl.uniform1f(U.u_calm, calm);
+      gl.uniform2f(U.u_tilt, tilt.x, tilt.y);
       drawFullscreen(gl);
     },
 
@@ -266,7 +197,6 @@ export function createHeroScene(
       field?.dispose();
       field = null;
       if (buffer) gl.deleteBuffer(buffer);
-      if (texture) gl.deleteTexture(texture);
       gl.deleteProgram(main);
       gl.deleteProgram(sim);
     },

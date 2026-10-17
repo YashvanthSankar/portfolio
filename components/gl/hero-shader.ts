@@ -1,6 +1,7 @@
 /**
- * Hero background shaders — a slow, flowing noise field in near-black with
- * electric-lime filaments, and the wordmark woven into the flow.
+ * Hero shaders — a slow, flowing noise field in near-black with electric
+ * lime filaments, and the relic: an iridescent fluid form raymarched in
+ * the same pass, sitting in the field as the hero's one object.
  *
  * Two passes a frame:
  *
@@ -10,21 +11,14 @@
  *     moving after the cursor has gone, carried off by the current.
  *
  *  2. FRAG_SHADER, the picture. 2D simplex noise (Ashima/Gustavson) →
- *     4-octave fbm → two-pass domain warp. Lime is injected only on a
- *     narrow band of the final field value, so it reads as glowing ridges
- *     in darkness rather than a green wash. The ridge is sampled three
- *     times at a small offset, one per channel, so disturbed regions
- *     split into a faint spectrum like light through a prism.
- *
- * The wordmark is a luminance texture sampled through the *same* warp
- * field, so it sits inside the current rather than on top of it. Near
- * the pointer the warp amplitude spikes, which shreds the letterforms
- * into the flow and lets them re-form as the cursor moves away. The
- * simulated trail does the same wherever it passes.
- *
- * `u_calm` runs 0→1 as the page curtain rises over the hero: the lime
- * dims and the field sinks toward the page colour, so the handover to
- * the next section is a fade rather than a cut.
+ *     4-octave fbm → two-pass domain warp for the field; lime only on a
+ *     narrow ridge band, sampled per channel so disturbed regions split
+ *     into a faint spectrum. Then, inside a bounding disc around
+ *     `u_relic`, a sphere-distance-field displaced by layered noise is
+ *     raymarched with parallel rays: a dark liquid body, thin-film
+ *     iridescence that cycles with the view angle, a lime key light and a
+ *     soft lime halo. It tilts toward the pointer (`u_tilt`) and sinks
+ *     with the page curtain (`u_calm`).
  */
 
 export const VERT_SHADER = /* glsl */ `
@@ -86,13 +80,13 @@ precision mediump float;
 uniform vec2      u_res;
 uniform float     u_time;
 uniform vec2      u_pointer;
-uniform float     u_disturb;    // 0 → calm, 1 → cursor actively shredding
-uniform float     u_calm;       // 0 → hero in view, 1 → fully under the curtain
-uniform sampler2D u_text;
-uniform vec2      u_textScale;  // aspect fit for the wordmark texture
-uniform vec2      u_textOffset; // where its centre sits, in screen uv
-uniform float     u_textGain;   // 0 → no imprint at all (touch devices)
-uniform sampler2D u_field;      // the simulated trail: rg velocity, b density
+uniform float     u_disturb;   // 0 → calm, 1 → cursor actively moving
+uniform float     u_calm;      // 0 → hero in view, 1 → fully under the curtain
+uniform sampler2D u_field;     // the simulated trail: rg velocity, b density
+uniform vec2      u_relic;     // the relic's centre, in screen uv
+uniform float     u_relicSize; // its radius as a fraction of min(width, height)
+uniform vec2      u_tilt;      // pointer-driven lean, radians
+uniform float     u_quality;   // 1 → full march; lower on phones
 
 const vec3 BG_0   = vec3(0.039, 0.039, 0.043); // #0A0A0B
 const vec3 BG_2   = vec3(0.086, 0.086, 0.098); // #161619
@@ -145,6 +139,35 @@ float ridgeAt(float x) {
   return smoothstep(0.42, 0.50, x) * (1.0 - smoothstep(0.50, 0.62, x));
 }
 
+/* ── The relic ─────────────────────────────────────────────────────
+ * Three slices of the 2D noise stand in for 3D noise: cheap, and the
+ * seams never show on a surface that is itself moving. */
+float noise3(vec3 p) {
+  return snoise(p.xy + p.z * 0.71) * 0.55
+       + snoise(p.yz * 1.3 - p.x * 0.5) * 0.30
+       + snoise(p.zx * 0.9 + p.y * 0.4) * 0.15;
+}
+
+mat2 rot(float a) { float c = cos(a); float s = sin(a); return mat2(c, -s, s, c); }
+
+float relicSDF(vec3 p) {
+  p.xz = rot(u_time * 0.12 + u_tilt.x) * p.xz;
+  p.yz = rot(u_tilt.y) * p.yz;
+  float d = length(p) - 0.74;
+  /* Low frequency only: it should read as liquid, not rock. */
+  float swell = noise3(p * 1.35 + vec3(0.0, u_time * 0.18, 0.0));
+  float skin  = noise3(p * 3.2 - vec3(u_time * 0.25));
+  return d + swell * 0.16 + skin * 0.012;
+}
+
+vec3 relicNormal(vec3 p) {
+  vec2 e = vec2(0.005, 0.0);
+  return normalize(vec3(
+    relicSDF(p + e.xyy) - relicSDF(p - e.xyy),
+    relicSDF(p + e.yxy) - relicSDF(p - e.yxy),
+    relicSDF(p + e.yyx) - relicSDF(p - e.yyx)));
+}
+
 /* Cheap per-pixel dither — kills banding across the dark gradient. */
 float dither(vec2 co) {
   return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
@@ -152,10 +175,11 @@ float dither(vec2 co) {
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_res.xy;
+  float unit = min(u_res.x, u_res.y);
 
   /* Aspect-corrected space so the field doesn't stretch on wide screens. */
-  vec2 p = (gl_FragCoord.xy - 0.5 * u_res.xy) / min(u_res.x, u_res.y);
-  vec2 ptr = (u_pointer * u_res.xy - 0.5 * u_res.xy) / min(u_res.x, u_res.y);
+  vec2 p = (gl_FragCoord.xy - 0.5 * u_res.xy) / unit;
+  vec2 ptr = (u_pointer * u_res.xy - 0.5 * u_res.xy) / unit;
 
   float t = u_time * 0.06;
 
@@ -168,81 +192,69 @@ void main() {
   vec2 flow = (fld.rg - 0.5) * 2.0;
   float wake = fld.b;
 
-  /* ── The imprint ───────────────────────────────────────────────────
-   * The wordmark is never drawn. It's a relief map: the letterforms are
-   * pressed into the field, and their slopes bend the flow around them.
-   * What you read is the wave deforming, not type sitting on top.
-   * ────────────────────────────────────────────────────────────────── */
-  vec2 tuv = (uv - 0.5 - u_textOffset) * u_textScale + 0.5;
-  bool inText = u_textGain > 0.0 &&
-                tuv.x > 0.0 && tuv.x < 1.0 && tuv.y > 0.0 && tuv.y < 1.0;
-
-  float relief = 0.0;
-  vec2  slope  = vec2(0.0);
-  if (inText) {
-    vec2 texel = vec2(3.0 / 2048.0, 3.0 / 512.0);
-    /* Gain holds it well under the type in front of it — this is scenery
-       behind a headline, not a second headline. */
-    relief = texture2D(u_text, tuv).r * u_textGain;
-    /* Central differences → the surface normal of the stamped edge. */
-    slope = vec2(
-      texture2D(u_text, tuv + vec2(texel.x, 0.0)).r -
-      texture2D(u_text, tuv - vec2(texel.x, 0.0)).r,
-      texture2D(u_text, tuv + vec2(0.0, texel.y)).r -
-      texture2D(u_text, tuv - vec2(0.0, texel.y)).r
-    ) * u_textGain;
-  }
-
-  /* Cursor and wake both smear the stamp — the deeper the disturbance,
-     the more the flow tears the letterforms apart before they settle. */
-  float tear  = focus * u_disturb + wake;
-  float smear = 1.0 + focus * u_disturb * 7.0 + wake * 5.0;
-
-  /* Flow is deflected by the imprint's slopes, so streamlines pile up
-     against the strokes exactly like liquid over a pressed surface; the
-     wake's own velocity bends it too. */
-  vec2 pw = p - slope * 0.13 * smear + flow * 0.16;
-
-  /* Two-pass domain warp. */
+  /* ── The field ─────────────────────────────────────────────────── */
+  vec2 pw = p + flow * 0.16;
   vec2 q = vec2(fbm(pw * 1.4 + vec2(0.0, t)),
                 fbm(pw * 1.4 + vec2(5.2, 1.3 - t)));
   vec2 r = vec2(fbm(pw * 1.4 + (1.7 + focus * 0.9) * q + vec2(1.7 + t * 2.0, 9.2)),
                 fbm(pw * 1.4 + (1.7 + focus * 0.9) * q + vec2(8.3 - t * 1.6, 2.8)));
   float f = fbm(pw * 1.4 + 1.3 * r);
 
-  /* Press the name down into the surface. Because the lime ridges are
-     iso-contours of the field, lowering it inside the strokes drags
-     every contour into the shape of the letters. */
-  float depth = relief * max(0.44 - tear * 0.36, 0.0);
-  f -= depth;
-
-  /* Base: near-black lifting toward the raised surface tone. */
   float shade = smoothstep(-0.6, 0.9, f);
   vec3 color  = mix(BG_0, BG_2, shade);
 
-  /* ── Lime ridges, with a little dispersion ───────────────────────
-   * Each channel reads the ridge at a slightly different field value.
-   * At rest the three almost coincide; where the field is disturbed the
-   * spread widens and the ridge splits into a faint spectrum. */
   float spread = 0.010 + wake * 0.03 + focus * u_disturb * 0.02;
   vec3 ridge = mix(vec3(ridgeAt(f)),
                    vec3(ridgeAt(f - spread), ridgeAt(f), ridgeAt(f + spread)),
                    0.55);
   float energy = (0.35 + focus * 0.15 + wake * 0.3) * (1.0 - u_calm * 0.75);
   color += ACCENT * ridge * energy;
-
-  /* Rim light on the stamped edge — the bevel catching the light is what
-     makes it read as depth rather than a silhouette. */
-  float bevel = length(slope);
-  float lit = max(0.0, dot(normalize(slope + vec2(1e-5)), normalize(vec2(-0.6, 0.8))));
-  color += ACCENT * bevel * (0.05 + lit * 0.17) * (1.0 - min(tear, 1.0) * 0.85);
-
-  /* Interior sits marginally darker than its surroundings, the way a
-     recess holds shadow. */
-  color = mix(color, BG_0, relief * 0.14);
-
-  /* A faint wide bloom around the ridges so they read as glowing. */
   color += ACCENT * smoothstep(0.30, 0.70, f) * 0.035 * (1.0 - u_calm * 0.5);
+
+  /* ── The relic ─────────────────────────────────────────────────── */
+  vec2 rc = (u_relic - 0.5) * u_res.xy / unit;
+  vec2 sp = (p - rc) / u_relicSize;
+  float hit = 0.0;
+  float nearest = 10.0;
+  vec3 relic = vec3(0.0);
+
+  if (dot(sp, sp) < 2.6) {
+    vec3 ro = vec3(sp, -3.0);
+    vec3 rd = vec3(0.0, 0.0, 1.0);
+    float tt = 1.6;
+    int steps = int(48.0 * u_quality);
+    for (int i = 0; i < 48; i++) {
+      if (i >= steps) break;
+      vec3 pp = ro + rd * tt;
+      float dd = relicSDF(pp);
+      nearest = min(nearest, dd);
+      if (dd < 0.004) { hit = 1.0; break; }
+      tt += dd * 0.85;
+      if (tt > 4.6) break;
+    }
+    if (hit > 0.5) {
+      vec3 pp = ro + rd * tt;
+      vec3 n = relicNormal(pp);
+      vec3 v = -rd;
+      float facing = max(dot(n, v), 0.0);
+      float fres = pow(1.0 - facing, 2.5);
+      vec3 key = normalize(vec3(-0.6, 0.8, -0.5));
+      float diff = max(dot(n, key), 0.0);
+      float spec = pow(max(dot(reflect(-key, n), v), 0.0), 56.0);
+      /* Thin film: hue cycles with the view angle, drifting with time. */
+      /* Kept to the cool half of the wheel plus lime — no hot reds. */
+      vec3 film = 0.5 + 0.5 * cos(6.2831 * (facing * 1.2 + vec3(0.18, 0.38, 0.62)) + u_time * 0.25);
+      film = mix(film, vec3(film.g, film.g, film.b), 0.6);
+      vec3 body = mix(BG_0 * 0.8, BG_2 * 1.6, diff);
+      relic = body + film * fres * 0.72 + ACCENT * spec * 0.9 + ACCENT * pow(fres, 3.0) * 0.4;
+      /* Pressed by the wake: the surface flashes where a trail crosses it. */
+      relic += ACCENT * wake * 0.25;
+    }
+  }
+  float present = 1.0 - u_calm * 0.85;
+  color = mix(color, relic, hit * present);
+  /* Halo — a soft lime bloom just outside the silhouette. */
+  color += ACCENT * exp(-max(nearest, 0.0) * 6.0) * 0.14 * (1.0 - hit) * present;
 
   /* Vignette — canvas melts into the page instead of showing a rectangle. */
   float vig = smoothstep(1.05, 0.25, length(uv - 0.5) * 1.6);

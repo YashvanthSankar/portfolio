@@ -5,6 +5,7 @@ import { experience } from "@/data/experience";
 import { chapterNumber } from "@/data/sections";
 import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp } from "@/lib/split-reveal";
+import { REVEAL_START } from "@/lib/motion";
 
 function isOngoing(period: string): boolean {
   const range = period.split(/[-–—]/);
@@ -21,7 +22,7 @@ export function ExperienceSection() {
   useEffect(() => {
     const cleanup = fadeUp("[data-exp-row]", {
       trigger: listRef.current,
-      start: "top 82%",
+      start: REVEAL_START,
       stagger: 0.1,
       y: 26,
     });

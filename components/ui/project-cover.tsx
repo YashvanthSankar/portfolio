@@ -222,13 +222,15 @@ export function ProjectCover({
       ) : (
         <>
           {/* Corner plates — DOM, above the sheet, never distorted */}
-          <div className="absolute inset-x-0 top-0 flex items-start justify-between p-6">
+          <div className="absolute inset-x-0 top-0 flex items-start justify-between p-6 md:px-[var(--gutter)] md:pt-24">
+            {/* The panel's copy carries kind and year on desktop. */}
             <span className="meta text-[var(--accent)]">{project.kind ?? project.tags[0]}</span>
             <span className="meta">{project.year}</span>
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
-            <div className="flex flex-wrap gap-x-5 gap-y-1">
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6 md:px-[var(--gutter)] md:pb-20">
+            {/* On desktop the panel's own copy lists the tags right here. */}
+            <div className="flex flex-wrap gap-x-5 gap-y-1 md:invisible">
               {project.tags.slice(0, 3).map((tag) => (
                 <span key={tag} className="meta text-[var(--text-2)]">
                   {tag}

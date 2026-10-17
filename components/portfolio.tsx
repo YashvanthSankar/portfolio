@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/sections/navbar";
 import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/projects";
+import { Ticker } from "@/components/sections/ticker";
 import { ScrollProgressBar } from "@/components/sections/footer";
 import { SectionIndex } from "@/components/section-index";
 import { KbdShortcuts } from "@/components/kbd-shortcuts";
@@ -72,6 +73,7 @@ export function Portfolio() {
         <Hero />
 
         <div className="relative z-10">
+          <Ticker />
           <SelectedWork />
           <About />
           <ExperienceSection />

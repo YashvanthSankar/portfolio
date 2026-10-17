@@ -42,23 +42,57 @@ function ProjectPanel({
 
   const href = project.live ?? project.github;
 
+  const coverClass =
+    "group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-[border-color,transform] duration-300 motion-safe:active:scale-[0.985] md:absolute md:inset-0 md:aspect-auto md:rounded-none md:border-0";
+
+  /* Desktop: the cover is the whole panel, full-bleed, and the copy sits
+     over it on a gradient — a title card, not a card in a grid. Phones
+     keep the stacked layout: copy, then a cover at its own proportions. */
   return (
     <article
       data-work-panel
       className="md:sticky md:top-0"
       style={{ zIndex: index + 1 }}
     >
-      <div className="border-t border-[var(--line-1)] bg-[var(--bg-0)] md:min-h-[100svh] md:origin-top">
-        <div className="mx-auto grid max-w-[var(--container)] items-center gap-10 px-[var(--gutter)] py-16 md:min-h-[100svh] md:grid-cols-12 md:gap-16 md:py-24">
+      <div className="relative border-t border-[var(--line-1)] bg-[var(--bg-0)] md:min-h-[100svh] md:origin-top md:overflow-hidden">
+        {/* Cover */}
+        <div className="px-[var(--gutter)] pt-16 md:absolute md:inset-0 md:p-0">
+          {href ? (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor="view"
+              className={`${coverClass} hover:border-[var(--line-2)]`}
+            >
+              {/* Names the link from its content, so the visible plate text
+                  is part of the accessible name rather than overridden. */}
+              <span className="sr-only">{project.title} — open project: </span>
+              <ProjectCover project={project} index={index} />
+            </a>
+          ) : (
+            <div className={coverClass}>
+              <ProjectCover project={project} index={index} />
+            </div>
+          )}
+          {/* Legibility scrim for the copy, desktop only */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,var(--bg-0)_0%,rgba(10,10,11,0.86)_34%,rgba(10,10,11,0.2)_70%,transparent_100%)] md:block"
+          />
+        </div>
+
+        <div className="pointer-events-none relative mx-auto flex max-w-[var(--container)] flex-col px-[var(--gutter)] pb-16 pt-10 md:min-h-[100svh] md:justify-end md:pb-20 md:pt-28">
           {/* Text column */}
-          <div ref={bodyRef} className="md:col-span-5">
+          <div ref={bodyRef} className="pointer-events-auto md:max-w-xl">
             <div data-panel-meta className="mb-6 flex items-center gap-3" style={{ opacity: 0 }}>
               <span className="meta text-[var(--accent)]">{num}</span>
               <span className="h-px w-8 bg-[var(--line-2)]" />
-              <span className="meta">{project.tags[0]}</span>
+              <span className="meta">{project.kind ?? project.tags[0]}</span>
+              {project.year && <span className="meta">· {project.year}</span>}
             </div>
 
-            <h3 ref={titleRef} className="display-md mb-5 font-semibold">
+            <h3 ref={titleRef} className="display-lg mb-6">
               {project.title}
             </h3>
 
@@ -100,26 +134,6 @@ function ProjectPanel({
                 )}
               </div>
             </div>
-          </div>
-
-          {/* Cover */}
-          <div className="md:col-span-7">
-            {href ? (
-              <a
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${project.title} — open project`}
-                data-cursor="view"
-                className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-[border-color,transform] duration-300 hover:border-[var(--line-2)] motion-safe:active:scale-[0.985]"
-              >
-                <ProjectCover project={project} index={index} />
-              </a>
-            ) : (
-              <div className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-transform duration-300 motion-safe:active:scale-[0.985]">
-                <ProjectCover project={project} index={index} />
-              </div>
-            )}
           </div>
         </div>
       </div>

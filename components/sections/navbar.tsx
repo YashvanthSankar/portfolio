@@ -113,7 +113,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
           {variant === "home" ? (
             <button
               onClick={() => scrollTo(0, { updateHash: false })}
-              aria-label="Back to top"
+              aria-label="Yashvanth — back to top"
               className="group flex items-baseline gap-2"
             >
               <span className="font-display text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-1)]">
@@ -122,7 +122,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
               <span className="h-[5px] w-[5px] translate-y-[-2px] rounded-full bg-[var(--accent)] transition-shadow duration-300 group-hover:shadow-[var(--glow-accent)]" />
             </button>
           ) : (
-            <Link href="/" aria-label="Back to home" className="group flex items-baseline gap-2">
+            <Link href="/" aria-label="Yashvanth — back to home" className="group flex items-baseline gap-2">
               <span className="font-display text-[15px] font-semibold tracking-[-0.02em] text-[var(--text-1)]">
                 Yashvanth
               </span>
@@ -211,6 +211,8 @@ export function Navbar({ variant = "home" }: NavbarProps) {
       <nav
         aria-label="Mobile navigation"
         aria-hidden={!menuOpen}
+        /* Closed, its links must not be reachable by Tab either. */
+        inert={!menuOpen}
         className={cn(
           "fixed inset-0 z-[60] flex h-dvh w-screen flex-col bg-[var(--bg-0)] transition-[clip-path] duration-500 ease-[cubic-bezier(0.83,0,0.17,1)] md:hidden",
           menuOpen ? "pointer-events-auto" : "pointer-events-none"

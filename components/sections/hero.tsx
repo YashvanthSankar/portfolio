@@ -23,7 +23,7 @@ export function Hero() {
   const scrollTo = useScrollTo();
 
   /* The name leans away from the cursor once it has risen into place. */
-  useCharProximity(sectionRef, { selector: "[data-hero-char]", radius: 150, lift: 12 });
+  useCharProximity(sectionRef, { selector: "[data-hero-char]", radius: 170, lift: 14 });
 
   /* useGSAP runs in a layout effect, so the pre-animation state lands
      before paint. Critically, that state is set here rather than as a
@@ -37,7 +37,7 @@ export function Hero() {
       const rise = gsap.utils.toArray<HTMLElement>("[data-hero-rise]");
       const socialIcons = gsap.utils.toArray<HTMLElement>("[data-hero-social]");
 
-      gsap.set(chars, { yPercent: 118 });
+      gsap.set(chars, { yPercent: 118, rotateX: -40, transformPerspective: 800 });
       gsap.set([...rise, ...socialIcons], { autoAlpha: 0 });
 
       /* Clipping is switched on from JS purely for the duration of the
@@ -48,7 +48,7 @@ export function Hero() {
       gsap.set(lines, { overflow: "hidden" });
 
       const tl = gsap.timeline({
-        delay: 0.15,
+        delay: 0.1,
         onComplete: () => {
           gsap.set(lines, { overflow: "visible" });
         },
@@ -56,14 +56,15 @@ export function Hero() {
 
       tl.to(chars, {
         yPercent: 0,
-        duration: 1.1,
-        stagger: 0.025,
+        rotateX: 0,
+        duration: 1.2,
+        stagger: 0.028,
         ease: "expo.out",
       })
         .to(
           rise,
           { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.09, ease: "expo.out" },
-          "-=0.65"
+          "-=0.7"
         )
         .from(rise, { y: 22, duration: 0.9, stagger: 0.09, ease: "expo.out" }, "<")
         .to(
@@ -97,16 +98,16 @@ export function Hero() {
     <section
       ref={sectionRef}
       id="home"
-      className="sticky top-0 z-0 flex h-[100svh] items-center overflow-hidden"
+      className="sticky top-0 z-0 flex h-[100svh] items-end overflow-hidden"
     >
       <HeroCanvas sectionRef={sectionRef} />
 
       <div
         ref={contentRef}
-        className="relative z-10 mx-auto w-full max-w-[var(--container)] px-[var(--gutter)] pt-20"
+        className="relative z-10 mx-auto flex h-full w-full max-w-[var(--container)] flex-col justify-end px-[var(--gutter)] pb-[max(env(safe-area-inset-bottom),2rem)] pt-24 md:pb-20"
       >
         {/* Availability */}
-        <div data-hero-rise className="mb-8 flex items-center gap-2.5">
+        <div data-hero-rise className="mb-6 flex items-center gap-2.5 md:mb-10">
           <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-[var(--accent)] shadow-[var(--glow-accent)]" />
           <span className="meta text-[var(--text-2)]">
             <TextScramble text="Open to opportunities" startDelay={900} duration={620} />
@@ -116,11 +117,18 @@ export function Hero() {
         {/* Name — masked char rise. Every glyph is its own element so it can
             be staggered, which makes assistive tech spell the name out one
             letter at a time; the visual split is therefore hidden and the
-            name given once as a real (absolutely positioned) text node. */}
-        <h1 className="display-xl mb-7 select-none">
+            name given once as a real (absolutely positioned) text node.
+            The second line steps in from the left — the relic sits in the
+            right half of the frame, and the stagger makes room for it. */}
+        <h1 className="display-xl mb-8 select-none md:mb-12">
           <span className="sr-only">{NAME_LINES.join(" ")}.</span>
           {NAME_LINES.map((line, li) => (
-            <span key={line} data-hero-line aria-hidden="true" className="block py-[0.12em]">
+            <span
+              key={line}
+              data-hero-line
+              aria-hidden="true"
+              className={`block py-[0.1em] ${li === 1 ? "md:pl-[0.9em]" : ""}`}
+            >
               {line.split("").map((char, ci) => (
                 <span
                   key={`${line}-${ci}`}
@@ -142,60 +150,65 @@ export function Hero() {
           ))}
         </h1>
 
-        {/* Role line */}
-        <p data-hero-rise className="lead mb-10 max-w-xl text-[var(--text-2)]">
-          Full-stack developer &amp; AI engineer building{" "}
-          <span className="serif-accent text-[var(--text-1)]">fast, quiet</span> products for
-          the modern web.
-        </p>
+        {/* Bottom rail: role and actions left, place and links right */}
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">
+          <div className="max-w-xl">
+            <p data-hero-rise className="lead mb-7 text-[var(--text-2)]">
+              Full-stack developer &amp; AI engineer building{" "}
+              <span className="serif-accent text-[var(--text-1)]">fast, quiet</span> products
+              for the modern web.
+            </p>
 
-        {/* CTAs */}
-        <div data-hero-rise className="flex flex-wrap items-center gap-3">
-          <div ref={primaryCta} className="magnetic inline-flex">
-            <a
-              href="#projects"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollTo("#projects");
-              }}
-              className="btn btn-primary"
-            >
-              View selected work
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
-          </div>
-          <a href="/YashvanthS_Resume.pdf" download className="btn btn-outline">
-            <Download className="h-4 w-4" />
-            Résumé
-          </a>
-        </div>
-
-        {/* Meta strip */}
-        <div data-hero-rise className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-4">
-          <div className="tap-row flex items-center gap-4">
-            {socials.slice(0, 5).map((s) => (
-              <a
-                key={s.name}
-                data-hero-social
-                href={s.href}
-                {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
-                aria-label={s.name}
-                className="tap-safe h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
-              >
-                <SocialIcon icon={s.icon} />
+            <div data-hero-rise className="flex flex-wrap items-center gap-3">
+              <div ref={primaryCta} className="magnetic inline-flex">
+                <a
+                  href="#projects"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollTo("#projects");
+                  }}
+                  className="btn btn-primary"
+                >
+                  View selected work
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </div>
+              <a href="/YashvanthS_Resume.pdf" download className="btn btn-outline">
+                <Download className="h-4 w-4" />
+                Résumé
               </a>
-            ))}
+            </div>
           </div>
-          <span className="meta hidden sm:inline">Chennai, IN · GMT+5:30</span>
-          <span className="meta hidden md:inline">IIITDM Kancheepuram</span>
+
+          <div
+            data-hero-rise
+            className="flex flex-wrap items-center gap-x-8 gap-y-4 md:flex-col md:items-end md:gap-y-5"
+          >
+            <div className="tap-row flex items-center gap-4">
+              {socials.slice(0, 5).map((s) => (
+                <a
+                  key={s.name}
+                  data-hero-social
+                  href={s.href}
+                  {...(!s.noBlank && { target: "_blank", rel: "noopener noreferrer" })}
+                  aria-label={s.name}
+                  className="tap-safe h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
+                >
+                  <SocialIcon icon={s.icon} />
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 md:flex-col md:items-end md:gap-y-2">
+              <span className="meta hidden sm:inline">Chennai, IN · GMT+5:30</span>
+              <span className="meta hidden md:inline">IIITDM Kancheepuram</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Scroll cue — right-aligned so it clears the meta strip on the left,
-          and stacked above the fixed "?" shortcuts button, which occupies
-          the bottom 60px of this same corner. */}
+      {/* Scroll cue — top-right, out of the way of both rails */}
       <div
-        className="pointer-events-none absolute bottom-20 right-[var(--gutter)] z-10 hidden lg:block"
+        className="pointer-events-none absolute right-[var(--gutter)] top-28 z-10 hidden lg:block"
         aria-hidden="true"
       >
         <span className="meta flex items-center gap-2 text-[var(--text-3)]">

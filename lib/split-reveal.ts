@@ -86,15 +86,27 @@ export function splitReveal(
      * A rise paired with a fade reads nearly identically and introduces
      * no clipping box at all, so descenders cannot be cut in any state —
      * mid-animation, on completion, or if JS dies halfway through. */
+    /* Screen readers get the original string, not a pile of spans. Not
+       via SplitText's own `aria: "auto"`, which writes an aria-label onto
+       the target — prohibited on a role-less <p>. Instead the pieces are
+       hidden and a visually hidden copy of the text is placed first;
+       `revert()` restores the original markup, so the copy goes with it. */
+    const text = target.textContent ?? "";
     split = new SplitText(target, {
       type: type === "chars" ? "chars,words" : type,
       linesClass: "split-line",
-      // Screen readers get the original string, not a pile of spans.
-      aria: "auto",
+      aria: "none",
     });
 
     const targets = split[type];
     if (!targets?.length) return;
+
+    for (const piece of split.lines) piece.setAttribute("aria-hidden", "true");
+    if (type !== "lines") for (const piece of split.words) piece.setAttribute("aria-hidden", "true");
+    const copy = document.createElement("span");
+    copy.className = "sr-only";
+    copy.textContent = text;
+    target.prepend(copy);
 
     gsap.set(targets, { yPercent: 34, autoAlpha: 0 });
 
@@ -116,16 +128,21 @@ export function splitReveal(
     trigger = (tween.scrollTrigger as ScrollTrigger) ?? null;
   };
 
-  build();
-
-  /* Re-split after webfonts swap so line breaks match final metrics. */
-  let rebuilt = false;
-  document.fonts?.ready.then(() => {
-    if (disposed || rebuilt || settled) return;
-    rebuilt = true;
+  /* Line breaks measured against the fallback font are wrong, and
+     SplitText says so in the console. While the webfonts are still in
+     flight, hold the heading hidden (from JS, so a reader without JS
+     never sees this branch) and split once, when they have landed. */
+  if (document.fonts?.status === "loading") {
+    gsap.set(target, { autoAlpha: 0 });
+    document.fonts.ready.then(() => {
+      if (disposed) return;
+      target.style.cssText = prevCss;
+      build();
+      ScrollTrigger.refresh();
+    });
+  } else {
     build();
-    ScrollTrigger.refresh();
-  });
+  }
 
   return () => {
     disposed = true;

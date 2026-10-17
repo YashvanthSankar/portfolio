@@ -242,7 +242,7 @@ export function Footer() {
           </p>
           <button
             onClick={() => scrollTo(0, { updateHash: false })}
-            aria-label="Scroll to top of page"
+            aria-label="Back to top of page"
             className="meta tap-safe group inline-flex items-center gap-2 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
           >
             <ArrowUp className="h-3 w-3 transition-transform duration-300 group-hover:-translate-y-0.5" />
