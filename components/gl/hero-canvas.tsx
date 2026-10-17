@@ -1,342 +1,59 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
+import { ScrollTrigger } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
-import { FRAG_SHADER, VERT_SHADER } from "@/components/gl/hero-shader";
-
-/** Internal render scale — the field is soft, so upscaling is invisible. */
-const RENDER_SCALE = 0.8;
-
-/** Wordmark texture resolution. Power-of-two keeps WebGL 1 happy. */
-const TEX_W = 2048;
-const TEX_H = 512;
-
-const WORDMARK = "YASHVANTH";
-
-function compile(gl: WebGLRenderingContext, type: number, src: string) {
-  const shader = gl.createShader(type);
-  if (!shader) return null;
-  gl.shaderSource(shader, src);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    gl.deleteShader(shader);
-    return null;
-  }
-  return shader;
-}
-
-/** Renders the wordmark to an offscreen canvas for use as a luminance mask. */
-function drawWordmark(): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = TEX_W;
-  c.height = TEX_H;
-  const ctx = c.getContext("2d");
-  if (!ctx) return c;
-
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, TEX_W, TEX_H);
-
-  /* Fit the word to the texture width with a small margin. */
-  const family =
-    getComputedStyle(document.body).getPropertyValue("font-family") ||
-    "system-ui, sans-serif";
-  let size = 400;
-  ctx.font = `600 ${size}px ${family}`;
-  const target = TEX_W * 0.94;
-  const measured = ctx.measureText(WORDMARK).width;
-  size = Math.floor(size * (target / measured));
-
-  ctx.font = `600 ${size}px ${family}`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = "#fff";
-  ctx.letterSpacing = "-0.03em";
-  ctx.fillText(WORDMARK, TEX_W / 2, TEX_H / 2);
-
-  return c;
-}
+import { useGlSurface } from "@/lib/gl/use-gl-surface";
+import { createHeroScene } from "@/components/gl/hero-scene";
 
 /**
- * Signature WebGL hero background. Raw GL — no three.js: one program,
- * one fullscreen triangle, and the wordmark carried as a texture that
- * the noise field warps and the cursor shreds.
+ * Signature WebGL hero background. Raw GL — no three.js: two programs,
+ * one triangle, the wordmark carried as a texture that the noise field
+ * warps and the cursor shreds, and a small simulated trail behind the
+ * pointer. The scene itself lives in hero-scene.ts; this component wires
+ * it to the shared lifecycle and to the page's scroll.
  *
- * Deferred to idle so it never competes with LCP, paused when offscreen
- * or backgrounded, and it simply never covers the CSS `.hero-fallback`
- * gradient if anything fails.
+ * Built on idle, after fonts (the headline is LCP and the wordmark
+ * texture must be set in Geist), paused when the tab is hidden, and —
+ * because a sticky hero is "visible" at every scroll position — paused
+ * by hand once the page curtain has fully covered it. It never covers
+ * the CSS `.hero-fallback` gradient if anything fails.
  */
-export function HeroCanvas() {
+export function HeroCanvas({ sectionRef }: { sectionRef: RefObject<HTMLElement | null> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  /* 0 → hero in view, 1 → the next section has slid fully over it. */
+  const calm = useRef(0);
+
+  const controls = useGlSurface(canvasRef, {
+    awaitFonts: true,
+    renderScale: 0.8,
+    shouldRun: () => calm.current < 1,
+    create: (gl, canvas, { coarse }) =>
+      createHeroScene(gl, canvas, coarse, () => calm.current),
+    /* Fade in only once there's something real on the canvas. */
+    onFirstFrame: () => {
+      if (canvasRef.current) canvasRef.current.style.opacity = "1";
+    },
+    onRelease: () => {
+      if (canvasRef.current) canvasRef.current.style.opacity = "0";
+    },
+  });
 
   useEffect(() => {
-    if (!shouldAnimate()) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    let disposed = false;
-    let raf = 0;
-    let gl: WebGLRenderingContext | null = null;
-    let program: WebGLProgram | null = null;
-    let buffer: WebGLBuffer | null = null;
-    let texture: WebGLTexture | null = null;
-    let resizeObserver: ResizeObserver | null = null;
-    let intersectionObserver: IntersectionObserver | null = null;
-    let resizeTimer = 0;
-    const cleanupFns: Array<() => void> = [];
-
-    /* Pointer is lerped in JS; the shader just reads the uniform. */
-    const pointer = { x: 0.5, y: 0.5 };
-    const target = { x: 0.5, y: 0.5 };
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-
-    /* How hard the cursor is currently tearing the wordmark apart.
-       Ramps up while the pointer moves, decays when it rests. */
-    let disturb = 0;
-    let disturbTarget = 0;
-    let lastMove = 0;
-
-    let visible = true;
-    let running = false;
-    let elapsed = 0;
-    let lastFrame = 0;
-
-    const init = () => {
-      if (disposed) return;
-
-      gl = canvas.getContext("webgl", {
-        alpha: false,
-        antialias: false,
-        depth: false,
-        stencil: false,
-        powerPreference: "low-power",
-      }) as WebGLRenderingContext | null;
-      if (!gl) return; // fallback gradient stays visible
-
-      const vs = compile(gl, gl.VERTEX_SHADER, VERT_SHADER);
-      const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG_SHADER);
-      if (!vs || !fs) return;
-
-      program = gl.createProgram();
-      if (!program) return;
-      gl.attachShader(program, vs);
-      gl.attachShader(program, fs);
-      gl.linkProgram(program);
-      gl.deleteShader(vs);
-      gl.deleteShader(fs);
-      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
-      gl.useProgram(program);
-
-      /* One oversized triangle covers the viewport — no quad, no indices. */
-      buffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array([-1, -1, 3, -1, -1, 3]),
-        gl.STATIC_DRAW
-      );
-      const loc = gl.getAttribLocation(program, "a_pos");
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-
-      /* Wordmark texture — pointer devices only.
-       *
-       * The imprint exists to be shredded by the cursor. A touch screen has
-       * no cursor, so all it can ever be there is a second, static copy of
-       * the name; and a portrait hero has no empty column to move it into,
-       * so it lands under the headline whatever we do. Skipping it also
-       * spares a phone the 2048x512 rasterise and a 4MB texture upload. */
-      if (!coarse) {
-        texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        gl.texImage2D(
-          gl.TEXTURE_2D,
-          0,
-          gl.RGBA,
-          gl.RGBA,
-          gl.UNSIGNED_BYTE,
-          drawWordmark()
-        );
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.uniform1i(gl.getUniformLocation(program, "u_text"), 0);
-      }
-
-      const uRes = gl.getUniformLocation(program, "u_res");
-      const uTime = gl.getUniformLocation(program, "u_time");
-      const uPointer = gl.getUniformLocation(program, "u_pointer");
-      const uDisturb = gl.getUniformLocation(program, "u_disturb");
-      const uTextScale = gl.getUniformLocation(program, "u_textScale");
-      const uTextOffset = gl.getUniformLocation(program, "u_textOffset");
-      /* Zero here makes the shader skip the texture entirely — see above. */
-      gl.uniform1f(gl.getUniformLocation(program, "u_textGain"), coarse ? 0 : 0.7);
-
-      const resize = () => {
-        if (!gl || disposed) return;
-        const dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.25 : 1.75);
-        const w = Math.max(1, Math.round(canvas.clientWidth * dpr * RENDER_SCALE));
-        const h = Math.max(1, Math.round(canvas.clientHeight * dpr * RENDER_SCALE));
-        if (canvas.width === w && canvas.height === h) return;
-        canvas.width = w;
-        canvas.height = h;
-        gl.viewport(0, 0, w, h);
-        gl.uniform2f(uRes, w, h);
-
-        /* Fit the wordmark to a share of the viewport width, preserving its
-           own aspect so the letters never stretch.
-         *
-         * Placement matters as much as size. The headline runs down the
-         * left column, so the wordmark is anchored into the empty
-         * lower-right quadrant and allowed to bleed off the right edge —
-         * centred, it lands squarely across "Sankar." and reads as a
-         * duplicated headline instead of scenery behind one. Far enough
-         * right to clear the role line where it wraps to two lines on a
-         * ~1024px window, which is the tightest case that still shows it. */
-        if (coarse) return;
-        const texAspect = TEX_W / TEX_H;
-        const viewAspect = w / h;
-        const scaleX = 1 / 0.46;
-        const scaleY = (scaleX * texAspect) / viewAspect;
-        gl.uniform2f(uTextScale, scaleX, scaleY);
-        gl.uniform2f(uTextOffset, 0.33, -0.215);
-      };
-      resize();
-
-      const render = (now: number) => {
-        if (disposed || !gl) return;
-
-        /* Advance our own clock so pausing never causes a time jump. */
-        const delta = lastFrame ? Math.min(now - lastFrame, 50) : 16;
-        lastFrame = now;
-        elapsed += delta;
-
-        if (coarse) {
-          /* No cursor to follow — slow autonomous drift keeps it alive. */
-          const t = elapsed * 0.0001;
-          target.x = 0.5 + Math.sin(t * 1.3) * 0.28;
-          target.y = 0.5 + Math.cos(t) * 0.24;
-          disturbTarget = 0.35;
-        } else if (now - lastMove > 260) {
-          /* Cursor at rest — let the letters knit back together. */
-          disturbTarget = 0;
-        }
-
-        pointer.x += (target.x - pointer.x) * 0.06;
-        pointer.y += (target.y - pointer.y) * 0.06;
-        disturb += (disturbTarget - disturb) * 0.055;
-
-        gl.uniform1f(uTime, elapsed * 0.001);
-        gl.uniform2f(uPointer, pointer.x, pointer.y);
-        gl.uniform1f(uDisturb, disturb);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-        raf = requestAnimationFrame(render);
-      };
-
-      const start = () => {
-        if (running || disposed) return;
-        running = true;
-        lastFrame = 0;
-        raf = requestAnimationFrame(render);
-      };
-      const stop = () => {
-        running = false;
-        cancelAnimationFrame(raf);
-      };
-
-      const onVisibility = () => {
-        if (document.hidden || !visible) stop();
-        else start();
-      };
-
-      intersectionObserver = new IntersectionObserver(
-        ([entry]) => {
-          visible = entry.isIntersecting;
-          onVisibility();
-        },
-        { threshold: 0 }
-      );
-      intersectionObserver.observe(canvas);
-
-      resizeObserver = new ResizeObserver(() => {
-        window.clearTimeout(resizeTimer);
-        resizeTimer = window.setTimeout(resize, 150);
-      });
-      resizeObserver.observe(canvas);
-
-      document.addEventListener("visibilitychange", onVisibility);
-
-      const onPointerMove = (e: PointerEvent) => {
-        target.x = e.clientX / window.innerWidth;
-        target.y = 1 - e.clientY / window.innerHeight;
-        disturbTarget = 1;
-        lastMove = performance.now();
-      };
-      if (!coarse) window.addEventListener("pointermove", onPointerMove, { passive: true });
-
-      const onContextLost = (e: Event) => {
-        e.preventDefault();
-        stop();
-        canvas.style.opacity = "0";
-      };
-      const onContextRestored = () => {
-        canvas.style.opacity = "0";
-        init();
-      };
-      canvas.addEventListener("webglcontextlost", onContextLost);
-      canvas.addEventListener("webglcontextrestored", onContextRestored);
-
-      start();
-      /* Fade in only once there's something real on the canvas. */
-      requestAnimationFrame(() => {
-        if (!disposed) canvas.style.opacity = "1";
-      });
-
-      cleanupFns.push(() => {
-        stop();
-        document.removeEventListener("visibilitychange", onVisibility);
-        window.removeEventListener("pointermove", onPointerMove);
-        canvas.removeEventListener("webglcontextlost", onContextLost);
-        canvas.removeEventListener("webglcontextrestored", onContextRestored);
-      });
-    };
-
-    /* Defer past first paint — the hero headline is the LCP element.
-       Fonts first, so the wordmark texture uses Geist, not a fallback. */
-    let idleId: number | undefined;
-    const schedule = () => {
-      const ric =
-        window.requestIdleCallback ??
-        ((cb: IdleRequestCallback) => window.setTimeout(() => cb({} as IdleDeadline), 200));
-      idleId = ric(() => init()) as unknown as number;
-    };
-    if (document.fonts?.status === "loaded") schedule();
-    else if (document.fonts) document.fonts.ready.then(schedule);
-    else schedule();
-
-    return () => {
-      disposed = true;
-      window.clearTimeout(resizeTimer);
-      cancelAnimationFrame(raf);
-      cleanupFns.forEach((fn) => fn());
-      resizeObserver?.disconnect();
-      intersectionObserver?.disconnect();
-      if (idleId !== undefined) {
-        window.cancelIdleCallback?.(idleId);
-        window.clearTimeout(idleId);
-      }
-      if (gl) {
-        if (buffer) gl.deleteBuffer(buffer);
-        if (texture) gl.deleteTexture(texture);
-        if (program) gl.deleteProgram(program);
-        gl.getExtension("WEBGL_lose_context")?.loseContext();
-      }
-    };
-  }, []);
+    const section = sectionRef.current;
+    if (!section || !shouldAnimate()) return;
+    const st = ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: "bottom top",
+      onUpdate(self) {
+        const wasCovered = calm.current >= 1;
+        calm.current = self.progress;
+        if (wasCovered !== self.progress >= 1) controls.sync();
+      },
+    });
+    return () => st.kill();
+  }, [sectionRef, controls]);
 
   return (
     <div className="absolute inset-0 overflow-hidden" aria-hidden="true">

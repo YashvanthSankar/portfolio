@@ -11,6 +11,7 @@ import { HeroCanvas } from "@/components/gl/hero-canvas";
 import { SocialIcon } from "@/components/ui/social-icon";
 import { TextScramble } from "@/components/ui/text-scramble";
 import { useMagnetic } from "@/lib/use-magnetic";
+import { useCharProximity } from "@/lib/use-char-proximity";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 
 const NAME_LINES = ["Yashvanth", "Sankar"];
@@ -20,6 +21,9 @@ export function Hero() {
   const contentRef = useRef<HTMLDivElement>(null);
   const primaryCta = useMagnetic<HTMLDivElement>(0.2, 8);
   const scrollTo = useScrollTo();
+
+  /* The name leans away from the cursor once it has risen into place. */
+  useCharProximity(sectionRef, { selector: "[data-hero-char]", radius: 150, lift: 12 });
 
   /* useGSAP runs in a layout effect, so the pre-animation state lands
      before paint. Critically, that state is set here rather than as a
@@ -95,7 +99,7 @@ export function Hero() {
       id="home"
       className="sticky top-0 z-0 flex h-[100svh] items-center overflow-hidden"
     >
-      <HeroCanvas />
+      <HeroCanvas sectionRef={sectionRef} />
 
       <div
         ref={contentRef}
