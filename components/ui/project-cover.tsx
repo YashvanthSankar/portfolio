@@ -1,30 +1,69 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, type RefObject } from "react";
 import type { Project } from "@/data/types";
+import { COVER_H, COVER_W, coverGeometry, coverGlowX, drawCoverTexture } from "@/lib/cover-art";
+import { useGlSurface } from "@/lib/gl/use-gl-surface";
+import { useMediaQuery } from "@/lib/use-media-query";
+import { createCoverScene } from "@/components/gl/cover-scene";
 
-const W = 800;
-const H = 550;
+/** The sheet only where it earns its keep: a pointer to ripple under, and room to see it. */
+const SHEET_QUERY =
+  "(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
-/** Seeded PRNG — same title always yields the same artwork. */
-function mulberry32(a: number) {
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+/**
+ * The WebGL sheet over a cover. It draws the same picture as the DOM
+ * beneath it — rasterised from the shared geometry, or the screenshot
+ * itself — and distorts it under the pointer and with scroll. The DOM
+ * stays in the markup: it is what the server renders, what no-JS and
+ * touch readers get, and what shows again if the context is lost. It is
+ * hidden only once the sheet has drawn its first real frame.
+ */
+function CoverSheet({
+  project,
+  index,
+  artRef,
+  imageRef,
+}: {
+  project: Project;
+  index: number;
+  artRef: RefObject<HTMLDivElement | null>;
+  imageRef: RefObject<HTMLImageElement | null>;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-function hash(str: string) {
-  let h = 2166136261;
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
+  useGlSurface(canvasRef, {
+    renderScale: 0.75,
+    dprCap: [1.5, 1],
+    near: "50% 0px",
+    far: "150% 0px",
+    /* The ghost numeral is set in Geist. */
+    awaitFonts: true,
+    create: (gl, canvas) => {
+      const host = canvas.parentElement;
+      if (!host) return null;
+      const source = imageRef.current ?? drawCoverTexture(project.title, index);
+      return createCoverScene(gl, canvas, { source, host });
+    },
+    onFirstFrame: () => {
+      if (canvasRef.current) canvasRef.current.style.opacity = "1";
+      if (artRef.current) artRef.current.style.opacity = "0";
+    },
+    onRelease: () => {
+      if (canvasRef.current) canvasRef.current.style.opacity = "0";
+      if (artRef.current) artRef.current.style.opacity = "";
+    },
+  });
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="absolute inset-0 h-full w-full transition-opacity duration-500"
+      style={{ opacity: 0 }}
+    />
+  );
 }
 
 /**
@@ -34,67 +73,19 @@ function hash(str: string) {
  * rather than a fake product shot.
  */
 function GenerativeArt({ project, index }: { project: Project; index: number }) {
-  const { path, area, nodes, ticks } = useMemo(() => {
-    const rand = mulberry32(hash(project.title));
-
-    /* Three summed sine waves with seeded phase/frequency — smooth, organic,
-       and never the same twice across projects. */
-    const waves = Array.from({ length: 3 }, () => ({
-      amp: 26 + rand() * 52,
-      freq: 0.6 + rand() * 2.1,
-      phase: rand() * Math.PI * 2,
-    }));
-    const drift = 0.22 + rand() * 0.5;
-
-    const points: Array<[number, number]> = [];
-    const steps = 68;
-    for (let i = 0; i <= steps; i++) {
-      const t = i / steps;
-      const x = t * W;
-      let y = H * 0.56;
-      for (const w of waves) {
-        y += Math.sin(t * Math.PI * 2 * w.freq + w.phase) * w.amp;
-      }
-      y -= t * H * drift * 0.42; // gentle upward climb
-      points.push([x, y]);
-    }
-
-    /* Catmull-Rom → cubic bezier for a properly smooth trace. */
-    let d = `M ${points[0][0].toFixed(1)} ${points[0][1].toFixed(1)}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[i - 1] ?? points[i];
-      const p1 = points[i];
-      const p2 = points[i + 1];
-      const p3 = points[i + 2] ?? p2;
-      const c1x = p1[0] + (p2[0] - p0[0]) / 6;
-      const c1y = p1[1] + (p2[1] - p0[1]) / 6;
-      const c2x = p2[0] - (p3[0] - p1[0]) / 6;
-      const c2y = p2[1] - (p3[1] - p1[1]) / 6;
-      d += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
-    }
-
-    /* A few marked readings along the trace. */
-    const nodeIdx = [0.16, 0.42, 0.71, 0.93].map((f) =>
-      Math.round(f * (points.length - 1))
-    );
-
-    return {
-      path: d,
-      area: `${d} L ${W} ${H} L 0 ${H} Z`,
-      nodes: nodeIdx.map((i) => points[i]),
-      ticks: Array.from({ length: 9 }, (_, i) => (i + 1) * (W / 10)),
-    };
-  }, [project.title]);
-
+  const { path, area, nodes, ticks } = useMemo(
+    () => coverGeometry(project.title),
+    [project.title]
+  );
   const gid = `pc-${index}`;
 
   return (
-    <div className="absolute inset-0 bg-[var(--bg-1)]">
+    <>
       {/* Ambient accent field */}
       <div
         className="absolute inset-0 transition-transform duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
         style={{
-          background: `radial-gradient(70% 80% at ${28 + index * 22}% 22%, rgba(200,240,75,0.13), transparent 62%)`,
+          background: `radial-gradient(70% 80% at ${coverGlowX(index)}% 22%, rgba(200,240,75,0.13), transparent 62%)`,
         }}
       />
 
@@ -122,7 +113,7 @@ function GenerativeArt({ project, index }: { project: Project; index: number }) 
 
       {/* Signal trace */}
       <svg
-        viewBox={`0 0 ${W} ${H}`}
+        viewBox={`0 0 ${COVER_W} ${COVER_H}`}
         preserveAspectRatio="none"
         className="absolute inset-0 h-full w-full"
         aria-hidden="true"
@@ -146,7 +137,7 @@ function GenerativeArt({ project, index }: { project: Project; index: number }) 
             x1={x}
             y1="0"
             x2={x}
-            y2={H}
+            y2={COVER_H}
             stroke="rgba(244,244,242,0.05)"
             strokeWidth="1"
           />
@@ -169,7 +160,7 @@ function GenerativeArt({ project, index }: { project: Project; index: number }) 
               x1={x}
               y1={y}
               x2={x}
-              y2={H}
+              y2={COVER_H}
               stroke="rgba(200,240,75,0.18)"
               strokeWidth="1"
               vectorEffect="non-scaling-stroke"
@@ -186,33 +177,7 @@ function GenerativeArt({ project, index }: { project: Project; index: number }) 
           </g>
         ))}
       </svg>
-
-      {/* Corner plates */}
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-6">
-        <span className="meta text-[var(--accent)]">
-          {project.kind ?? project.tags[0]}
-        </span>
-        <span className="meta">{project.year}</span>
-      </div>
-
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
-        <div className="flex flex-wrap gap-x-5 gap-y-1">
-          {project.tags.slice(0, 3).map((tag) => (
-            <span key={tag} className="meta text-[var(--text-2)]">
-              {tag}
-            </span>
-          ))}
-        </div>
-        <span className="meta flex shrink-0 items-center gap-2 text-[var(--text-2)]">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              project.live ? "bg-[var(--accent)]" : "bg-[var(--text-3)]"
-            }`}
-          />
-          {project.live ? "live" : "source"}
-        </span>
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -224,22 +189,63 @@ export function ProjectCover({
   index: number;
 }) {
   const [imgOk, setImgOk] = useState(Boolean(project.image));
+  const sheet = useMediaQuery(SHEET_QUERY);
+  const artRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const hasImage = Boolean(project.image) && imgOk;
 
-  if (project.image && imgOk) {
-    return (
-      <div className="absolute inset-0 overflow-hidden bg-[var(--bg-1)]">
-        <Image
-          src={project.image}
-          alt={`${project.title} interface`}
-          fill
-          sizes="(max-width: 1024px) 100vw, 55vw"
-          className="object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-          onError={() => setImgOk(false)}
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--bg-0)]/50 to-transparent" />
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[var(--bg-1)]">
+      {/* The picture the server renders; the sheet replaces it once drawn. */}
+      <div ref={artRef} className="absolute inset-0 transition-opacity duration-500">
+        {hasImage ? (
+          <Image
+            ref={imageRef}
+            src={project.image!}
+            alt={`${project.title} interface`}
+            fill
+            sizes="(max-width: 1024px) 100vw, 55vw"
+            className="object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+            onError={() => setImgOk(false)}
+          />
+        ) : (
+          <GenerativeArt project={project} index={index} />
+        )}
       </div>
-    );
-  }
 
-  return <GenerativeArt project={project} index={index} />;
+      {sheet && (
+        <CoverSheet project={project} index={index} artRef={artRef} imageRef={imageRef} />
+      )}
+
+      {hasImage ? (
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--bg-0)]/50 to-transparent" />
+      ) : (
+        <>
+          {/* Corner plates — DOM, above the sheet, never distorted */}
+          <div className="absolute inset-x-0 top-0 flex items-start justify-between p-6">
+            <span className="meta text-[var(--accent)]">{project.kind ?? project.tags[0]}</span>
+            <span className="meta">{project.year}</span>
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
+            <div className="flex flex-wrap gap-x-5 gap-y-1">
+              {project.tags.slice(0, 3).map((tag) => (
+                <span key={tag} className="meta text-[var(--text-2)]">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <span className="meta flex shrink-0 items-center gap-2 text-[var(--text-2)]">
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  project.live ? "bg-[var(--accent)]" : "bg-[var(--text-3)]"
+                }`}
+              />
+              {project.live ? "live" : "source"}
+            </span>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }

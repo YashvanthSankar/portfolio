@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Github } from "lucide-react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { DESKTOP_MOTION } from "@/lib/motion";
 import { projects } from "@/data/projects";
 import { chapterNumber } from "@/data/sections";
@@ -111,12 +111,12 @@ function ProjectPanel({
                 rel="noopener noreferrer"
                 aria-label={`${project.title} — open project`}
                 data-cursor="view"
-                className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-colors duration-300 hover:border-[var(--line-2)]"
+                className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-[border-color,transform] duration-300 hover:border-[var(--line-2)] motion-safe:active:scale-[0.985]"
               >
                 <ProjectCover project={project} index={index} />
               </a>
             ) : (
-              <div className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)]">
+              <div className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-transform duration-300 motion-safe:active:scale-[0.985]">
                 <ProjectCover project={project} index={index} />
               </div>
             )}
@@ -129,8 +129,12 @@ function ProjectPanel({
 
 export function SelectedWork() {
   const stackRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLSpanElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
 
-  /* Outgoing panels recede as the next one slides over them. */
+  /* Outgoing panels recede as the next one slides over them, and the rail
+     in the corner counts the stack through. */
   useEffect(() => {
     const mm = gsap.matchMedia();
 
@@ -152,6 +156,22 @@ export function SelectedWork() {
           },
         });
       });
+
+      gsap.set(fillRef.current, { scaleX: 0 });
+      ScrollTrigger.create({
+        trigger: stackRef.current,
+        start: "top 60%",
+        end: "bottom 40%",
+        onToggle(self) {
+          gsap.to(railRef.current, { autoAlpha: self.isActive ? 1 : 0, duration: 0.4 });
+        },
+        onUpdate(self) {
+          gsap.set(fillRef.current, { scaleX: self.progress });
+          const n = Math.min(panels.length, Math.floor(self.progress * panels.length) + 1);
+          /* Static text React never re-renders, so writing it directly is safe. */
+          if (countRef.current) countRef.current.textContent = String(n).padStart(2, "0");
+        },
+      });
     });
 
     return () => mm.revert();
@@ -159,6 +179,25 @@ export function SelectedWork() {
 
   return (
     <section id="projects" className="relative z-10 bg-[var(--bg-0)]">
+      {/* Progress rail — desktop only, where the panels stack */}
+      <div
+        ref={railRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed bottom-8 left-[var(--gutter)] z-30 hidden items-center gap-3 md:flex"
+        style={{ opacity: 0 }}
+      >
+        <span className="meta tabular-nums text-[var(--text-1)]">
+          <span ref={countRef}>01</span>
+          <span className="text-[var(--text-3)]">
+            {" "}
+            / {String(projects.length).padStart(2, "0")}
+          </span>
+        </span>
+        <span className="block h-px w-16 overflow-hidden bg-[var(--line-2)]">
+          <span ref={fillRef} className="block h-full w-full origin-left bg-[var(--accent)]" />
+        </span>
+      </div>
+
       <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] pt-[var(--section-pad)]">
         <SectionHeader
           index={chapterNumber("projects")}

@@ -10,8 +10,12 @@ import { shouldAnimate } from "@/lib/utils";
 export interface GlScene {
   /** After any size change, with the drawing-buffer size in pixels. */
   resize(width: number, height: number): void;
-  /** One frame. `dt` in ms (clamped), `elapsed` in seconds; both freeze while paused. */
-  frame(dt: number, elapsed: number): void;
+  /**
+   * One frame. `dt` in ms (clamped), `elapsed` in seconds; both freeze
+   * while paused. Return `false` if nothing was drawn (a texture still
+   * loading, say) so the hook does not announce a first frame yet.
+   */
+  frame(dt: number, elapsed: number): boolean | void;
   /** Free every GL object the scene created. The context itself is the hook's. */
   dispose(): void;
 }
@@ -130,8 +134,8 @@ export function useGlSurface(
       const dt = lastFrame ? Math.min(now - lastFrame, 50) : 16;
       lastFrame = now;
       elapsed += dt;
-      scene.frame(dt, elapsed * 0.001);
-      if (!drewFrame) {
+      const drew = scene.frame(dt, elapsed * 0.001);
+      if (!drewFrame && drew !== false) {
         drewFrame = true;
         opts().onFirstFrame?.();
       }
