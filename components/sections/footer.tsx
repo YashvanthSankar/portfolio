@@ -10,6 +10,7 @@ import { sections, HERO_ID } from "@/data/sections";
 import { socials } from "@/data/socials";
 import { NAME } from "@/data/site";
 import { fadeUp, scoped } from "@/lib/split-reveal";
+import { useCharProximity } from "@/lib/use-char-proximity";
 import { SocialIcon } from "@/components/ui/social-icon";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 
@@ -114,6 +115,15 @@ export function Footer() {
     };
   }, []);
 
+  /* The page ends the way it began: the wordmark leans away from the pointer. */
+  useCharProximity(wordmarkRef, {
+    selector: "[data-footer-char]",
+    radius: 200,
+    lift: 18,
+    skew: 4,
+    scale: 1.02,
+  });
+
   const wordmark = "YASHVANTH";
 
   return (
@@ -207,14 +217,16 @@ export function Footer() {
 
       {/* Outsized wordmark */}
       <div className="border-t border-[var(--line-1)] px-[var(--gutter)] pt-8" aria-hidden="true">
+        {/* The paragraph does the clipping for the rise, with headroom above
+            so a letter lifted by the pointer isn't sheared at the top. */}
         <p
           ref={wordmarkRef}
-          className="flex select-none justify-between overflow-hidden font-display font-semibold leading-[0.8] tracking-[-0.05em] text-[var(--text-1)]"
+          className="-mt-[0.3em] flex select-none justify-between overflow-hidden pt-[0.3em] font-display font-semibold leading-[0.8] tracking-[-0.05em] text-[var(--text-1)]"
           style={{ fontSize: "clamp(3rem, 13.5vw, 13rem)" }}
         >
           {wordmark.split("").map((char, i) => (
-            <span key={i} className="inline-block overflow-hidden">
-              <span data-footer-char className="inline-block">
+            <span key={i} className="inline-block">
+              <span data-footer-char className="inline-block will-change-transform">
                 {char}
               </span>
             </span>

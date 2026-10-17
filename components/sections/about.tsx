@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import { Check, Copy } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
@@ -9,6 +9,8 @@ import { DESKTOP_MOTION } from "@/lib/motion";
 import { useIsoLayoutEffect } from "@/lib/use-iso-layout-effect";
 import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp, splitReveal } from "@/lib/split-reveal";
+import { useGlSurface } from "@/lib/gl/use-gl-surface";
+import { createDitherScene } from "@/components/gl/dither-scene";
 import { chapterNumber } from "@/data/sections";
 import { EMAIL } from "@/data/site";
 
@@ -113,10 +115,52 @@ function CopyEmail() {
   );
 }
 
+/**
+ * The WebGL sheet over the portrait: the photo arrives as a two-tone
+ * dither print and resolves into itself as the section enters; the
+ * pointer un-resolves a soft disc wherever it rests. The `next/image`
+ * beneath is what the server renders and what reduced-motion, no-JS and
+ * lost-context readers see — it is hidden only after the first frame.
+ */
+function PortraitSheet({ imageRef }: { imageRef: RefObject<HTMLImageElement | null> }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useGlSurface(canvasRef, {
+    renderScale: 1,
+    dprCap: [2, 1.5],
+    near: "50% 0px",
+    far: "150% 0px",
+    create: (gl, canvas) => {
+      const image = imageRef.current;
+      const host = canvas.parentElement;
+      if (!image || !host) return null;
+      return createDitherScene(gl, canvas, { image, host });
+    },
+    onFirstFrame: () => {
+      if (canvasRef.current) canvasRef.current.style.opacity = "1";
+      if (imageRef.current) imageRef.current.style.opacity = "0";
+    },
+    onRelease: () => {
+      if (canvasRef.current) canvasRef.current.style.opacity = "0";
+      if (imageRef.current) imageRef.current.style.opacity = "";
+    },
+  });
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="absolute inset-0 h-full w-full transition-opacity duration-500"
+      style={{ opacity: 0 }}
+    />
+  );
+}
+
 export function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const manifestoRef = useRef<HTMLParagraphElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const cleanups = [
@@ -221,14 +265,16 @@ export function About() {
             <div ref={photoRef} className="relative mx-auto w-full max-w-[280px] md:ml-auto md:mr-0">
               <div className="relative overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] bg-[var(--bg-1)]">
                 <Image
+                  ref={imageRef}
                   src="/yashvanth.jpg"
                   alt="Yashvanth S"
                   width={460}
                   height={460}
                   quality={95}
                   sizes="280px"
-                  className="block h-auto w-full grayscale transition-[filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:grayscale-0"
+                  className="block h-auto w-full grayscale transition-[filter,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:grayscale-0"
                 />
+                <PortraitSheet imageRef={imageRef} />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[var(--bg-0)]/55 via-transparent to-transparent" />
               </div>
               <p className="meta mt-4">Chennai · GMT+5:30</p>

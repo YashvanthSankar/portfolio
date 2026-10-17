@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Check, Loader2, Send } from "lucide-react";
+import { gsap } from "@/lib/gsap";
+import { shouldAnimate } from "@/lib/utils";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SocialIcon } from "@/components/ui/social-icon";
 import { socials } from "@/data/socials";
@@ -25,6 +27,70 @@ function validate(form: Record<FieldName, string>): Errors {
   if (form.message.trim().length < 10)
     errors.message = "A little more detail — at least 10 characters.";
   return errors;
+}
+
+/* Twelve spokes, from an inner radius out, around the submit button.
+   Rounded, because Node and the browser disagree on the last digit of
+   Math.sin and React would report every spoke as a hydration mismatch. */
+const r2 = (v: number) => Math.round(v * 100) / 100;
+const SPOKES = Array.from({ length: 12 }, (_, i) => {
+  const a = (i / 12) * Math.PI * 2;
+  return {
+    x1: r2(Math.cos(a) * 18),
+    y1: r2(Math.sin(a) * 18),
+    x2: r2(Math.cos(a) * 44),
+    y2: r2(Math.sin(a) * 44),
+  };
+});
+
+/**
+ * A small line burst in lime when a message has gone — the one moment
+ * on the page that deserves a flourish. Plays once per send and is
+ * invisible otherwise; under reduced motion it never shows at all.
+ */
+function SendBurst({ active }: { active: boolean }) {
+  const ref = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const svg = ref.current;
+    if (!active || !svg || !shouldAnimate()) return;
+    const spokes = svg.querySelectorAll("line");
+    const tl = gsap.timeline();
+    tl.set(svg, { autoAlpha: 1 })
+      .fromTo(
+        spokes,
+        { opacity: 0, scale: 0.4, transformOrigin: "0 0" },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out", stagger: 0.02 }
+      )
+      .to(svg, { autoAlpha: 0, duration: 0.7, ease: "power2.out" }, "-=0.1");
+    return () => {
+      tl.kill();
+      gsap.set(svg, { autoAlpha: 0 });
+    };
+  }, [active]);
+
+  return (
+    <svg
+      ref={ref}
+      aria-hidden="true"
+      viewBox="-50 -50 100 100"
+      className="pointer-events-none absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2"
+      style={{ opacity: 0 }}
+    >
+      {SPOKES.map((s, i) => (
+        <line
+          key={i}
+          x1={s.x1}
+          y1={s.y1}
+          x2={s.x2}
+          y2={s.y2}
+          stroke="var(--accent)"
+          strokeWidth="1"
+          strokeLinecap="round"
+        />
+      ))}
+    </svg>
+  );
 }
 
 export function ContactSection() {
@@ -204,19 +270,21 @@ export function ContactSection() {
                 <label htmlFor="name" className="meta mb-2 block">
                   Name
                 </label>
-                <input
-                  type="text"
-                  id="name"
-                  autoComplete="name"
-                  value={form.name}
-                  onChange={setField("name")}
-                  placeholder="Jane Doe"
-                  className={fieldClass("name")}
-                  required
-                  maxLength={80}
-                  aria-invalid={Boolean(errors.name)}
-                  aria-describedby={describedBy("name")}
-                />
+                <div className="field-wrap">
+                  <input
+                    type="text"
+                    id="name"
+                    autoComplete="name"
+                    value={form.name}
+                    onChange={setField("name")}
+                    placeholder="Jane Doe"
+                    className={fieldClass("name")}
+                    required
+                    maxLength={80}
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={describedBy("name")}
+                  />
+                </div>
                 {errors.name && (
                   <p id="name-error" role="alert" className="meta mt-2 text-[var(--accent)]">
                     {errors.name}
@@ -227,19 +295,21 @@ export function ContactSection() {
                 <label htmlFor="email" className="meta mb-2 block">
                   Email
                 </label>
-                <input
-                  type="email"
-                  id="email"
-                  autoComplete="email"
-                  value={form.email}
-                  onChange={setField("email")}
-                  placeholder="jane@example.com"
-                  className={fieldClass("email")}
-                  required
-                  maxLength={200}
-                  aria-invalid={Boolean(errors.email)}
-                  aria-describedby={describedBy("email")}
-                />
+                <div className="field-wrap">
+                  <input
+                    type="email"
+                    id="email"
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={setField("email")}
+                    placeholder="jane@example.com"
+                    className={fieldClass("email")}
+                    required
+                    maxLength={200}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={describedBy("email")}
+                  />
+                </div>
                 {errors.email && (
                   <p id="email-error" role="alert" className="meta mt-2 text-[var(--accent)]">
                     {errors.email}
@@ -257,19 +327,21 @@ export function ContactSection() {
                   {form.message.length} / 4000
                 </span>
               </div>
-              <textarea
-                id="message"
-                value={form.message}
-                onChange={setField("message")}
-                placeholder="Tell me about your project, idea, or question…"
-                rows={7}
-                className={`${fieldClass("message")} resize-none`}
-                required
-                minLength={10}
-                maxLength={4000}
-                aria-invalid={Boolean(errors.message)}
-                aria-describedby={describedBy("message")}
-              />
+              <div className="field-wrap">
+                <textarea
+                  id="message"
+                  value={form.message}
+                  onChange={setField("message")}
+                  placeholder="Tell me about your project, idea, or question…"
+                  rows={7}
+                  className={`${fieldClass("message")} block resize-none`}
+                  required
+                  minLength={10}
+                  maxLength={4000}
+                  aria-invalid={Boolean(errors.message)}
+                  aria-describedby={describedBy("message")}
+                />
+              </div>
               {errors.message && (
                 <p id="message-error" role="alert" className="meta mt-2 text-[var(--accent)]">
                   {errors.message}
@@ -295,7 +367,8 @@ export function ContactSection() {
             )}
 
             <div className="mt-7 flex flex-wrap items-center gap-5">
-              <div ref={submitRef} className="magnetic inline-flex">
+              <div ref={submitRef} className="magnetic relative inline-flex">
+                <SendBurst active={status === "sent"} />
                 <button
                   type="submit"
                   disabled={status === "sending" || status === "sent"}
