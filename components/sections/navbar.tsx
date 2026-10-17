@@ -6,9 +6,10 @@ import { ArrowUpRight, Menu, X } from "lucide-react";
 import { cn, throttle } from "@/lib/utils";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 import { useActiveSection } from "@/lib/use-active-section";
-import { navSections, sections, HERO_ID } from "@/data/sections";
+import { navSections, sections, chapterNumber, HERO_ID } from "@/data/sections";
 import { socials } from "@/data/socials";
 import { GITHUB_URL } from "@/data/site";
+import { SocialIcon, SocialSprite } from "@/components/ui/social-icon";
 
 /** The mobile panel carries the whole page; the hero is the wordmark's job. */
 const panelSections = sections.filter((s) => s.id !== HERO_ID);
@@ -96,6 +97,8 @@ export function Navbar({ variant = "home" }: NavbarProps) {
 
   return (
     <>
+      {/* The icon symbols every `<SocialIcon>` on the page points at. */}
+      <SocialSprite />
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-40 transition-[transform,background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
@@ -238,7 +241,8 @@ export function Navbar({ variant = "home" }: NavbarProps) {
                 { id: "__github", label: "GitHub" },
               ]
           ).map((item, i) => {
-            const num = String(i + 1).padStart(2, "0");
+            const num =
+              variant === "home" ? chapterNumber(item.id) : String(i + 1).padStart(2, "0");
             const inner = (
               <>
                 <span className="meta w-8 shrink-0 pt-3 text-[var(--text-3)]">{num}</span>
@@ -303,7 +307,7 @@ export function Navbar({ variant = "home" }: NavbarProps) {
                   aria-label={s.name}
                   className="tap-safe h-4 w-4 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
                 >
-                  {s.icon}
+                  <SocialIcon icon={s.icon} />
                 </a>
               ))}
             </div>

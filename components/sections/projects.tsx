@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Github } from "lucide-react";
 import { gsap } from "@/lib/gsap";
+import { DESKTOP_MOTION } from "@/lib/motion";
 import { projects } from "@/data/projects";
+import { chapterNumber } from "@/data/sections";
 import type { Project } from "@/data/types";
 import { SectionHeader } from "@/components/ui/section-header";
 import { ProjectCover } from "@/components/ui/project-cover";
@@ -108,6 +110,7 @@ function ProjectPanel({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${project.title} — open project`}
+                data-cursor="view"
                 className="group relative block aspect-[16/11] overflow-hidden rounded-[var(--radius)] border border-[var(--line-1)] transition-colors duration-300 hover:border-[var(--line-2)]"
               >
                 <ProjectCover project={project} index={index} />
@@ -131,7 +134,7 @@ export function SelectedWork() {
   useEffect(() => {
     const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+    mm.add(DESKTOP_MOTION, () => {
       const panels = gsap.utils.toArray<HTMLElement>("[data-work-panel]", stackRef.current);
 
       panels.forEach((panel, i) => {
@@ -158,7 +161,7 @@ export function SelectedWork() {
     <section id="projects" className="relative z-10 bg-[var(--bg-0)]">
       <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] pt-[var(--section-pad)]">
         <SectionHeader
-          index="01"
+          index={chapterNumber("projects")}
           label="selected work"
           title={
             <>

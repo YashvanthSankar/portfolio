@@ -4,6 +4,10 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { Cursor } from "@/components/cursor";
+import { NAME, SITE_URL } from "@/data/site";
+import { profileUrls } from "@/data/socials";
+
+const TITLE = `${NAME} · Full-Stack Developer & AI Engineer`;
 
 const geistSans = Geist({
   variable: "--font-display",
@@ -35,12 +39,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Yashvanth S · Full-Stack Developer & AI Engineer",
-    template: "%s · Yashvanth S",
+    default: TITLE,
+    template: `%s · ${NAME}`,
   },
   description:
     "Full-stack developer & AI engineer building fast, opinionated products for the modern web. React, Next.js, Node.js, Python, ML.",
   keywords: [
+    NAME,
     "Yashvanth S",
     "full-stack developer",
     "AI engineer",
@@ -56,24 +61,24 @@ export const metadata: Metadata = {
     "open source",
     "IIITDM Kancheepuram",
   ],
-  authors: [{ name: "Yashvanth S" }],
-  creator: "Yashvanth S",
-  publisher: "Yashvanth S",
+  authors: [{ name: NAME }],
+  creator: NAME,
+  publisher: NAME,
   formatDetection: { email: false, address: false, telephone: false },
-  metadataBase: new URL("https://yashvanth.com"),
+  metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://yashvanth.com",
-    title: "Yashvanth S · Full-Stack Developer & AI Engineer",
+    url: SITE_URL,
+    title: TITLE,
     description:
       "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
-    siteName: "Yashvanth S",
+    siteName: NAME,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yashvanth S · Full-Stack Developer & AI Engineer",
+    title: TITLE,
     description:
       "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
     creator: "@yashvanths19",
@@ -108,17 +113,13 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Person",
-              name: "Yashvanth S",
+              name: NAME,
+              alternateName: "Yashvanth S",
               jobTitle: "Full-Stack Developer & AI Engineer",
               description:
                 "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.",
-              url: "https://yashvanth.com",
-              sameAs: [
-                "https://github.com/YashvanthSankar",
-                "https://linkedin.com/in/yashvanths",
-                "https://x.com/yashvanths19",
-                "https://instagram.com/yashvanth.19",
-              ],
+              url: SITE_URL,
+              sameAs: profileUrls,
               knowsAbout: [
                 "JavaScript",
                 "TypeScript",

@@ -5,9 +5,11 @@ import Image from "next/image";
 import { Check, Copy } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
+import { DESKTOP_MOTION } from "@/lib/motion";
 import { useIsoLayoutEffect } from "@/lib/use-iso-layout-effect";
 import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp, splitReveal } from "@/lib/split-reveal";
+import { chapterNumber } from "@/data/sections";
 import { EMAIL } from "@/data/site";
 
 const stats = [
@@ -102,6 +104,7 @@ function CopyEmail() {
       type="button"
       onClick={copy}
       aria-label={copied ? "Email address copied" : "Copy email address"}
+      data-cursor="copy"
       className="meta tap-safe inline-flex items-center gap-2 text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--accent)]"
     >
       {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
@@ -127,7 +130,7 @@ export function About() {
     ];
 
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+    mm.add(DESKTOP_MOTION, () => {
       gsap.fromTo(
         photoRef.current,
         { y: 34 },
@@ -158,7 +161,7 @@ export function About() {
     >
       <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] py-[var(--section-pad)]">
         <SectionHeader
-          index="02"
+          index={chapterNumber("about")}
           label="about"
           title={
             <>

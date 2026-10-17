@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { fadeUp } from "@/lib/split-reveal";
+import { chapterNumber } from "@/data/sections";
 
 /**
  * "Now" — what I'm working on this season, not historically.
@@ -68,7 +69,7 @@ export function NowSection() {
       <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] py-[var(--section-pad)]">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6 border-b border-[var(--line-1)] pb-6">
           <div className="flex items-center gap-3">
-            <span className="meta text-[var(--accent)]">04</span>
+            <span className="meta text-[var(--accent)]">{chapterNumber("now")}</span>
             <span className="meta">right now</span>
           </div>
           <span className="meta">

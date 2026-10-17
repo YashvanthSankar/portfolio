@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
-import { sections } from "@/data/sections";
+import { sections, chapterNumber, chapterCount } from "@/data/sections";
 import { useActiveSection } from "@/lib/use-active-section";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 
@@ -51,7 +51,7 @@ export function MobileProgress() {
     >
       {open && (
         <div className="panel flex flex-col overflow-hidden">
-          {sections.map((s, i) => {
+          {sections.map((s) => {
             const isActive = active === s.id;
             return (
               <button
@@ -62,9 +62,7 @@ export function MobileProgress() {
                   isActive ? "bg-[var(--bg-2)] text-[var(--accent)]" : "text-[var(--text-2)]"
                 }`}
               >
-                <span className="meta tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+                <span className="meta tabular-nums">{chapterNumber(s.id)}</span>
                 <span className="text-sm">{s.label}</span>
               </button>
             );
@@ -104,9 +102,9 @@ export function MobileProgress() {
             ))}
           </span>
           <span className="meta tabular-nums">
-            {String(activeIdx + 1).padStart(2, "0")}
+            {chapterNumber(active)}
             <span className="text-[var(--text-3)]">
-              /{String(sections.length).padStart(2, "0")}
+              /{String(chapterCount).padStart(2, "0")}
             </span>
           </span>
         </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { sections, shortcutMap } from "@/data/sections";
+import { sections, shortcutMap, HERO_ID } from "@/data/sections";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 
 /**
@@ -11,7 +11,7 @@ import { useScrollTo } from "@/components/providers/smooth-scroll";
  */
 const hints: Array<[string, string]> = [
   ...sections.map(
-    (s) => [s.key.toUpperCase(), s.id === "home" ? "Home" : s.label] as [string, string]
+    (s) => [s.key.toUpperCase(), s.id === HERO_ID ? "Home" : s.label] as [string, string]
   ),
   ["?", "Toggle this"],
 ];

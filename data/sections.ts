@@ -40,3 +40,16 @@ export const navSections = sections.filter((s) => s.inNav);
 export const shortcutMap: Record<string, string> = Object.fromEntries(
   sections.map((s) => [s.key, s.id])
 );
+
+/**
+ * Two-digit chapter number, for section headers and every indicator. The
+ * hero is "00": it is the cover, and the chapters begin at Work. One rule
+ * in one place, so a header and the mobile cluster can never disagree.
+ */
+export function chapterNumber(id: string): string {
+  const i = sections.findIndex((s) => s.id === id);
+  return String(Math.max(0, i)).padStart(2, "0");
+}
+
+/** Chapters after the cover — what the `/ 06` in the progress cluster counts. */
+export const chapterCount = sections.length - 1;

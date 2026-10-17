@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { experience } from "@/data/experience";
+import { chapterNumber } from "@/data/sections";
 import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp } from "@/lib/split-reveal";
 
@@ -34,7 +35,7 @@ export function ExperienceSection() {
     >
       <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] py-[var(--section-pad)]">
         <SectionHeader
-          index="03"
+          index={chapterNumber("experience")}
           label="experience"
           title={
             <>

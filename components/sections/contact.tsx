@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Check, Loader2, Send } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
+import { SocialIcon } from "@/components/ui/social-icon";
 import { socials } from "@/data/socials";
+import { chapterNumber } from "@/data/sections";
 import { EMAIL } from "@/data/site";
 import { fadeUp } from "@/lib/split-reveal";
 import { useMagnetic } from "@/lib/use-magnetic";
@@ -127,7 +129,7 @@ export function ContactSection() {
     >
       <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] py-[var(--section-pad)]">
         <SectionHeader
-          index="06"
+          index={chapterNumber("contact")}
           label="contact"
           title={
             <>
@@ -164,7 +166,7 @@ export function ContactSection() {
                         className="group tap-safe inline-flex items-center gap-3 py-1.5 text-sm text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
                       >
                         <span className="h-3.5 w-3.5 text-[var(--text-3)] transition-colors duration-200 group-hover:text-[var(--accent)]">
-                          {s.icon}
+                          <SocialIcon icon={s.icon} />
                         </span>
                         {s.name}
                         <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />

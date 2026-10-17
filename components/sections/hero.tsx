@@ -5,8 +5,10 @@ import { useGSAP } from "@gsap/react";
 import { ArrowDown, ArrowUpRight, Download } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
+import { DESKTOP_MOTION } from "@/lib/motion";
 import { socials } from "@/data/socials";
 import { HeroCanvas } from "@/components/gl/hero-canvas";
+import { SocialIcon } from "@/components/ui/social-icon";
 import { TextScramble } from "@/components/ui/text-scramble";
 import { useMagnetic } from "@/lib/use-magnetic";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
@@ -68,7 +70,7 @@ export function Hero() {
 
       /* Hero content dissolves as the page curtain rises over it. */
       const mm = gsap.matchMedia();
-      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+      mm.add(DESKTOP_MOTION, () => {
         gsap.to(contentRef.current, {
           autoAlpha: 0.15,
           yPercent: -8,
@@ -176,7 +178,7 @@ export function Hero() {
                 aria-label={s.name}
                 className="tap-safe h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
               >
-                {s.icon}
+                <SocialIcon icon={s.icon} />
               </a>
             ))}
           </div>

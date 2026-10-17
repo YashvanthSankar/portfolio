@@ -1,6 +1,6 @@
 "use client";
 
-import { sections } from "@/data/sections";
+import { sections, chapterNumber } from "@/data/sections";
 import { useActiveSection } from "@/lib/use-active-section";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 
@@ -19,7 +19,7 @@ export function SectionIndex() {
         past ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
-      {sections.map((s, i) => {
+      {sections.map((s) => {
         const isActive = active === s.id;
         return (
           <button
@@ -35,7 +35,7 @@ export function SectionIndex() {
                 isActive ? "text-[var(--accent)]" : "text-[var(--text-3)]"
               }`}
             >
-              {String(i + 1).padStart(2, "0")} · {s.label}
+              {chapterNumber(s.id)} · {s.label}
             </span>
             <span
               aria-hidden="true"

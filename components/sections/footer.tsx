@@ -5,9 +5,12 @@ import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { shouldAnimate } from "@/lib/utils";
-import { sections } from "@/data/sections";
+import { DESKTOP_MOTION } from "@/lib/motion";
+import { sections, HERO_ID } from "@/data/sections";
 import { socials } from "@/data/socials";
+import { NAME } from "@/data/site";
 import { fadeUp, scoped } from "@/lib/split-reveal";
+import { SocialIcon } from "@/components/ui/social-icon";
 import { useScrollTo } from "@/components/providers/smooth-scroll";
 
 /* ── Scroll progress bar ── */
@@ -48,7 +51,7 @@ const colophon = [
 /* Every chapter but the hero, then the one route that isn't a chapter. */
 const sitemap = [
   ...sections
-    .filter((s) => s.id !== "home")
+    .filter((s) => s.id !== HERO_ID)
     .map((s) => ({ label: s.label, href: `/#${s.id}` })),
   { label: "All projects", href: "/work" },
 ];
@@ -87,7 +90,7 @@ export function Footer() {
     /* Final beat — the wordmark rises as the footer enters. */
     const chars = scoped("[data-footer-char]", wordmarkRef.current);
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+    mm.add(DESKTOP_MOTION, () => {
       gsap.fromTo(
         chars,
         { yPercent: 105 },
@@ -145,7 +148,7 @@ export function Footer() {
       {/* Meta columns */}
       <div className="mx-auto grid max-w-[var(--container)] grid-cols-2 gap-10 px-[var(--gutter)] py-14 md:grid-cols-12">
         <div data-footer-el className="col-span-2 md:col-span-4" style={{ opacity: 0 }}>
-          <p className="mb-2 text-sm font-medium text-[var(--text-1)]">Yashvanth Sankar</p>
+          <p className="mb-2 text-sm font-medium text-[var(--text-1)]">{NAME}</p>
           <p className="text-sm leading-relaxed text-[var(--text-2)]">
             Full-stack engineer, AI tinkerer.
             <br />
@@ -195,7 +198,7 @@ export function Footer() {
                 aria-label={s.name}
                 className="tap-safe h-4 w-4 text-[var(--text-3)] transition-colors duration-200 hover:text-[var(--accent)]"
               >
-                {s.icon}
+                <SocialIcon icon={s.icon} />
               </a>
             ))}
           </div>
@@ -223,7 +226,7 @@ export function Footer() {
       <div className="border-t border-[var(--line-1)]">
         <div className="mx-auto flex max-w-[var(--container)] flex-wrap items-center justify-between gap-4 px-[var(--gutter)] py-5">
           <p className="meta">
-            © {new Date().getFullYear()} Yashvanth Sankar · Hand-built, no template
+            © {new Date().getFullYear()} {NAME} · Hand-built, no template
           </p>
           <button
             onClick={() => scrollTo(0, { updateHash: false })}

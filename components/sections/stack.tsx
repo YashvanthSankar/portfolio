@@ -12,6 +12,7 @@ import {
   SiSupabase, SiTailwindcss, SiTypescript, SiVercel,
 } from "react-icons/si";
 import { technologyCategories } from "@/data/technologies";
+import { chapterNumber } from "@/data/sections";
 import { SectionHeader } from "@/components/ui/section-header";
 import { fadeUp } from "@/lib/split-reveal";
 
@@ -50,7 +51,7 @@ export function Stack() {
     >
       <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] py-[var(--section-pad)]">
         <SectionHeader
-          index="05"
+          index={chapterNumber("technologies")}
           label="stack"
           title={
             <>
