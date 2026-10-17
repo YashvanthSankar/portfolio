@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
+import { PageTransition } from "@/components/providers/page-transition";
 import { Cursor } from "@/components/cursor";
 import { NAME, SITE_URL } from "@/data/site";
 import { profileUrls } from "@/data/socials";
@@ -149,7 +150,9 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <PageTransition>{children}</PageTransition>
+        </SmoothScroll>
         <Cursor />
         <Analytics />
       </body>
