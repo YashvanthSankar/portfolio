@@ -166,9 +166,7 @@ body {
     width: 100%;
   }
   .section {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top-color: #ddd;
+    margin-top: 2rem;
     break-inside: avoid;
   }
   a {
@@ -185,9 +183,7 @@ body {
    the divider and the breakpoint switch can never be overridden by a
    stray class. */
 .section {
-  margin-top: 5rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--line);
+  margin-top: 6rem;
 }
 /* ── Header breakpoint and the phone menu sheet ── */
 .nav-desktop { display: none; }

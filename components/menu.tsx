@@ -47,7 +47,7 @@ export function Menu({ home = true }: { home?: boolean }) {
                 href={it.href}
                 {...(it.external && { target: "_blank", rel: "noopener noreferrer" })}
                 onClick={close}
-                className="nav-link border-t border-line py-3 text-lg"
+                className="nav-link py-2.5 text-lg"
               >
                 {it.label}
               </a>

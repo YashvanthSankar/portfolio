@@ -2,7 +2,7 @@ import { EMAIL, NAME, RESUME_URL, ROLE } from "@/data/site";
 
 export function Hero() {
   return (
-    <section className="col pb-4 pt-14 sm:pt-20">
+    <section className="col pt-14 sm:pt-20">
       <h1 className="h-page">{ROLE}.</h1>
       <p className="mt-6 max-w-[34rem] text-muted">
         I&apos;m {NAME}, a computer science student at IIITDM Kancheepuram in Chennai. I
