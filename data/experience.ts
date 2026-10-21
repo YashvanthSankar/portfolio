@@ -34,6 +34,6 @@ export const experience: Experience[] = [
     title: "BTech + MTech in Computer Science",
     organization: "IIITDM Kancheepuram",
     description:
-      "Integrated dual degree with a focus on software engineering, AI/ML and full-stack development. CGPA 9.27.",
+      "Integrated dual degree with a focus on software engineering, AI/ML and full-stack development. CGPA 9.32, highest in the cohort.",
   },
 ];

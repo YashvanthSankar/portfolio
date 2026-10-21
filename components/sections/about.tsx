@@ -5,7 +5,7 @@ const facts = [
   { label: "Email", value: EMAIL, href: `mailto:${EMAIL}` },
   { label: "Based in", value: "Chennai, India" },
   { label: "Studying", value: "BTech + MTech CS, IIITDM Kancheepuram, 2024–2029" },
-  { label: "CGPA", value: "9.27" },
+  { label: "CGPA", value: "9.32" },
   { label: "Status", value: "Open to work" },
 ];
 
