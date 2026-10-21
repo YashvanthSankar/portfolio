@@ -22,6 +22,17 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  /* The résumé lives in github.com/YashvanthSankar/resume and is published
+     by GitHub Pages; this keeps the old URL working and always current. */
+  async redirects() {
+    return [
+      {
+        source: "/YashvanthS_Resume.pdf",
+        destination: "https://yashvanthsankar.github.io/resume/resume.pdf",
+        permanent: false,
+      },
+    ];
+  },
   /* `curl yashvanth.com` gets a plain-text card instead of the HTML. */
   async rewrites() {
     return {
@@ -61,10 +72,6 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)\\.(js|css|woff2)",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
-      {
-        source: "/YashvanthS_Resume.pdf",
-        headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
       },
     ];
   },

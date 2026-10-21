@@ -28,6 +28,9 @@ the contact form and the `/work` language filter.
 - `/work` → every public GitHub repo, imported from `public/repos.json`
   at build time; language filter
 - `/api/contact` → POST, Zod-validated, rate-limited, honeypot, sends via **Resend**
+- `/api/card` → plain-text card; `next.config.ts` rewrites `/` here for curl/wget
+- `/YashvanthS_Resume.pdf` → redirect to the PDF GitHub Pages publishes from
+  the `YashvanthSankar/resume` repo (`resume.tex` is the source; CI rebuilds it)
 
 The display name is `NAME` ("Yashvanth S") from `data/site.ts`; the full
 surname appears only in the JSON-LD `alternateName` and keywords for search.
