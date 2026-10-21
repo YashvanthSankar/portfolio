@@ -44,14 +44,18 @@ export function ThemeToggle() {
     notify();
   };
 
+  const next = theme === "dark" ? "Light" : "Dark";
+
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-      className="link small text-muted hover:text-ink"
+      aria-label={`Switch to ${next.toLowerCase()} theme`}
+      title={`${next} theme`}
+      className="nav-link inline-flex items-center gap-1.5"
     >
-      {theme === null ? "Theme" : theme === "dark" ? "Light" : "Dark"}
+      <span aria-hidden="true" className="theme-glyph" />
+      <span className="theme-label">{theme === null ? "Theme" : next}</span>
     </button>
   );
 }
