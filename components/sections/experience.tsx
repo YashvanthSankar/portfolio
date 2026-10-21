@@ -2,7 +2,7 @@ import { experience } from "@/data/experience";
 
 export function ExperienceSection() {
   return (
-    <section id="experience" className="col mt-28 scroll-mt-8">
+    <section id="experience" className="col section scroll-mt-8">
       <h2 className="h-section">Experience</h2>
       <ul className="mt-8 space-y-10">
         {experience.map((item) => (

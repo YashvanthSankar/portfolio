@@ -5,6 +5,7 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-surface: var(--surface);
+  --color-line: var(--line);
   --font-sans: var(--font-geist);
 }
 
@@ -15,6 +16,7 @@
   --ink: #111111;
   --muted: #666666;
   --surface: #f4f4f4;
+  --line: #e4e4e4;
   color-scheme: light;
 }
 
@@ -24,6 +26,7 @@
     --ink: #f2f2f2;
     --muted: #9a9a9a;
     --surface: #171717;
+    --line: #262626;
     color-scheme: dark;
   }
 }
@@ -33,6 +36,7 @@
   --ink: #f2f2f2;
   --muted: #9a9a9a;
   --surface: #171717;
+  --line: #262626;
   color-scheme: dark;
 }
 
@@ -88,6 +92,13 @@ body {
   .small {
     font-size: 0.9375rem;
     line-height: 1.5;
+  }
+
+  /* A section after the first: one hairline above, then its heading. */
+  .section {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--line);
   }
 
   .link {
@@ -161,8 +172,10 @@ body {
   .col {
     width: 100%;
   }
-  section {
-    margin-top: 2rem !important;
+  .section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top-color: #ddd;
     break-inside: avoid;
   }
   a {

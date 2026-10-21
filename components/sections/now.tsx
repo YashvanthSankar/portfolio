@@ -11,7 +11,7 @@ const monthYear = (date: string) =>
 
 export function Now() {
   return (
-    <section id="now" className="col mt-28 scroll-mt-8">
+    <section id="now" className="col section scroll-mt-8">
       <h2 className="h-section">Now</h2>
       <p className="small mt-1 text-muted">
         What I&apos;m working on this season. Updated {nowUpdated}.

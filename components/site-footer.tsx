@@ -6,7 +6,7 @@ import { Clock } from "@/components/clock";
 
 export function SiteFooter() {
   return (
-    <footer className="col mt-28 pb-12">
+    <footer className="col section pb-12">
       <div className="grid gap-10 sm:grid-cols-3">
         <div className="small">
           <p className="font-medium">{NAME}</p>

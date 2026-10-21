@@ -11,7 +11,7 @@ const facts = [
 
 export function About() {
   return (
-    <section id="about" className="col mt-28 scroll-mt-8">
+    <section id="about" className="col section scroll-mt-8">
       <h2 className="h-section">About</h2>
       <div className="mt-8 grid gap-8 sm:grid-cols-[1fr_12rem] sm:gap-10">
         <div>

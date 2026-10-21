@@ -61,7 +61,7 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="col mt-28 scroll-mt-8">
+    <section id="contact" className="col section scroll-mt-8">
       <h2 className="h-section">Contact</h2>
       <p className="mt-3 text-muted">
         Freelance work, full-time roles, or an idea you want a second opinion on. Write

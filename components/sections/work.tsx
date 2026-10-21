@@ -3,7 +3,7 @@ import { projects } from "@/data/projects";
 
 export function Work() {
   return (
-    <section id="work" className="col scroll-mt-8">
+    <section id="work" className="col section scroll-mt-8">
       <h2 className="h-section">Selected work</h2>
       <div className="mt-8 space-y-16">
         {projects.map((p) => {

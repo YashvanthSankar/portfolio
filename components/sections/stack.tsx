@@ -2,7 +2,7 @@ import { technologyCategories } from "@/data/technologies";
 
 export function Stack() {
   return (
-    <section id="stack" className="col mt-28 scroll-mt-8">
+    <section id="stack" className="col section scroll-mt-8">
       <h2 className="h-section">Stack</h2>
       <dl className="mt-8 space-y-4">
         {technologyCategories.map((c) => (
