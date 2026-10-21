@@ -196,6 +196,20 @@ body {
   .nav-phone { display: none; }
 }
 
+/* Phone nav: one row that scrolls sideways, scrollbar hidden, and the
+   links bleed to the screen edge so a cut-off word hints there is more. */
+.nav-scroll {
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin-inline: calc(-1 * (100vw - 100%) / 2);
+  padding-inline: calc((100vw - 100%) / 2);
+}
+.nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* Header links: muted at rest, ink on hover. */
 .nav-link {
   color: var(--muted);

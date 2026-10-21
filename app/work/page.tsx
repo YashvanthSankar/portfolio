@@ -44,7 +44,7 @@ export default function WorkPage() {
   return (
     <>
       <SiteHeader home={false} />
-      <main id="main-content" className="col pt-16 sm:pt-24">
+      <main id="main-content" className="col pt-14 sm:pt-20">
         <h1 className="h-page">All public repositories</h1>
         <p className="mt-4 text-muted">
           Everything on GitHub, sorted by stars. {REPOS.length} repositories.

@@ -15,7 +15,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <main id="main-content" className="col pt-16 sm:pt-24">
+    <main id="main-content" className="col pt-14 sm:pt-20">
       <h1 className="h-page">Something broke.</h1>
       <p className="mt-4 text-muted">An unexpected error occurred while loading this page.</p>
       {error.digest && <p className="small mt-2 text-muted">Digest: {error.digest}</p>}
