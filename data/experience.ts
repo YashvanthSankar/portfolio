@@ -12,21 +12,21 @@ export const experience: Experience[] = [
   },
   {
     type: "work",
-    period: "Feb – Oct 2026",
+    period: "Feb – Sep 2026",
     title: "Founding Engineer",
     organization: "Promptli · Toronto, remote",
     description:
-      "Part-time founding engineer on promptli.com, voice AI agents for lead capture. Built the conversion surface and the internal issue tracker.",
-    tags: ["Next.js", "TypeScript", "Voice AI"],
+      "Built a voice-AI receptionist on LiveKit Agents and the OpenAI Realtime API handling inbound and outbound calls over Twilio SIP, with 14 function-calling tools wired into self-hosted Cal.com and a 21-table Convex data layer.",
+    tags: ["LiveKit", "OpenAI Realtime", "Twilio SIP", "Convex", "AWS Lightsail", "Docker"],
   },
   {
     type: "work",
-    period: "2025",
-    title: "Backend Developer Intern",
-    organization: "reel.cat",
+    period: "Jan – Feb 2026",
+    title: "Software Developer Intern",
+    organization: "Artly Creative Labs · ReelCat",
     description:
-      "Part of the video and audio processing team, building scalable backend infrastructure for media handling and processing pipelines.",
-    tags: ["Docker", "Remotion", "Convex"],
+      "Built ReelCat, a video-editing SaaS: a serverless render pipeline on Remotion and AWS Lambda that cut render time by 60%, plus auth, payments, analytics and real-time sync on Convex.",
+    tags: ["React", "Remotion", "AWS Lambda", "Convex", "Expo"],
   },
   {
     type: "education",
