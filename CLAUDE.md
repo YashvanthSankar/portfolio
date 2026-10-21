@@ -64,7 +64,7 @@ Rules:
 ### Data
 
 Static content, no CMS — `data/projects.ts`, `data/experience.ts`,
-`data/achievements.ts`, `data/technologies.ts`,
+`data/now.ts` (update `nowUpdated` when it changes), `data/technologies.ts`,
 `data/socials.ts`, types in `data/types.ts`. `data/site.ts` holds the identity
 constants (`NAME`, `ROLE`, `EMAIL`, `SITE_URL`, `GITHUB_URL`, `RESUME_URL`);
 anything appearing in two places belongs there.
