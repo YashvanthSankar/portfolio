@@ -20,8 +20,9 @@ No test suite is configured. `npm run build` + `npm run lint` are the gate.
 **Next.js 16 App Router**, React 19, TypeScript strict, Tailwind CSS v4.
 Minimal, black-and-white, one typeface (Geist), one column. No animation
 library, no WebGL, no custom cursor. Almost everything is a server
-component; the only client code is the theme toggle, the Chennai clock,
-the contact form and the `/work` language filter.
+component; the only client code is the theme toggle, the phone menu, the
+Chennai clock, the contact form and the `/work` language filter.
+
 ### Routes
 
 - `/` → `app/page.tsx` renders the sections in `components/sections/` in order
@@ -40,7 +41,8 @@ surname appears only in the JSON-LD `alternateName` and keywords for search.
 Everything lives in `app/globals.css` — there is no `tailwind.config.ts`
 (Tailwind v4 is CSS-first via `@theme inline`).
 
-- Four colour tokens: `--bg`, `--ink`, `--muted`, `--surface`. Light is the
+- Colour tokens: `--bg`, `--ink`, `--muted`, `--surface`, and `--line` for the
+  hairline above each section. Light is the
   default; dark applies under `prefers-color-scheme: dark` unless
   `data-theme="light"` is set, and always under `data-theme="dark"`.
   Exposed to Tailwind as `bg-bg`, `text-ink`, `text-muted`, `bg-surface`.
@@ -48,7 +50,9 @@ Everything lives in `app/globals.css` — there is no `tailwind.config.ts`
   `localStorage.theme`; an inline script in `app/layout.tsx` replays the
   stored choice before first paint.
 - Layout: `.col` is the single column (`min(100% - 2.5rem, 42rem)`,
-  centred). Every section is `col` + `mt-28`.
+  centred). Every section after the hero is `col section` (`.section` gives
+  the gap and the hairline; it and the header breakpoint classes are
+  unlayered on purpose so no utility can override them).
 - Type: `.h-page` (the one h1 per page), `.h-section`, `.h-item`, `.small`.
   Body is 17px / 1.6. Five sizes on the page, no more.
 - Components: `.link` (underlined), `.btn` (filled ink), `.btn-quiet`,
@@ -56,21 +60,22 @@ Everything lives in `app/globals.css` — there is no `tailwind.config.ts`
 
 Rules:
 - **No accent colour.** Emphasis is weight or ink-vs-muted, never hue.
-- **No lines, boxes, shadows, gradients, icons or radii.** Surfaces differ
-  by a tone step (`--surface`) only.
+- **No boxes, shadows, gradients, icons or radii.** The only lines are the
+  section hairlines; surfaces differ by a tone step (`--surface`).
 - **No motion** beyond colour/opacity transitions on hover.
 - **No monospace, no uppercase tracked labels, no section numbers.**
 
 ### Data
 
 Static content, no CMS — `data/projects.ts`, `data/experience.ts`,
-`data/now.ts` (update `nowUpdated` when it changes), `data/technologies.ts`,
+`data/achievements.ts`, `data/now.ts` (update `nowUpdated` when it
+changes), `data/technologies.ts`,
 `data/socials.ts`, types in `data/types.ts`. `data/site.ts` holds the identity
 constants (`NAME`, `ROLE`, `EMAIL`, `SITE_URL`, `GITHUB_URL`, `RESUME_URL`);
 anything appearing in two places belongs there.
 
 `data/sections.ts` lists the home page's sections and is the source of the
-header links (`inNav`) and the footer links. Adding a section means adding
+desktop header links (`inNav`), the phone menu and the footer links. Adding a section means adding
 one row there plus its component in `app/page.tsx`.
 
 Adding a project: append to `data/projects.ts`.
