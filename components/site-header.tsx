@@ -2,59 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { navSections, sections } from "@/data/sections";
+import { navSections } from "@/data/sections";
 import { GITHUB_URL } from "@/data/site";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { cn } from "@/lib/utils";
 
 /**
- * Sticky header: wordmark, section links, GitHub, theme switch. On the
- * home page the link for the section under the reader is marked. Below
- * 640px the links fold behind "Menu" as full-width rows and close again
- * when one is chosen or Escape is pressed.
+ * A plain header that scrolls away with the page: wordmark, section
+ * links, GitHub, theme switch. Below 640px the links fold behind "Menu"
+ * as full-width rows and close again when one is chosen or Escape is
+ * pressed. On /work the section links point back to the home page.
  */
 export function SiteHeader({ home = true }: { home?: boolean }) {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
   const prefix = home ? "" : "/";
-
-  /* The bar slides away while the reader scrolls down and returns on the
-     first scroll up, so it is never in the way of reading. The hairline
-     under it appears once the page has moved. */
-  useEffect(() => {
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 8);
-      if (Math.abs(y - last) > 6) {
-        setHidden(y > 120 && y > last);
-        last = y;
-      }
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  /* Scroll-spy: the last section whose top has passed a third of the
-     viewport is the current one. Above the first section nothing is. */
-  useEffect(() => {
-    if (!home) return;
-    const onScroll = () => {
-      const probe = window.innerHeight / 3;
-      let current: string | null = null;
-      for (const s of sections) {
-        const el = document.getElementById(s.id);
-        if (el && el.getBoundingClientRect().top <= probe) current = s.id;
-      }
-      setActive(current);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [home]);
 
   useEffect(() => {
     if (!open) return;
@@ -69,27 +29,18 @@ export function SiteHeader({ home = true }: { home?: boolean }) {
   ];
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-10 bg-bg transition-[border-color,transform] duration-300",
-        "border-b",
-        scrolled || open ? "border-line" : "border-transparent",
-        hidden && !open ? "-translate-y-full" : "translate-y-0"
-      )}
-    >
-      <div className="col flex items-center justify-between gap-6 py-6">
+    <header className="col pt-7 pb-2">
+      <div className="flex items-center justify-between gap-6">
         <Link href="/" className="font-medium">
           Yashvanth
         </Link>
 
-        {/* Desktop: one row, the current section marked */}
         <nav aria-label="Primary" className="small nav-desktop items-center gap-6">
           {items.map((it) => (
             <a
               key={it.id}
               href={it.href}
               {...(it.external && { target: "_blank", rel: "noopener noreferrer" })}
-              aria-current={active === it.id ? "true" : undefined}
               className="nav-link"
             >
               {it.label}
@@ -98,7 +49,6 @@ export function SiteHeader({ home = true }: { home?: boolean }) {
           <ThemeToggle />
         </nav>
 
-        {/* Phone: theme switch stays visible; the links fold away */}
         <div className="small nav-phone items-center gap-5">
           <ThemeToggle />
           <button
@@ -114,14 +64,13 @@ export function SiteHeader({ home = true }: { home?: boolean }) {
       </div>
 
       {open && (
-        <nav id="phone-menu" aria-label="Primary" className="nav-phone col flex-col pb-3">
+        <nav id="phone-menu" aria-label="Primary" className="nav-phone mt-4 flex-col">
           {items.map((it) => (
             <a
               key={it.id}
               href={it.href}
               {...(it.external && { target: "_blank", rel: "noopener noreferrer" })}
               onClick={() => setOpen(false)}
-              aria-current={active === it.id ? "true" : undefined}
               className="nav-link border-t border-line py-3.5 text-lg"
             >
               {it.label}

@@ -52,10 +52,9 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={`Switch to ${next.toLowerCase()} theme`}
       title={`${next} theme`}
-      className="nav-link inline-flex items-center gap-1.5"
+      className="nav-link"
     >
-      <span aria-hidden="true" className="theme-glyph" />
-      <span className="theme-label">{theme === null ? "Theme" : next}</span>
+      {theme === null ? "Theme" : next}
     </button>
   );
 }

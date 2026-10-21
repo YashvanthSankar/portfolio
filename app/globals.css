@@ -196,34 +196,13 @@ body {
   .nav-phone { display: none; }
 }
 
-/* Header links: muted at rest, ink on hover, ink + a short rule when the
-   reader is in that section. */
+/* Header links: muted at rest, ink on hover. */
 .nav-link {
-  position: relative;
   color: var(--muted);
   transition: color 150ms ease;
 }
-.nav-link:hover,
-.nav-link[aria-current] {
+.nav-link:hover {
   color: var(--ink);
-}
-.nav-desktop .nav-link[aria-current]::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.35em;
-  height: 1px;
-  background: var(--ink);
-}
-
-/* The half-filled circle on the theme switch. */
-.theme-glyph {
-  width: 0.8em;
-  height: 0.8em;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
 }
 
 @media (prefers-reduced-motion: reduce) {
