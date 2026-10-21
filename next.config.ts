@@ -22,6 +22,18 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  /* `curl yashvanth.com` gets a plain-text card instead of the HTML. */
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/",
+          has: [{ type: "header", key: "user-agent", value: "(curl|Wget|HTTPie)/.*" }],
+          destination: "/api/card",
+        },
+      ],
+    };
+  },
   images: {
     qualities: [75, 85, 95],
     formats: ["image/avif", "image/webp"],

@@ -8,7 +8,6 @@ export const projects: Project[] = [
     description:
       "Recommends the best YouTube lectures for any subject, then generates quizzes, notes and games from that content — so students preparing for JEE, NEET, GATE and UPSC learn while they watch.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL", "Prisma"],
-    image: "/preploot.png",
     github: "https://github.com/YashvanthSankar/preploot",
     live: "https://preploot.vercel.app",
   },

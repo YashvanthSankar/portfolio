@@ -144,6 +144,36 @@ body {
   }
 }
 
+/* Cmd+P gives a one-page résumé: content only, black on white. */
+@media print {
+  :root {
+    --bg: #fff;
+    --ink: #000;
+    --muted: #444;
+    --surface: #fff;
+  }
+  header nav,
+  form,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  .col {
+    width: 100%;
+  }
+  section {
+    margin-top: 2rem !important;
+    break-inside: avoid;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  img {
+    max-width: 8rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

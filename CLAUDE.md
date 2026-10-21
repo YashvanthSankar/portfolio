@@ -70,8 +70,7 @@ anything appearing in two places belongs there.
 header links (`inNav`) and the footer links. Adding a section means adding
 one row there plus its component in `app/page.tsx`.
 
-Adding a project: append to `data/projects.ts`. `image` is optional; with one,
-the screenshot (in `public/`) is shown above the title.
+Adding a project: append to `data/projects.ts`.
 
 ### Constraints
 

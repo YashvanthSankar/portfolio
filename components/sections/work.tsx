@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/data/projects";
 
@@ -11,23 +10,6 @@ export function Work() {
           const href = p.live ?? p.github;
           return (
             <article key={p.title}>
-              {p.image && (
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mb-6 block bg-surface"
-                >
-                  <Image
-                    src={p.image}
-                    alt={`${p.title} home page`}
-                    width={1440}
-                    height={900}
-                    sizes="(max-width: 720px) 100vw, 672px"
-                    className="block h-auto w-full"
-                  />
-                </a>
-              )}
               <h3 className="h-item">
                 {href ? (
                   <a href={href} target="_blank" rel="noopener noreferrer" className="link">
