@@ -2,19 +2,21 @@ export interface Section {
   /** DOM id of the section element. */
   id: string;
   label: string;
-  /** One line under the label on the menu card. */
-  blurb: string;
+  /** Shown in the desktop header. */
+  inNav?: boolean;
 }
 
 /**
  * The home page's sections in scroll order — the single source of truth
- * for the menu and the footer links.
+ * for the header, the phone menu and the footer links.
  */
 export const sections: Section[] = [
-  { id: "work", label: "Work", blurb: "Three things I've shipped." },
-  { id: "experience", label: "Experience", blurb: "Study and an internship." },
-  { id: "now", label: "Now", blurb: "What I'm building this season." },
-  { id: "about", label: "About", blurb: "Who I am, where I am." },
-  { id: "stack", label: "Stack", blurb: "Tools I reach for." },
-  { id: "contact", label: "Contact", blurb: "Email or the form." },
+  { id: "work", label: "Work", inNav: true },
+  { id: "experience", label: "Experience" },
+  { id: "now", label: "Now" },
+  { id: "about", label: "About", inNav: true },
+  { id: "stack", label: "Stack" },
+  { id: "contact", label: "Contact", inNav: true },
 ];
+
+export const navSections = sections.filter((s) => s.inNav);
