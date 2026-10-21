@@ -3,20 +3,8 @@ import { SITE_URL } from "@/data/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-
   return [
-    ...['', '/privacy', '/terms', '/delete-account', '/support'].map(path => ({ url: `${SITE_URL}/lilmoney${path}`, lastModified, changeFrequency: 'monthly' as const, priority: 0.6 })),
-    {
-      url: SITE_URL,
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 1,
-    },
-    {
-      url: `${SITE_URL}/work`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
+    { url: SITE_URL, lastModified, changeFrequency: "monthly", priority: 1 },
+    { url: `${SITE_URL}/work`, lastModified, changeFrequency: "weekly", priority: 0.8 },
   ];
 }

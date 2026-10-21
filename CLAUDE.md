@@ -22,19 +22,15 @@ Minimal, black-and-white, one typeface (Geist), one column. No animation
 library, no WebGL, no custom cursor. Almost everything is a server
 component; the only client code is the theme toggle, the Chennai clock,
 the contact form and the `/work` language filter.
-
 ### Routes
 
 - `/` → `app/page.tsx` renders the sections in `components/sections/` in order
 - `/work` → every public GitHub repo, imported from `public/repos.json`
   at build time; language filter
 - `/api/contact` → POST, Zod-validated, rate-limited, honeypot, sends via **Resend**
-- `/lilmoney/**` → a separate product site (LilMoney) with its own light
-  design system in `app/lilmoney/littlemoney.module.css` and legal copy in
-  `data/littlemoney-legal.ts`. **Out of scope for portfolio styling.** It
-  inherits the root layout's `authors` / `creator` / `publisher` / `keywords`
-  metadata, which is why those stay the short form "Yashvanth S" while the
-  portfolio title uses `NAME` from `data/site.ts`.
+
+The display name is `NAME` ("Yashvanth S") from `data/site.ts`; the full
+surname appears only in the JSON-LD `alternateName` and keywords for search.
 
 ### Design system
 

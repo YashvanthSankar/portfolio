@@ -2,7 +2,7 @@
 
 export const SITE_URL = "https://yashvanth.com";
 
-export const NAME = "Yashvanth Sankar";
+export const NAME = "Yashvanth S";
 
 export const ROLE = "Full-stack developer and AI engineer";
 

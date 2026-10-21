@@ -58,4 +58,4 @@ working on to `data/now.ts` (update `nowUpdated`).
 
 ## License
 
-Content and design © Yashvanth Sankar. Code is free to learn from.
+Content and design © Yashvanth S. Code is free to learn from.

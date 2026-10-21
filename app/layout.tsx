@@ -25,7 +25,8 @@ export const metadata: Metadata = {
   title: { default: TITLE, template: `%s · ${NAME}` },
   description: DESCRIPTION,
   keywords: [
-    "Yashvanth S",
+    NAME,
+    "Yashvanth Sankar",
     "full-stack developer",
     "AI engineer",
     "React developer",
@@ -40,11 +41,9 @@ export const metadata: Metadata = {
     "open source",
     "IIITDM Kancheepuram",
   ],
-  /* Inherited by /lilmoney's metadata, which must not change — so these
-     stay the short form while the portfolio's own title carries NAME. */
-  authors: [{ name: "Yashvanth S" }],
-  creator: "Yashvanth S",
-  publisher: "Yashvanth S",
+  authors: [{ name: NAME }],
+  creator: NAME,
+  publisher: NAME,
   formatDetection: { email: false, address: false, telephone: false },
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
@@ -94,7 +93,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               "@context": "https://schema.org",
               "@type": "Person",
               name: NAME,
-              alternateName: "Yashvanth S",
+              alternateName: "Yashvanth Sankar",
               jobTitle: ROLE,
               description: DESCRIPTION,
               url: SITE_URL,
