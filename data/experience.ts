@@ -16,6 +16,15 @@ export const experience: Experience[] = [
     },
     {
         type: "work",
+        period: "2026",
+        title: "Software Engineering Intern",
+        organization: "Random Walk",
+        description:
+            "Built Project Doppler: a head-tracked display that re-renders a Gaussian-splat scene from the viewer's position, with a photo-to-3D pipeline on a Modal GPU.",
+        tags: ["TypeScript", "Three.js", "MediaPipe", "FastAPI", "Docker"],
+    },
+    {
+        type: "work",
         period: "2025",
         title: "Backend Developer Intern",
         organization: "reel.cat",

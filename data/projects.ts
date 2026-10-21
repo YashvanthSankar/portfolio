@@ -3,7 +3,7 @@ import type { Project } from "./types";
 export const projects: Project[] = [
   {
     title: "Project Doppler",
-    kind: "Internship project · computer vision",
+    kind: "Internship at Random Walk · computer vision",
     year: "2026",
     description:
       "Turns a monitor into a window. A webcam tracks the viewer's head with MediaPipe in a Web Worker, a One-Euro filter steadies it, and an off-axis projection re-renders a Gaussian-splat scene from their exact viewpoint. Photos become 3D scenes through Apple SHARP on a Modal GPU behind a FastAPI gateway.",
