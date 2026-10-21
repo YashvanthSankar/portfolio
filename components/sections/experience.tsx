@@ -6,7 +6,7 @@ export function ExperienceSection() {
       <h2 className="h-section">Experience</h2>
       <ul className="mt-8 space-y-10">
         {experience.map((item) => (
-          <li key={item.title} className="grid gap-1 sm:grid-cols-[7rem_1fr] sm:gap-6">
+          <li key={item.title} className="grid gap-1 sm:grid-cols-[8.5rem_1fr] sm:gap-6">
             <p className="small text-muted tabular-nums">{item.period}</p>
             <div>
               <p className="h-item">{item.title}</p>
