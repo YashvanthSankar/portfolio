@@ -45,7 +45,7 @@ npm run repos    # refresh public/repos.json from the GitHub API
 ```
 app/               routes, metadata, OG images, contact API
 components/        header, footer, theme toggle, clock
-  sections/        hero, work, now, experience, about, stack, contact
+  sections/        hero, work, experience, achievements, about, stack, contact
 data/              all site content
 lib/               rate limiter, helpers
 ```
@@ -53,8 +53,8 @@ lib/               rate limiter, helpers
 ## Editing content
 
 Everything lives in `data/`. Add a project to `data/projects.ts`, a role to
-`data/experience.ts`, tools to `data/technologies.ts`, and what you're
-working on to `data/now.ts` (update `nowUpdated`).
+`data/experience.ts`, tools to `data/technologies.ts`, and wins to
+`data/achievements.ts`.
 
 ## License
 

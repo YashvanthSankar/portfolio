@@ -16,12 +16,12 @@ export const achievements: Achievement[] = [
   {
     title: "Sagar Prahari — official app of Swachh Sagar, Surakshit Sagar 5.0",
     detail:
-      "Built the core of the Government of India campaign app (MoES / NIOT / NCCR) with a team of five. The campaign ran 12–19 September 2026: 231 cleanups across 13 states, 15 lakh ocean-conservation pledges.",
+      "Built the core of the Government of India campaign app (MoES / NIOT / NCCR) with a team of five, live on the Play Store. The campaign ran 12–19 September 2026: 231 cleanups across 13 states, 15 lakh ocean-conservation pledges.",
     year: "2026",
-    href: "https://lnkd.in/p/g7amjK5n",
+    href: "https://play.google.com/store/apps/details?id=com.swachhsagar.release",
   },
   {
-    title: "Placed, CS Week 2026 — IIITDM Kancheepuram",
+    title: "2nd place, TravelTech track — CS Week 2026, IIITDM Kancheepuram",
     detail: "GudTour, multilingual disaster alerts for tourists, native Android and iOS.",
     year: "2026",
   },

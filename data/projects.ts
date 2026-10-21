@@ -12,7 +12,7 @@ export const projects: Project[] = [
   },
   {
     title: "GudTour",
-    kind: "Mobile app · CS Week 2026",
+    kind: "Mobile app · 2nd place, TravelTech, CS Week 2026",
     year: "2026",
     description:
       "Real-time, multilingual disaster alerts and verified emergency guidance for tourists in India, shipped as native Android and iOS apps from one Expo codebase. Official NDMA notices, community reports and a bounded LLM assessment stay on separate, versioned paths; 308 automated tests cover the Convex backend.",
