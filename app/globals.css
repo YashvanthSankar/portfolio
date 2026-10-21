@@ -189,25 +189,52 @@ body {
   padding-top: 3rem;
   border-top: 1px solid var(--line);
 }
-.nav-desktop { display: none; }
-.nav-phone { display: flex; }
-@media (min-width: 640px) {
-  .nav-desktop { display: flex; }
-  .nav-phone { display: none; }
+/* ── Menu: a full-width sheet at the top, the sections as a carousel ── */
+.menu {
+  position: fixed;
+  inset: 0 0 auto 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
 }
-
-/* Phone nav: one row that scrolls sideways, scrollbar hidden, and the
-   links bleed to the screen edge so a cut-off word hints there is more. */
-.nav-scroll {
+.menu::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+.menu-track {
+  display: flex;
+  gap: 0.75rem;
   overflow-x: auto;
-  white-space: nowrap;
+  scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  margin-inline: calc(-1 * (100vw - 100%) / 2);
-  padding-inline: calc((100vw - 100%) / 2);
+  padding-block: 1.5rem;
+  /* Starts and ends on the page's column, scrolls under the edges. */
+  padding-inline: max(1.25rem, (100% - 42rem) / 2);
 }
-.nav-scroll::-webkit-scrollbar {
+.menu-track::-webkit-scrollbar {
   display: none;
+}
+.menu-card {
+  flex: 0 0 auto;
+  width: min(68vw, 16rem);
+  min-height: 9rem;
+  padding: 1.125rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: var(--surface);
+  scroll-snap-align: start;
+  transition: background-color 150ms ease;
+}
+.menu-card:hover,
+.menu-card:focus-visible {
+  background: var(--line);
 }
 
 /* Header links: muted at rest, ink on hover. */
