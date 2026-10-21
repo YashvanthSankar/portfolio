@@ -94,13 +94,6 @@ body {
     line-height: 1.5;
   }
 
-  /* A section after the first: one hairline above, then its heading. */
-  .section {
-    margin-top: 4rem;
-    padding-top: 3rem;
-    border-top: 1px solid var(--line);
-  }
-
   .link {
     text-decoration: underline;
     text-decoration-thickness: 1px;
@@ -185,6 +178,22 @@ body {
   img {
     max-width: 8rem;
   }
+}
+
+/* ── Section rhythm and the phone menu ────────────────────────────────
+   Deliberately outside @layer: an unlayered rule beats any utility, so
+   the divider and the breakpoint switch can never be overridden by a
+   stray class. */
+.section {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--line);
+}
+.nav-desktop { display: none; }
+.nav-phone { display: flex; }
+@media (min-width: 640px) {
+  .nav-desktop { display: flex; }
+  .nav-phone { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
