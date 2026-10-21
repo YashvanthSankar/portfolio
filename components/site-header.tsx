@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NAME } from "@/data/site";
 import { navSections } from "@/data/sections";
 import { GITHUB_URL } from "@/data/site";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -14,7 +15,7 @@ export function SiteHeader({ home = true }: { home?: boolean }) {
   return (
     <header className="col flex items-center justify-between gap-6 pt-7">
       <Link href="/" className="font-medium">
-        Yashvanth
+        {NAME}
       </Link>
 
       <nav aria-label="Primary" className="small nav-desktop items-center gap-6">

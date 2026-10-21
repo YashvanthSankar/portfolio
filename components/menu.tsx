@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { sections } from "@/data/sections";
-import { GITHUB_URL } from "@/data/site";
+import { GITHUB_URL, NAME } from "@/data/site";
 
 /**
  * The phone menu: a "Menu" button that opens a native <dialog> holding
@@ -35,7 +35,7 @@ export function Menu({ home = true }: { home?: boolean }) {
       >
         <div className="col pb-6 pt-7">
           <div className="flex items-center justify-between">
-            <span className="font-medium">Yashvanth</span>
+            <span className="font-medium">{NAME}</span>
             <button type="button" onClick={close} className="nav-link small">
               Close
             </button>
