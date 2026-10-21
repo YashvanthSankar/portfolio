@@ -16,7 +16,7 @@
   --ink: #111111;
   --muted: #666666;
   --surface: #f4f4f4;
-  --line: #e4e4e4;
+  --line: #d0d0d0;
   color-scheme: light;
 }
 
@@ -26,7 +26,7 @@
     --ink: #f2f2f2;
     --muted: #9a9a9a;
     --surface: #171717;
-    --line: #262626;
+    --line: #3a3a3a;
     color-scheme: dark;
   }
 }
@@ -36,7 +36,7 @@
   --ink: #f2f2f2;
   --muted: #9a9a9a;
   --surface: #171717;
-  --line: #262626;
+  --line: #3a3a3a;
   color-scheme: dark;
 }
 
