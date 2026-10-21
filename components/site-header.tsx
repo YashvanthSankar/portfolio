@@ -16,12 +16,23 @@ import { cn } from "@/lib/utils";
 export function SiteHeader({ home = true }: { home?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const prefix = home ? "" : "/";
 
-  /* The hairline under the bar appears once the page has moved. */
+  /* The bar slides away while the reader scrolls down and returns on the
+     first scroll up, so it is never in the way of reading. The hairline
+     under it appears once the page has moved. */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+      if (Math.abs(y - last) > 6) {
+        setHidden(y > 120 && y > last);
+        last = y;
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -60,12 +71,13 @@ export function SiteHeader({ home = true }: { home?: boolean }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 bg-bg transition-[border-color] duration-200",
+        "sticky top-0 z-10 bg-bg transition-[border-color,transform] duration-300",
         "border-b",
-        scrolled || open ? "border-line" : "border-transparent"
+        scrolled || open ? "border-line" : "border-transparent",
+        hidden && !open ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      <div className="col flex items-center justify-between gap-6 py-4">
+      <div className="col flex items-center justify-between gap-6 py-6">
         <Link href="/" className="font-medium">
           Yashvanth
         </Link>
