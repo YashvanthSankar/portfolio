@@ -2,31 +2,25 @@ export interface Project {
   title: string;
   description: string;
   tags: string[];
-  /** Optional screenshot. Without one, a generative cover is derived
-   *  from the title — see components/ui/project-cover.tsx. */
+  /** Optional screenshot in /public. */
   image?: string;
   github?: string;
   live?: string;
-  /** Short label for the cover plate, e.g. "AI Learning Platform". */
+  /** Short label, e.g. "AI learning platform". */
   kind?: string;
   year?: string;
 }
 
-export interface TechItem {
-  name: string;
-  icon: string;
-}
-
 export interface TechCategory {
   title: string;
-  items: TechItem[];
+  items: string[];
 }
 
 export interface Experience {
   /** Role or qualification, e.g. "Backend Developer Intern". */
   title: string;
   organization?: string;
-  /** Free text, e.g. "2024 – Present". `isOngoing()` parses the end of it. */
+  /** Free text, e.g. "2024 – Present". */
   period: string;
   description: string;
   tags?: string[];

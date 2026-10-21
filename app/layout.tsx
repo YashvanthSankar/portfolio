@@ -1,50 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { SmoothScroll } from "@/components/providers/smooth-scroll";
-import { PageTransition } from "@/components/providers/page-transition";
-import { Cursor } from "@/components/cursor";
-import { NAME, SITE_URL } from "@/data/site";
+import { NAME, ROLE, SITE_URL } from "@/data/site";
 import { profileUrls } from "@/data/socials";
 
-const TITLE = `${NAME} · Full-Stack Developer & AI Engineer`;
+const TITLE = `${NAME} · ${ROLE}`;
+const DESCRIPTION = `${ROLE} in Chennai. React, Next.js, Node.js, Python and machine learning.`;
 
-const geistSans = Geist({
-  variable: "--font-display",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-/* Editorial counterweight — used on 2–4 emphasized words per section. */
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["italic"],
   display: "swap",
 });
 
 export const viewport: Viewport = {
-  viewportFit: "cover",
-  themeColor: "#0A0A0B",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
+  ],
 };
 
 export const metadata: Metadata = {
-  title: {
-    default: TITLE,
-    template: `%s · ${NAME}`,
-  },
-  description:
-    "Full-stack developer & AI engineer building fast, opinionated products for the modern web. React, Next.js, Node.js, Python, ML.",
+  title: { default: TITLE, template: `%s · ${NAME}` },
+  description: DESCRIPTION,
   keywords: [
     "Yashvanth S",
     "full-stack developer",
@@ -74,15 +53,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     title: TITLE,
-    description:
-      "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
+    description: DESCRIPTION,
     siteName: NAME,
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
-    description:
-      "Full-stack developer & AI engineer building fast, opinionated products for the modern web.",
+    description: DESCRIPTION,
     creator: "@yashvanths19",
   },
   robots: {
@@ -101,14 +78,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+/* Replays a stored theme choice before first paint. Without a choice the
+   stylesheet follows the system preference on its own. */
+const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}`;
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -117,9 +95,8 @@ export default function RootLayout({
               "@type": "Person",
               name: NAME,
               alternateName: "Yashvanth S",
-              jobTitle: "Full-Stack Developer & AI Engineer",
-              description:
-                "Full-stack developer and AI engineer specializing in React, Next.js, Node.js, and machine learning.",
+              jobTitle: ROLE,
+              description: DESCRIPTION,
               url: SITE_URL,
               sameAs: profileUrls,
               knowsAbout: [
@@ -142,25 +119,14 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} font-sans antialiased`}
-      >
-        {/* Reveal targets ship with `opacity: 0` inline and are shown by
-            JS. Without JS there is nothing to show them, so the stylesheet
-            wins by force and the page reads in full. */}
-        <noscript>
-          <style>{`[style*="opacity:0"],[style*="opacity: 0"]{opacity:1!important}`}</style>
-        </noscript>
+      <body className={`${geist.variable} font-sans`}>
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--bg-1)] focus:text-[var(--text-1)] focus:border focus:border-[var(--accent)] focus:rounded-[2px] focus:text-sm focus:font-medium"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-ink focus:px-3 focus:py-2 focus:text-bg"
         >
           Skip to main content
         </a>
-        <SmoothScroll>
-          <PageTransition>{children}</PageTransition>
-        </SmoothScroll>
-        <Cursor />
+        {children}
         <Analytics />
       </body>
     </html>

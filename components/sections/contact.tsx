@@ -1,97 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Check, Loader2, Send } from "lucide-react";
-import { gsap } from "@/lib/gsap";
-import { shouldAnimate } from "@/lib/utils";
-import { SectionHeader } from "@/components/ui/section-header";
-import { SocialIcon } from "@/components/ui/social-icon";
-import { socials } from "@/data/socials";
-import { chapterNumber } from "@/data/sections";
+import { useState } from "react";
 import { EMAIL } from "@/data/site";
-import { fadeUp } from "@/lib/split-reveal";
-import { REVEAL_START } from "@/lib/motion";
-import { useMagnetic } from "@/lib/use-magnetic";
 
 type FieldName = "name" | "email" | "message";
 type Errors = Partial<Record<FieldName, string>>;
 
-const ORDER: FieldName[] = ["name", "email", "message"];
-
-/* Mirrors app/api/contact/route.ts. The server is still the authority —
-   this only saves a round-trip to be told what we already knew. */
+/* Mirrors app/api/contact/route.ts. The server is still the authority. */
 function validate(form: Record<FieldName, string>): Errors {
   const errors: Errors = {};
   if (form.name.trim().length < 2) errors.name = "Please enter your name.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
     errors.email = "That doesn't look like an email address.";
-  if (form.message.trim().length < 10)
-    errors.message = "A little more detail — at least 10 characters.";
+  if (form.message.trim().length < 10) errors.message = "At least 10 characters, please.";
   return errors;
-}
-
-/* Twelve spokes, from an inner radius out, around the submit button.
-   Rounded, because Node and the browser disagree on the last digit of
-   Math.sin and React would report every spoke as a hydration mismatch. */
-const r2 = (v: number) => Math.round(v * 100) / 100;
-const SPOKES = Array.from({ length: 12 }, (_, i) => {
-  const a = (i / 12) * Math.PI * 2;
-  return {
-    x1: r2(Math.cos(a) * 18),
-    y1: r2(Math.sin(a) * 18),
-    x2: r2(Math.cos(a) * 44),
-    y2: r2(Math.sin(a) * 44),
-  };
-});
-
-/**
- * A small line burst in lime when a message has gone — the one moment
- * on the page that deserves a flourish. Plays once per send and is
- * invisible otherwise; under reduced motion it never shows at all.
- */
-function SendBurst({ active }: { active: boolean }) {
-  const ref = useRef<SVGSVGElement>(null);
-
-  useEffect(() => {
-    const svg = ref.current;
-    if (!active || !svg || !shouldAnimate()) return;
-    const spokes = svg.querySelectorAll("line");
-    const tl = gsap.timeline();
-    tl.set(svg, { autoAlpha: 1 })
-      .fromTo(
-        spokes,
-        { opacity: 0, scale: 0.4, transformOrigin: "0 0" },
-        { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out", stagger: 0.02 }
-      )
-      .to(svg, { autoAlpha: 0, duration: 0.7, ease: "power2.out" }, "-=0.1");
-    return () => {
-      tl.kill();
-      gsap.set(svg, { autoAlpha: 0 });
-    };
-  }, [active]);
-
-  return (
-    <svg
-      ref={ref}
-      aria-hidden="true"
-      viewBox="-50 -50 100 100"
-      className="pointer-events-none absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2"
-      style={{ opacity: 0 }}
-    >
-      {SPOKES.map((s, i) => (
-        <line
-          key={i}
-          x1={s.x1}
-          y1={s.y1}
-          x2={s.x2}
-          y2={s.y2}
-          stroke="var(--accent)"
-          strokeWidth="1"
-          strokeLinecap="round"
-        />
-      ))}
-    </svg>
-  );
 }
 
 export function ContactSection() {
@@ -100,57 +22,21 @@ export function ContactSection() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const gridRef = useRef<HTMLDivElement>(null);
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const submitRef = useMagnetic<HTMLDivElement>(0.15, 5);
-
-  useEffect(() => {
-    const cleanup = fadeUp("[data-contact-el]", {
-      trigger: gridRef.current,
-      start: REVEAL_START,
-      stagger: 0.08,
-      y: 22,
-    });
-    return cleanup;
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (resetTimer.current) clearTimeout(resetTimer.current);
-    },
-    []
-  );
-
-  const resetLater = (ms: number) => {
-    if (resetTimer.current) clearTimeout(resetTimer.current);
-    resetTimer.current = setTimeout(() => setStatus("idle"), ms);
-  };
-
-  /* Clear a field's error as soon as the reader starts fixing it —
-     leaving it up while they type reads as though it's still wrong. */
   const setField =
     (key: FieldName | "website") =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { value } = e.target;
       setForm((prev) => ({ ...prev, [key]: value }));
-      if (key === "website") return;
-      setErrors((prev) => {
-        if (!prev[key]) return prev;
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
+      if (key !== "website") setErrors((prev) => ({ ...prev, [key]: undefined }));
     };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const found = validate(form);
     setErrors(found);
-    if (Object.keys(found).length > 0) {
-      setStatus("idle");
-      setErrorMsg(null);
-      document.getElementById(ORDER.find((k) => found[k]) as string)?.focus();
+    if (Object.values(found).some(Boolean)) {
+      const first = (["name", "email", "message"] as FieldName[]).find((k) => found[k]);
+      if (first) document.getElementById(first)?.focus();
       return;
     }
 
@@ -163,240 +49,125 @@ export function ContactSection() {
         body: JSON.stringify(form),
       });
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as {
-          error?: string;
-          issues?: string[];
-        };
-        throw new Error(data.issues?.join(" · ") || data.error || "Request failed");
+        const data = (await res.json().catch(() => ({}))) as { error?: string; issues?: string[] };
+        throw new Error(data.issues?.join(" ") || data.error || "Request failed");
       }
       setStatus("sent");
       setForm({ name: "", email: "", message: "", website: "" });
-      resetLater(4000);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Something went wrong");
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
       setStatus("error");
-      resetLater(5000);
     }
   };
 
-  const field =
-    "w-full rounded-[var(--radius)] border bg-[var(--bg-1)] px-4 py-3 text-sm text-[var(--text-1)] placeholder:text-[var(--text-3)] transition-colors duration-200 focus:outline-none";
-  const fieldClass = (name: FieldName) =>
-    `${field} ${
-      errors[name]
-        ? "border-[var(--accent)]"
-        : "border-[var(--line-1)] focus:border-[var(--accent)]"
-    }`;
-  const describedBy = (name: FieldName) => (errors[name] ? `${name}-error` : undefined);
-
   return (
-    <section
-      id="contact"
-      className="relative z-10 border-t border-[var(--line-1)] bg-[var(--bg-0)]"
-    >
-      <div className="mx-auto max-w-[var(--container)] px-[var(--gutter)] py-[var(--section-pad)]">
-        <SectionHeader
-          index={chapterNumber("contact")}
-          label="contact"
-          title={
-            <>
-              Got something worth <span className="serif-accent">building</span>?
-            </>
-          }
-          description="Freelance work, full-time roles, or an idea you want a second opinion on — my inbox is open."
-        />
+    <section id="contact" className="col mt-28 scroll-mt-8">
+      <h2 className="h-section">Contact</h2>
+      <p className="mt-3 text-muted">
+        Freelance work, full-time roles, or an idea you want a second opinion on. Write
+        here or email{" "}
+        <a href={`mailto:${EMAIL}`} className="link text-ink">
+          {EMAIL}
+        </a>
+        .
+      </p>
 
-        <div ref={gridRef} className="grid gap-12 md:grid-cols-12 md:gap-16">
-          {/* Left rail */}
-          <div className="md:col-span-4">
-            <div data-contact-el style={{ opacity: 0 }}>
-              <p className="meta mb-3">Direct</p>
-              <a
-                href={`mailto:${EMAIL}`}
-                className="link-line tap-safe mb-10 inline-block break-all text-lg font-medium tracking-[-0.01em] text-[var(--text-1)]"
-              >
-                {EMAIL}
-              </a>
-            </div>
-
-            <div data-contact-el className="border-t border-[var(--line-1)] pt-6" style={{ opacity: 0 }}>
-              <p className="meta mb-4">Elsewhere</p>
-              <ul className="space-y-3">
-                {socials
-                  .filter((s) => !s.noBlank)
-                  .map((s) => (
-                    <li key={s.name}>
-                      <a
-                        href={s.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group tap-safe inline-flex items-center gap-3 py-1.5 text-sm text-[var(--text-2)] transition-colors duration-200 hover:text-[var(--text-1)]"
-                      >
-                        <span className="h-3.5 w-3.5 text-[var(--text-3)] transition-colors duration-200 group-hover:text-[var(--accent)]">
-                          <SocialIcon icon={s.icon} />
-                        </span>
-                        {s.name}
-                        <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-                      </a>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Form */}
-          <form
-            data-contact-el
-            onSubmit={handleSubmit}
-            className="md:col-span-8"
-            style={{ opacity: 0 }}
-            noValidate
-          >
-            {/* Honeypot — hidden from users, catches bots */}
-            <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
-              <label htmlFor="website">Website (leave blank)</label>
-              <input
-                type="text"
-                id="website"
-                name="website"
-                tabIndex={-1}
-                autoComplete="off"
-                value={form.website}
-                onChange={setField("website")}
-              />
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="name" className="meta mb-2 block">
-                  Name
-                </label>
-                <div className="field-wrap">
-                  <input
-                    type="text"
-                    id="name"
-                    autoComplete="name"
-                    value={form.name}
-                    onChange={setField("name")}
-                    placeholder="Jane Doe"
-                    className={fieldClass("name")}
-                    required
-                    maxLength={80}
-                    aria-invalid={Boolean(errors.name)}
-                    aria-describedby={describedBy("name")}
-                  />
-                </div>
-                {errors.name && (
-                  <p id="name-error" role="alert" className="meta mt-2 text-[var(--accent)]">
-                    {errors.name}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="email" className="meta mb-2 block">
-                  Email
-                </label>
-                <div className="field-wrap">
-                  <input
-                    type="email"
-                    id="email"
-                    autoComplete="email"
-                    value={form.email}
-                    onChange={setField("email")}
-                    placeholder="jane@example.com"
-                    className={fieldClass("email")}
-                    required
-                    maxLength={200}
-                    aria-invalid={Boolean(errors.email)}
-                    aria-describedby={describedBy("email")}
-                  />
-                </div>
-                {errors.email && (
-                  <p id="email-error" role="alert" className="meta mt-2 text-[var(--accent)]">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-5">
-              <div className="mb-2 flex items-baseline justify-between">
-                <label htmlFor="message" className="meta">
-                  Message
-                </label>
-                <span className="meta tabular-nums" aria-live="polite">
-                  {form.message.length} / 4000
-                </span>
-              </div>
-              <div className="field-wrap">
-                <textarea
-                  id="message"
-                  value={form.message}
-                  onChange={setField("message")}
-                  placeholder="Tell me about your project, idea, or question…"
-                  rows={7}
-                  className={`${fieldClass("message")} block resize-none`}
-                  required
-                  minLength={10}
-                  maxLength={4000}
-                  aria-invalid={Boolean(errors.message)}
-                  aria-describedby={describedBy("message")}
-                />
-              </div>
-              {errors.message && (
-                <p id="message-error" role="alert" className="meta mt-2 text-[var(--accent)]">
-                  {errors.message}
-                </p>
-              )}
-            </div>
-
-            {status === "error" && (
-              <p
-                role="alert"
-                className="mt-5 rounded-[var(--radius)] border border-[var(--line-2)] bg-[var(--bg-1)] px-4 py-3 text-sm text-[var(--text-1)]"
-              >
-                {errorMsg || "Something went wrong. Try again."}
-              </p>
-            )}
-            {status === "sent" && (
-              <p
-                role="status"
-                className="mt-5 rounded-[var(--radius)] border border-[var(--accent)] bg-[var(--accent-dim)] px-4 py-3 text-sm text-[var(--text-1)]"
-              >
-                Message sent. I&apos;ll get back to you shortly.
-              </p>
-            )}
-
-            <div className="mt-7 flex flex-wrap items-center gap-5">
-              <div ref={submitRef} className="magnetic relative inline-flex">
-                <SendBurst active={status === "sent"} />
-                <button
-                  type="submit"
-                  disabled={status === "sending" || status === "sent"}
-                  className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {status === "sending" ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Sending
-                    </>
-                  ) : status === "sent" ? (
-                    <>
-                      <Check className="h-4 w-4" /> Sent
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4" /> Send message
-                    </>
-                  )}
-                </button>
-              </div>
-              <p className="meta max-w-[16rem] leading-relaxed">
-                Rate-limited to 3 per hour. Protected by a honeypot, not a CAPTCHA.
-              </p>
-            </div>
-          </form>
+      <form onSubmit={handleSubmit} noValidate className="mt-8 max-w-[34rem] space-y-5">
+        {/* Honeypot — hidden from people, filled by bots */}
+        <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
+          <label htmlFor="website">Website (leave blank)</label>
+          <input
+            type="text"
+            id="website"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={form.website}
+            onChange={setField("website")}
+          />
         </div>
-      </div>
+
+        <div>
+          <label htmlFor="name" className="small mb-1.5 block">
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            autoComplete="name"
+            value={form.name}
+            onChange={setField("name")}
+            className="field"
+            maxLength={80}
+            aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? "name-error" : undefined}
+          />
+          {errors.name && (
+            <p id="name-error" role="alert" className="small mt-1.5 text-muted">
+              {errors.name}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="email" className="small mb-1.5 block">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            value={form.email}
+            onChange={setField("email")}
+            className="field"
+            maxLength={200}
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? "email-error" : undefined}
+          />
+          {errors.email && (
+            <p id="email-error" role="alert" className="small mt-1.5 text-muted">
+              {errors.email}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="message" className="small mb-1.5 block">
+            Message
+          </label>
+          <textarea
+            id="message"
+            rows={6}
+            value={form.message}
+            onChange={setField("message")}
+            className="field resize-y"
+            maxLength={4000}
+            aria-invalid={Boolean(errors.message)}
+            aria-describedby={errors.message ? "message-error" : undefined}
+          />
+          {errors.message && (
+            <p id="message-error" role="alert" className="small mt-1.5 text-muted">
+              {errors.message}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <button type="submit" disabled={status === "sending" || status === "sent"} className="btn">
+            {status === "sending" ? "Sending…" : status === "sent" ? "Sent" : "Send message"}
+          </button>
+          {status === "sent" && (
+            <p role="status" className="small">
+              Thanks — I&apos;ll reply soon.
+            </p>
+          )}
+          {status === "error" && (
+            <p role="alert" className="small">
+              {errorMsg}
+            </p>
+          )}
+        </div>
+      </form>
     </section>
   );
 }
