@@ -1,14 +1,118 @@
 [
   {
-    "name": "vedaai",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/vedaai",
+    "name": "faultline",
+    "description": "Faultline diagnoses faults and attacks in packet captures and explains them in plain language.",
+    "url": "https://github.com/YashvanthSankar/faultline",
+    "language": "Python",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2026-11-01T07:37:25Z",
+    "updated_at": "2026-11-01T12:34:19Z"
+  },
+  {
+    "name": "choco.video",
+    "description": "Long videos in, clips out, on your Mac. Free, open-source app that turns podcasts and talks into ranked, captioned, speaker-centred vertical clips. Your video never leaves your computer.",
+    "url": "https://github.com/YashvanthSankar/choco.video",
+    "language": "Rust",
+    "stars": 1,
+    "forks": 0,
+    "topics": [
+      "captions",
+      "clips",
+      "macos",
+      "open-source",
+      "podcast",
+      "reels",
+      "rust",
+      "shorts",
+      "tauri",
+      "tiktok",
+      "video",
+      "whisper"
+    ],
+    "created_at": "2026-10-18T05:56:55Z",
+    "updated_at": "2026-10-23T10:09:57Z"
+  },
+  {
+    "name": "YashvanthSankar",
+    "description": "Config files for my GitHub profile.",
+    "url": "https://github.com/YashvanthSankar/YashvanthSankar",
+    "language": null,
+    "stars": 0,
+    "forks": 0,
+    "topics": [
+      "config",
+      "github-config"
+    ],
+    "created_at": "2022-01-25T02:53:38Z",
+    "updated_at": "2026-10-21T17:21:16Z"
+  },
+  {
+    "name": "portfolio",
+    "description": "yashvanth.com \u2014 personal site. Next.js 16, Tailwind v4, black and white.",
+    "url": "https://github.com/YashvanthSankar/portfolio",
     "language": "TypeScript",
     "stars": 0,
     "forks": 0,
     "topics": [],
-    "created_at": "2026-05-26T13:43:27Z",
-    "updated_at": "2026-05-28T09:07:15Z"
+    "created_at": "2025-12-22T16:36:12Z",
+    "updated_at": "2026-10-21T16:41:46Z"
+  },
+  {
+    "name": "resume",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/resume",
+    "language": "TeX",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2026-10-21T14:19:51Z",
+    "updated_at": "2026-10-21T16:05:08Z"
+  },
+  {
+    "name": "bits-n-bytes",
+    "description": "GudTour delivers real-time, multilingual disaster alerts, verified emergency guidance, and nearby shelter information to tourists in India.",
+    "url": "https://github.com/YashvanthSankar/bits-n-bytes",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2026-10-09T15:25:12Z",
+    "updated_at": "2026-10-10T15:42:18Z"
+  },
+  {
+    "name": "babbageBrosAutomation",
+    "description": "Student Success turns attendance and marks into explainable risk alerts, safe follow-up, and bookable faculty support.",
+    "url": "https://github.com/YashvanthSankar/babbageBrosAutomation",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2026-10-08T13:36:25Z",
+    "updated_at": "2026-10-09T12:04:33Z"
+  },
+  {
+    "name": "superfinz-gig",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/superfinz-gig",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2026-09-03T10:24:06Z",
+    "updated_at": "2026-09-04T06:14:57Z"
+  },
+  {
+    "name": "agentslash",
+    "description": null,
+    "url": "https://github.com/YashvanthSankar/agentslash",
+    "language": "TypeScript",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "created_at": "2026-07-15T17:25:59Z",
+    "updated_at": "2026-08-23T17:03:36Z"
   },
   {
     "name": "rag-playground",
@@ -20,28 +124,6 @@
     "topics": [],
     "created_at": "2026-05-20T14:26:34Z",
     "updated_at": "2026-05-20T17:04:29Z"
-  },
-  {
-    "name": "tigai",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/tigai",
-    "language": "TypeScript",
-    "stars": 0,
-    "forks": 0,
-    "topics": [],
-    "created_at": "2026-05-14T14:36:38Z",
-    "updated_at": "2026-05-20T14:23:34Z"
-  },
-  {
-    "name": "superfinz",
-    "description": null,
-    "url": "https://github.com/YashvanthSankar/superfinz",
-    "language": "TypeScript",
-    "stars": 0,
-    "forks": 1,
-    "topics": [],
-    "created_at": "2026-03-28T05:04:15Z",
-    "updated_at": "2026-04-21T05:54:52Z"
   },
   {
     "name": "cheatsheets-md-website",
@@ -86,20 +168,6 @@
     "topics": [],
     "created_at": "2025-12-27T15:57:50Z",
     "updated_at": "2026-01-07T11:09:20Z"
-  },
-  {
-    "name": "YashvanthSankar",
-    "description": "Config files for my GitHub profile.",
-    "url": "https://github.com/YashvanthSankar/YashvanthSankar",
-    "language": null,
-    "stars": 0,
-    "forks": 0,
-    "topics": [
-      "config",
-      "github-config"
-    ],
-    "created_at": "2022-01-25T02:53:38Z",
-    "updated_at": "2026-01-04T04:19:08Z"
   },
   {
     "name": "nexgenbnp",
