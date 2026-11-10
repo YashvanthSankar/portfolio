@@ -13,7 +13,7 @@ export function About() {
   return (
     <section id="about" className="col section scroll-mt-8">
       <h2 className="h-section">About</h2>
-      <div className="mt-8 grid gap-8 sm:grid-cols-[1fr_12rem] sm:gap-10">
+      <div className="grid gap-8 sm:grid-cols-[minmax(0,1fr)_11rem] sm:gap-10">
         <div>
           <p>
             I build full-stack apps and AI tools that solve real problems, and I care
@@ -23,7 +23,7 @@ export function About() {
           </p>
           <dl className="mt-8 space-y-2">
             {facts.map((f) => (
-              <div key={f.label} className="grid grid-cols-[6rem_1fr] gap-4">
+              <div key={f.label} className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-4">
                 <dt className="small text-muted">{f.label}</dt>
                 <dd className="small">
                   {f.href ? (
@@ -43,7 +43,7 @@ export function About() {
           alt={NAME}
           width={460}
           height={460}
-          sizes="(max-width: 640px) 100vw, 192px"
+          sizes="(max-width: 640px) 100vw, 176px"
           className="block h-auto w-full max-w-[16rem] grayscale sm:max-w-none"
         />
       </div>

@@ -9,25 +9,20 @@ const notify = () => listeners.forEach((fn) => fn());
 
 function subscribe(fn: () => void) {
   listeners.add(fn);
-  const mql = window.matchMedia("(prefers-color-scheme: dark)");
-  mql.addEventListener("change", fn);
   return () => {
     listeners.delete(fn);
-    mql.removeEventListener("change", fn);
   };
 }
 
 function current(): Theme {
-  const set = document.documentElement.getAttribute("data-theme");
-  if (set === "light" || set === "dark") return set;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
 }
 
 /**
  * Light / dark switch. The choice is written to `data-theme` on <html>
  * and to localStorage; the inline script in app/layout.tsx replays it
  * before first paint so there is no flash. With no stored choice the
- * system preference applies.
+ * site is black.
  */
 export function ThemeToggle() {
   /* `null` on the server and during hydration, so the label never lies. */

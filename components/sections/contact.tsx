@@ -63,7 +63,8 @@ export function ContactSection() {
   return (
     <section id="contact" className="col section scroll-mt-8">
       <h2 className="h-section">Contact</h2>
-      <p className="mt-3 text-muted">
+      <div>
+      <p className="measure text-muted">
         Freelance work, full-time roles, or an idea you want a second opinion on. Write
         here or email{" "}
         <a href={`mailto:${EMAIL}`} className="link text-ink">
@@ -168,6 +169,7 @@ export function ContactSection() {
           )}
         </div>
       </form>
+      </div>
     </section>
   );
 }

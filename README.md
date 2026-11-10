@@ -1,7 +1,7 @@
 # yashvanth.com
 
 The personal site of **Yashvanth S**, a full-stack developer and AI engineer
-in Chennai. Black and white, one column, one typeface, light and dark.
+in Chennai. Black and white, one monospace typeface, ASCII hands across the hero.
 
 **[yashvanth.com](https://yashvanth.com)** · [All repositories](https://yashvanth.com/work) · [Résumé](https://yashvanth.com/YashvanthS_Resume.pdf)
 
@@ -30,7 +30,7 @@ with a language filter.
 |---|---|
 | Framework | Next.js 16 (App Router), React 19, TypeScript |
 | Styling | Tailwind CSS v4, tokens in `app/globals.css` |
-| Type | Geist |
+| Type | Geist Mono |
 | Mail | Resend, with Zod validation, a rate limit and a honeypot |
 | Hosting | Vercel |
 
@@ -76,13 +76,20 @@ Everything a visitor reads lives in `data/`.
 ## Design
 
 Four colour tokens, `--bg`, `--ink`, `--muted` and `--surface`, plus `--line`
-for the hairline between sections. Light by default; dark follows the system
-or the switch in the header, and the choice is remembered.
+for the hairline between sections and `--art` for the hero's ASCII hands.
+Black by default; the switch in the header flips it to white, and the choice
+is remembered.
 
+- The hero is the two hands from The Creation of Adam drawn in characters
+  (`components/hands.tsx`, data in `data/hands.ts`), with a blinking text
+  cursor between the fingertips. The characters are the wallpaper's own,
+  read back one for one. Regenerate it with
+  `node scripts/ascii-hands.mjs <image>`.
+- One typeface, Geist Mono, everywhere. Three type sizes.
 - No accent colour. Emphasis is weight, or ink against muted.
 - No shadows, gradients, icons or rounded corners.
-- No motion beyond colour on hover.
-- One column, 42rem wide; five type sizes.
+- No motion beyond colour on hover and the cursor's blink.
+- One 60rem column; each section's heading sits in a left rail.
 
 ## Résumé
 

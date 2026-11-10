@@ -18,9 +18,9 @@ No test suite is configured. `npm run build` + `npm run lint` are the gate.
 ## Architecture
 
 **Next.js 16 App Router**, React 19, TypeScript strict, Tailwind CSS v4.
-Minimal, black-and-white, one typeface (Geist), one column. No animation
-library, no WebGL, no custom cursor. Almost everything is a server
-component; the only client code is the theme toggle, the phone menu, the
+Minimal, black-and-white, one typeface (Geist Mono), one column, with the
+ASCII hands across the hero. No animation library, no WebGL, no custom
+cursor. Almost everything is a server component; the only client code is the theme toggle, the phone menu, the
 Chennai clock, the contact form and the `/work` language filter.
 
 ### Routes
@@ -41,20 +41,33 @@ surname appears only in the JSON-LD `alternateName` and keywords for search.
 Everything lives in `app/globals.css` — there is no `tailwind.config.ts`
 (Tailwind v4 is CSS-first via `@theme inline`).
 
-- Colour tokens: `--bg`, `--ink`, `--muted`, `--surface`, and `--line` for the
-  hairline above each section. Light is the
-  default; dark applies under `prefers-color-scheme: dark` unless
-  `data-theme="light"` is set, and always under `data-theme="dark"`.
+- Colour tokens: `--bg`, `--ink`, `--muted`, `--surface`, `--line` for the
+  hairline above each section, and `--art` for the ASCII hands. Black is the
+  default regardless of the system preference; white applies only under
+  `data-theme="light"`.
   Exposed to Tailwind as `bg-bg`, `text-ink`, `text-muted`, `bg-surface`.
 - Theme: `components/theme-toggle.tsx` writes `data-theme` on `<html>` and
   `localStorage.theme`; an inline script in `app/layout.tsx` replays the
   stored choice before first paint.
-- Layout: `.col` is the single column (`min(100% - 2.5rem, 42rem)`,
+- Hero: `components/hands.tsx` draws the hands from The Creation of Adam as
+  an SVG of `<text>` rows from `data/hands.ts` (generated — rebuild with
+  `node scripts/ascii-hands.mjs <image>`, never edit by hand). The script
+  reads the wallpaper's own 400-column character grid back glyph for glyph;
+  its `LABELS` constant names the glyph clusters and needs re-checking
+  against the debug `templates.png` if the source image ever changes.
+  `.caret` is the blinking cursor between the fingertips; the script finds
+  its cell (`HANDS_CARET`). From 1024px
+  `.hero-copy` is pulled up into the empty corner under the left hand.
+- Layout: `.col` is the single column (`min(100% - 2.5rem, 60rem)`,
   centred). Every section after the hero is `col section` (`.section` gives
   the gap and the hairline; it and the header breakpoint classes are
-  unlayered on purpose so no utility can override them).
-- Type: `.h-page` (the one h1 per page), `.h-section`, `.h-item`, `.small`.
-  Body is 17px / 1.6. Five sizes on the page, no more.
+  unlayered on purpose so no utility can override them). A `.section` has
+  **exactly two children**, heading then body; from 800px they sit side by
+  side with the heading in an 11rem left rail. `.measure` caps running text
+  at 68ch.
+- Type: Geist Mono everywhere. `.h-page` (the one h1 per page), `.h-section`
+  and `.h-item` (body-sized, weight 600), `.small`. Body is 15px / 1.7.
+  Three sizes on the page, no more.
 - Components: `.link` (underlined), `.btn` (filled ink), `.btn-quiet`,
   `.field` (form input on `--surface`).
 
@@ -62,8 +75,11 @@ Rules:
 - **No accent colour.** Emphasis is weight or ink-vs-muted, never hue.
 - **No boxes, shadows, gradients, icons or radii.** The only lines are the
   section hairlines; surfaces differ by a tone step (`--surface`).
-- **No motion** beyond colour/opacity transitions on hover.
-- **No monospace, no uppercase tracked labels, no section numbers.**
+- **No motion** beyond colour/opacity transitions on hover and the caret's
+  blink (which stops under `prefers-reduced-motion`).
+- **No second typeface, no uppercase tracked labels, no section numbers, no
+  terminal costume** (fake prompts, window chrome). The one shell command
+  shown, `curl yashvanth.com`, is there because it really works.
 
 ### Data
 

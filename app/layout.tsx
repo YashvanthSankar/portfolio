@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { NAME, ROLE, SITE_URL } from "@/data/site";
@@ -8,17 +8,18 @@ import { profileUrls } from "@/data/socials";
 const TITLE = `${NAME} · ${ROLE}`;
 const DESCRIPTION = `${ROLE} in Chennai. React, Next.js, Node.js, Python and machine learning.`;
 
-const geist = Geist({
-  variable: "--font-geist",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+  /* While the font loads, fall back to a real monospace, not the default
+     metric-adjusted Arial: the layout is built on the character grid. */
+  adjustFontFallback: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
-  ],
+  themeColor: "#000000",
 };
 
 export const metadata: Metadata = {
@@ -78,7 +79,7 @@ export const metadata: Metadata = {
 };
 
 /* Replays a stored theme choice before first paint. Without a choice the
-   stylesheet follows the system preference on its own. */
+   site is black. */
 const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -118,7 +119,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           }}
         />
       </head>
-      <body className={`${geist.variable} font-sans`}>
+      <body className={`${geistMono.variable} font-mono`}>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-ink focus:px-3 focus:py-2 focus:text-bg"

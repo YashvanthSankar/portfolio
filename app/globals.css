@@ -6,50 +6,43 @@
   --color-muted: var(--muted);
   --color-surface: var(--surface);
   --color-line: var(--line);
-  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
 }
 
-/* Two palettes, no accent. Light is the default; dark is chosen by the
-   toggle (data-theme) or, failing that, by the system preference. */
+/* Black and white, no accent. Black is the default, whatever the system
+   says; the toggle (data-theme="light") flips it to white. */
 :root {
-  --bg: #ffffff;
-  --ink: #111111;
-  --muted: #666666;
-  --surface: #f4f4f4;
-  --line: #d0d0d0;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0b0b0b;
-    --ink: #f2f2f2;
-    --muted: #9a9a9a;
-    --surface: #171717;
-    --line: #3a3a3a;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg: #0b0b0b;
-  --ink: #f2f2f2;
-  --muted: #9a9a9a;
-  --surface: #171717;
-  --line: #3a3a3a;
+  --bg: #000000;
+  --ink: #f5f5f5;
+  --muted: #909090;
+  --surface: #141414;
+  --line: #2b2b2b;
+  --art: #b4b4b4;
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --ink: #000000;
+  --muted: #666666;
+  --surface: #f2f2f2;
+  --line: #d6d6d6;
+  --art: #555555;
+  color-scheme: light;
 }
 
 html {
   background: var(--bg);
 }
 
+/* One typeface, monospaced: the words and the ASCII hands are the same
+   material. */
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  font-size: 17px;
-  line-height: 1.6;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 15px;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -67,37 +60,39 @@ body {
 @layer components {
   /* The one column the whole site lives in. */
   .col {
-    width: min(100% - 2.5rem, 42rem);
+    width: min(100% - 2.5rem, 60rem);
     margin-inline: auto;
   }
 
+  /* Three sizes on the page: the h1, the body, and .small. Headings below
+     the h1 are body-sized and differ by weight alone. */
   .h-page {
-    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
-    line-height: 1.08;
-    letter-spacing: -0.03em;
-    font-weight: 600;
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.045em;
+    font-weight: 500;
     text-wrap: balance;
   }
-  .h-section {
-    font-size: 1.5rem;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
+  .h-section,
+  .h-item {
+    font-size: 1rem;
+    line-height: 1.7;
     font-weight: 600;
   }
-  .h-item {
-    font-size: 1.125rem;
-    line-height: 1.4;
-    font-weight: 500;
-  }
   .small {
-    font-size: 0.9375rem;
-    line-height: 1.5;
+    font-size: 0.8667rem;
+    line-height: 1.6;
+  }
+
+  /* Running text never gets wider than this. */
+  .measure {
+    max-width: 68ch;
   }
 
   .link {
     text-decoration: underline;
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
+    text-underline-offset: 0.25em;
     text-decoration-color: var(--muted);
     transition: text-decoration-color 150ms ease;
   }
@@ -114,7 +109,7 @@ body {
     background: var(--ink);
     color: var(--bg);
     font-weight: 500;
-    font-size: 0.9375rem;
+    font-size: 0.8667rem;
     white-space: nowrap;
     transition: opacity 150ms ease;
   }
@@ -148,47 +143,75 @@ body {
   }
 }
 
-/* Cmd+P gives a one-page résumé: content only, black on white. */
-@media print {
-  :root {
-    --bg: #fff;
-    --ink: #000;
-    --muted: #444;
-    --surface: #fff;
-  }
-  header nav,
-  form,
-  footer,
-  .no-print {
-    display: none !important;
-  }
-  .col {
-    width: 100%;
-  }
-  .section {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top-color: #ddd;
-    break-inside: avoid;
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  img {
-    max-width: 8rem;
+/* ── Hero: the hands ───────────────────────────────────────────────────
+   The SVG is full-bleed and keeps the wallpaper's proportions. On a
+   narrow screen it stops shrinking at 18rem tall and crops to the
+   fingertips instead (preserveAspectRatio="slice"). */
+.hands {
+  display: block;
+  width: 100%; /* aspect-ratio comes from the component */
+  min-height: 18rem;
+  color: var(--art);
+  pointer-events: none;
+  user-select: none;
+}
+.hands text {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10px;
+  fill: currentColor;
+}
+/* The spark between the fingers is a text cursor. The one animation on
+   the site. */
+.caret {
+  fill: var(--ink);
+  animation: blink 1.2s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }
 
-/* ── Section rhythm and the phone menu ────────────────────────────────
+.hero-copy {
+  margin-top: 1.5rem;
+}
+/* Wide screens: the copy moves up into the empty corner under the left
+   hand, where the wallpaper has nothing. 40rem keeps it clear of the
+   right hand. */
+@media (min-width: 1024px) {
+  .hero-copy {
+    margin-top: -10.5vw;
+    position: relative;
+  }
+  .hero-copy > * {
+    max-width: 40rem;
+  }
+}
+
+/* ── Section rhythm ────────────────────────────────────────────────────
    Deliberately outside @layer: an unlayered rule beats any utility, so
    the divider and the breakpoint switch can never be overridden by a
-   stray class. */
+   stray class. Every .section has exactly two children: its heading and
+   its body. From 800px they sit side by side, heading in a left rail. */
 .section {
   margin-top: 5rem;
-  padding-top: 3rem;
+  padding-top: 2rem;
   border-top: 1px solid var(--line);
 }
+.section > :first-child {
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 800px) {
+  .section {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    column-gap: 2rem;
+  }
+  .section > :first-child {
+    margin-bottom: 0;
+  }
+}
+
 /* ── Header breakpoint and the phone menu sheet ── */
 .nav-desktop { display: none; }
 .nav-phone { display: flex; }
@@ -210,7 +233,7 @@ body {
   color: var(--ink);
 }
 .menu::backdrop {
-  background: rgb(0 0 0 / 0.5);
+  background: rgb(0 0 0 / 0.6);
 }
 
 /* Header links: muted at rest, ink on hover. */
@@ -227,6 +250,45 @@ body {
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+  }
+  .caret {
+    animation: none;
+  }
+}
+
+/* Cmd+P gives a one-page résumé: content only, black on white. */
+@media print {
+  :root,
+  :root[data-theme="light"] {
+    --bg: #fff;
+    --ink: #000;
+    --muted: #444;
+    --surface: #fff;
+  }
+  header nav,
+  form,
+  footer,
+  .hands,
+  .no-print {
+    display: none !important;
+  }
+  .col {
+    width: 100%;
+  }
+  .hero-copy {
+    margin-top: 1.5rem;
+  }
+  .section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top-color: #ddd;
+    break-inside: avoid;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  img {
+    max-width: 8rem;
   }
 }
