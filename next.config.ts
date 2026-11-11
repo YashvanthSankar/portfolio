@@ -21,6 +21,8 @@ const csp = [
   "upgrade-insecure-requests",
 ].join("; ");
 
+const isProd = process.env.NODE_ENV === "production";
+
 const nextConfig: NextConfig = {
   /* The résumé lives in github.com/YashvanthSankar/resume and is published
      by GitHub Pages; this keeps the old URL working and always current. */
@@ -65,14 +67,21 @@ const nextConfig: NextConfig = {
           { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
       },
-      {
-        source: "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
-      {
-        source: "/(.*)\\.(js|css|woff2)",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
+      /* Long-lived caching only in production, where file names carry a
+         content hash. In `next dev` the stylesheet keeps one name, so an
+         immutable header pins the browser to a stale copy forever. */
+      ...(isProd
+        ? [
+            {
+              source: "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
+              headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+            },
+            {
+              source: "/(.*)\\.(js|css|woff2)",
+              headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+            },
+          ]
+        : []),
     ];
   },
 };
