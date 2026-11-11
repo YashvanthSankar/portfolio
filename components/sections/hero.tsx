@@ -5,7 +5,7 @@ const HOST = new URL(SITE_URL).host;
 
 export function Hero() {
   return (
-    <section className="pt-6 sm:pt-8">
+    <section className="pt-2 sm:pt-8">
       <Hands />
       <div className="col hero-copy">
         <h1 className="h-page">{ROLE}.</h1>

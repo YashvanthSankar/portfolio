@@ -4,10 +4,11 @@ import { navSections } from "@/data/sections";
 import { GITHUB_URL } from "@/data/site";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Menu } from "@/components/menu";
+import { PaletteButton } from "@/components/command-palette";
 
 /**
  * A plain header that scrolls away with the page. Desktop: wordmark,
- * section links, GitHub, theme switch in one row. Phone: wordmark, theme
+ * section links, GitHub, theme switch and the command-menu button in one row. Phone: wordmark, theme
  * switch and a Menu button that opens the list.
  */
 export function SiteHeader({ home = true }: { home?: boolean }) {
@@ -28,6 +29,7 @@ export function SiteHeader({ home = true }: { home?: boolean }) {
           GitHub
         </a>
         <ThemeToggle />
+        <PaletteButton />
       </nav>
 
       <div className="small nav-phone items-center gap-5">

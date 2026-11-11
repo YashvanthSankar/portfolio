@@ -144,27 +144,58 @@ body {
 }
 
 /* ── Hero: the hands ───────────────────────────────────────────────────
-   The SVG is full-bleed and keeps the wallpaper's proportions. On a
-   narrow screen it stops shrinking at 18rem tall and crops to the
-   fingertips instead (preserveAspectRatio="slice"). */
+   The SVG is full-bleed and keeps the wallpaper's proportions. On a phone
+   that would make it tiny, so it is held at 54vw tall and the arms crop
+   off at the edges instead (preserveAspectRatio="slice"). Tied to the
+   width on purpose: at 54vw both hands stay whole on any phone. */
 .hands {
   display: block;
   width: 100%; /* aspect-ratio comes from the component */
-  min-height: 18rem;
   color: var(--art);
   pointer-events: none;
   user-select: none;
+}
+@media (max-width: 700px) {
+  .hands {
+    min-height: 54vw;
+  }
 }
 .hands text {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 10px;
   fill: currentColor;
 }
-/* The spark between the fingers is a text cursor. The one animation on
-   the site. */
+/* The hands drift together as the page scrolls: hands-fx.tsx moves
+   --close from 0 to 1, --reach is how far each hand travels. */
+.hand-l {
+  transform: translateX(calc(var(--close, 0) * var(--reach)));
+}
+.hand-r {
+  transform: translateX(calc(var(--close, 0) * -1 * var(--reach)));
+}
+/* The spark between the fingers is a text cursor. */
 .caret {
   fill: var(--ink);
-  animation: blink 1.2s steps(1) infinite;
+}
+
+/* Motion, all of it: the hands print themselves row by row on load (each
+   row's delay is inline), the copy fades in behind them, then the cursor
+   starts to blink. */
+@media (prefers-reduced-motion: no-preference) {
+  .hands text {
+    animation: appear 1ms both;
+  }
+  .hero-copy {
+    animation: appear 500ms ease-out 400ms both;
+  }
+  .caret {
+    animation: appear 1ms 800ms both, blink 1.2s steps(1) 800ms infinite;
+  }
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
 }
 @keyframes blink {
   50% {
@@ -194,7 +225,7 @@ body {
    stray class. Every .section has exactly two children: its heading and
    its body. From 800px they sit side by side, heading in a left rail. */
 .section {
-  margin-top: 5rem;
+  margin-top: 3.5rem;
   padding-top: 2rem;
   border-top: 1px solid var(--line);
 }
@@ -203,6 +234,7 @@ body {
 }
 @media (min-width: 800px) {
   .section {
+    margin-top: 5rem;
     display: grid;
     grid-template-columns: 11rem minmax(0, 1fr);
     column-gap: 2rem;
@@ -236,6 +268,91 @@ body {
   background: rgb(0 0 0 / 0.6);
 }
 
+/* ── Command menu ── */
+.palette {
+  position: fixed;
+  inset: 0;
+  margin: 16vh auto auto;
+  width: min(100% - 2.5rem, 34rem);
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: var(--surface);
+  color: var(--ink);
+}
+.palette::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+.palette-input {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.125rem;
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 1rem; /* never under 16px on a phone, or iOS zooms */
+}
+.palette-input::placeholder {
+  color: var(--muted);
+}
+.palette-input:focus {
+  outline: none;
+}
+.palette-list {
+  max-height: min(22rem, 50vh);
+  overflow-y: auto;
+  padding: 0.375rem 0;
+}
+.palette-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.4rem 1.125rem;
+  cursor: pointer;
+}
+.palette-item[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+.palette-hint {
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.palette-item[aria-selected="true"] .palette-hint {
+  color: inherit;
+}
+.palette-empty,
+.palette-foot {
+  padding: 0.6rem 1.125rem;
+  color: var(--muted);
+}
+.palette-foot {
+  border-top: 1px solid var(--line);
+}
+
+/* ── Activity: a month of GitHub, one character a day ── */
+.activity {
+  display: flex;
+  justify-content: space-between;
+  max-width: 68ch;
+  font-size: 1.125rem;
+  line-height: 1.4;
+  cursor: default;
+}
+
+/* ── Project screenshots: greyscale, so the page stays black and white ── */
+.shot img {
+  filter: grayscale(1);
+  transition: opacity 150ms ease;
+}
+.shot:hover img {
+  opacity: 0.85;
+}
+
 /* Header links: muted at rest, ink on hover. */
 .nav-link {
   color: var(--muted);
@@ -250,9 +367,6 @@ body {
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
-  }
-  .caret {
-    animation: none;
   }
 }
 
@@ -277,6 +391,9 @@ body {
   }
   .hero-copy {
     margin-top: 1.5rem;
+  }
+  .shot {
+    display: none !important;
   }
   .section {
     margin-top: 1.5rem;

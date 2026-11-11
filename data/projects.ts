@@ -9,6 +9,7 @@ export const projects: Project[] = [
       "Turns a monitor into a window. A webcam tracks the viewer's head with MediaPipe in a Web Worker, a One-Euro filter steadies it, and an off-axis projection re-renders a Gaussian-splat scene from their exact viewpoint. Photos become 3D scenes through Apple SHARP on a Modal GPU behind a FastAPI gateway.",
     tags: ["TypeScript", "Three.js", "WebGL", "MediaPipe", "Gaussian splatting", "FastAPI", "Modal", "Docker"],
     live: "https://doppel-rw.vercel.app",
+    image: "/work/doppler.webp",
   },
   {
     title: "GudTour",
@@ -19,6 +20,7 @@ export const projects: Project[] = [
     tags: ["Expo", "React Native", "TypeScript", "Convex", "Google Cloud Translation"],
     github: "https://github.com/YashvanthSankar/bits-n-bytes",
     live: "https://gudtour.zapdos.me",
+    image: "/work/gudtour.webp",
   },
   {
     title: "choco.video",
@@ -29,5 +31,6 @@ export const projects: Project[] = [
     tags: ["Rust", "Tauri 2", "Svelte 5", "whisper.cpp", "FFmpeg", "LLM"],
     github: "https://github.com/YashvanthSankar/choco.video",
     live: "https://chcvd.vercel.app",
+    image: "/work/choco-video.webp",
   },
 ];

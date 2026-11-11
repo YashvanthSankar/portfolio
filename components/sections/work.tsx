@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { projects } from "@/data/projects";
 
@@ -24,6 +25,25 @@ export function Work() {
                   {p.year && <p className="small text-muted tabular-nums">{p.year}</p>}
                 </div>
                 {p.kind && <p className="small text-muted">{p.kind}</p>}
+                {p.image && (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    className="shot mt-4 block"
+                  >
+                    <Image
+                      src={p.image}
+                      alt=""
+                      width={1200}
+                      height={750}
+                      sizes="(max-width: 800px) 100vw, 784px"
+                      className="block h-auto w-full"
+                    />
+                  </a>
+                )}
                 <p className="measure mt-3">{p.description}</p>
                 <p className="small measure mt-3 text-muted">{p.tags.join(", ")}</p>
                 <p className="small mt-3 flex gap-5">

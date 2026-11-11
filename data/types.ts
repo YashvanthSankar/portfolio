@@ -2,7 +2,7 @@ export interface Project {
   title: string;
   description: string;
   tags: string[];
-  /** Optional screenshot in /public. */
+  /** Optional screenshot in /public/work, 1200 × 750. Shown in greyscale. */
   image?: string;
   github?: string;
   live?: string;

@@ -1,4 +1,5 @@
 import { hands, HANDS_CARET, HANDS_CELL_RATIO, HANDS_COLS, HANDS_ROWS } from "@/data/hands";
+import { HandsFx } from "@/components/hands-fx";
 
 /* One character cell in SVG units. The glyphs are drawn at 10px, so a 6-wide
    cell matches a monospace advance of 0.6em; the height keeps the cell
@@ -6,12 +7,49 @@ import { hands, HANDS_CARET, HANDS_CELL_RATIO, HANDS_COLS, HANDS_ROWS } from "@/
 const CW = 6;
 const CH = CW * HANDS_CELL_RATIO;
 
+/* The art splits into two hands at the caret's column. */
+const SPLIT = HANDS_CARET.col;
+
+/* How far, in columns, each hand travels toward the other as the page
+   scrolls. Rows that run off the picture's edge are extended by the same
+   amount (a mirror of their last characters), so an arm never ends in mid
+   air when its hand moves in. */
+const REACH = 20;
+
+/* Rows appear one after another on load, top to bottom. */
+const ROW_DELAY_MS = 8;
+
+const mirror = (s: string) => [...s].reverse().join("");
+
+function Row({ text, col, row }: { text: string; col: number; row: number }) {
+  const trimmed = text.trimEnd();
+  const lead = trimmed.length - trimmed.trimStart().length;
+  if (!trimmed.trim()) return null;
+  return (
+    <text
+      data-r={row}
+      data-c={col + lead}
+      x={(col + lead) * CW}
+      y={(row + 0.78) * CH}
+      textLength={(trimmed.length - lead) * CW}
+      lengthAdjust="spacing"
+      style={{ animationDelay: `${row * ROW_DELAY_MS}ms` }}
+    >
+      {trimmed.slice(lead).replaceAll(" ", " ")}
+    </text>
+  );
+}
+
 /**
  * The hero's background: the two hands from The Creation of Adam, as text —
  * the same characters as the wallpaper it came from, one for one. Each row
- * of data/hands.ts is one <text>, pinned to the grid with textLength so the
- * picture holds whatever monospace font loads. An SVG rather than a <pre>
- * because it scales with the viewport and can crop itself on narrow screens.
+ * of data/hands.ts becomes a <text> per hand, pinned to the grid with
+ * textLength so the picture holds whatever monospace font loads. An SVG
+ * rather than a <pre> because it scales with the viewport and can crop
+ * itself on narrow screens.
+ *
+ * The markup is static; components/hands-fx.tsx adds the pointer scramble
+ * and moves the hands together on scroll.
  */
 export function Hands() {
   const width = HANDS_COLS * CW;
@@ -21,27 +59,25 @@ export function Hands() {
     <svg
       className="hands"
       viewBox={`0 0 ${width} ${height}`}
-      style={{ aspectRatio: `${width} / ${height}` }}
+      style={{ aspectRatio: `${width} / ${height}`, "--reach": `${REACH * CW}px` } as React.CSSProperties}
       preserveAspectRatio="xMidYMid slice"
       role="img"
       aria-label="Two hands reaching toward each other, drawn in ASCII characters, with a text cursor between the fingertips."
     >
-      {hands.map((row, i) => {
-        const text = row.trimEnd();
-        const start = text.length - text.trimStart().length;
-        if (!text.trim()) return null;
-        return (
-          <text
-            key={i}
-            x={start * CW}
-            y={(i + 0.78) * CH}
-            textLength={(text.length - start) * CW}
-            lengthAdjust="spacing"
-          >
-            {text.slice(start).replaceAll(" ", "\u00a0")}
-          </text>
-        );
-      })}
+      <g className="hand-l">
+        {hands.map((row, i) => {
+          const extend = row[0] !== " ";
+          const text = (extend ? mirror(row.slice(0, REACH)) : "") + row.slice(0, SPLIT);
+          return <Row key={i} text={text} col={extend ? -REACH : 0} row={i} />;
+        })}
+      </g>
+      <g className="hand-r">
+        {hands.map((row, i) => {
+          const extend = row[HANDS_COLS - 1] !== " ";
+          const text = row.slice(SPLIT) + (extend ? mirror(row.slice(-REACH)) : "");
+          return <Row key={i} text={text} col={SPLIT} row={i} />;
+        })}
+      </g>
       {/* Two cells wide and tall: at this density one cell would vanish. */}
       <rect
         className="caret"
@@ -50,6 +86,7 @@ export function Hands() {
         width={CW * 2}
         height={CH * 2}
       />
+      <HandsFx cw={CW} ch={CH} reach={REACH * CW} />
     </svg>
   );
 }

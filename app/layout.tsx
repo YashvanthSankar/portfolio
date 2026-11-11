@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { NAME, ROLE, SITE_URL } from "@/data/site";
 import { profileUrls } from "@/data/socials";
+import { CommandPalette } from "@/components/command-palette";
 
 const TITLE = `${NAME} · ${ROLE}`;
 const DESCRIPTION = `${ROLE} in Chennai. React, Next.js, Node.js, Python and machine learning.`;
@@ -127,6 +128,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to main content
         </a>
         {children}
+        <CommandPalette />
         <Analytics />
       </body>
     </html>

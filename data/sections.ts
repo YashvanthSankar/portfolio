@@ -15,6 +15,7 @@ export const sections: Section[] = [
   { id: "experience", label: "Experience" },
   { id: "achievements", label: "Achievements" },
   { id: "now", label: "Now" },
+  { id: "activity", label: "Activity" },
   { id: "about", label: "About", inNav: true },
   { id: "stack", label: "Stack" },
   { id: "contact", label: "Contact", inNav: true },

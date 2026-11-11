@@ -18,6 +18,18 @@ function current(): Theme {
   return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
 }
 
+/** Flip the theme and remember it. Also used by the command menu. */
+export function toggleTheme() {
+  const next: Theme = current() === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try {
+    localStorage.setItem("theme", next);
+  } catch {
+    /* private mode — the attribute still holds for this visit */
+  }
+  notify();
+}
+
 /**
  * Light / dark switch. The choice is written to `data-theme` on <html>
  * and to localStorage; the inline script in app/layout.tsx replays it
@@ -28,23 +40,12 @@ export function ThemeToggle() {
   /* `null` on the server and during hydration, so the label never lies. */
   const theme = useSyncExternalStore(subscribe, current, () => null);
 
-  const toggle = () => {
-    const next: Theme = current() === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    try {
-      localStorage.setItem("theme", next);
-    } catch {
-      /* private mode — the attribute still holds for this visit */
-    }
-    notify();
-  };
-
   const next = theme === "dark" ? "Light" : "Dark";
 
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={toggleTheme}
       aria-label={`Switch to ${next.toLowerCase()} theme`}
       title={`${next} theme`}
       className="nav-link"

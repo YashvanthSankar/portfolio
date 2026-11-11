@@ -20,12 +20,17 @@ No test suite is configured. `npm run build` + `npm run lint` are the gate.
 **Next.js 16 App Router**, React 19, TypeScript strict, Tailwind CSS v4.
 Minimal, black-and-white, one typeface (Geist Mono), one column, with the
 ASCII hands across the hero. No animation library, no WebGL, no custom
-cursor. Almost everything is a server component; the only client code is the theme toggle, the phone menu, the
-Chennai clock, the contact form and the `/work` language filter.
+cursor. Almost everything is a server component; the only client code is
+the theme toggle, the phone menu, the command menu, the hands' effects
+(`hands-fx.tsx`), the Chennai clock, the contact form and the `/work`
+language filter.
 
 ### Routes
 
-- `/` → `app/page.tsx` renders the sections in `components/sections/` in order
+- `/` → `app/page.tsx` renders the sections in `components/sections/` in
+  order. Revalidates hourly, because the Activity section reads GitHub's
+  public events API (`lib/github.ts`; it returns null on failure and the
+  section falls back to `repos.json`, so the build never depends on it)
 - `/work` → every public GitHub repo, imported from `public/repos.json`
   at build time; language filter
 - `/api/contact` → POST, Zod-validated, rate-limited, honeypot, sends via **Resend**
@@ -56,7 +61,10 @@ Everything lives in `app/globals.css` — there is no `tailwind.config.ts`
   its `LABELS` constant names the glyph clusters and needs re-checking
   against the debug `templates.png` if the source image ever changes.
   `.caret` is the blinking cursor between the fingertips; the script finds
-  its cell (`HANDS_CARET`). From 1024px
+  its cell (`HANDS_CARET`). The art is split there into `.hand-l` and
+  `.hand-r`. `components/hands-fx.tsx` (client, renders nothing) scrambles
+  the characters near the pointer and sets `--close` on scroll so the hands
+  drift together by `REACH` columns. From 1024px
   `.hero-copy` is pulled up into the empty corner under the left hand.
 - Layout: `.col` is the single column (`min(100% - 2.5rem, 60rem)`,
   centred). Every section after the hero is `col section` (`.section` gives
@@ -69,14 +77,26 @@ Everything lives in `app/globals.css` — there is no `tailwind.config.ts`
   and `.h-item` (body-sized, weight 600), `.small`. Body is 15px / 1.7.
   Three sizes on the page, no more.
 - Components: `.link` (underlined), `.btn` (filled ink), `.btn-quiet`,
-  `.field` (form input on `--surface`).
+  `.field` (form input on `--surface`), `.shot` (greyscale project
+  screenshot), `.activity` (the one-character-a-day GitHub row).
+- Command menu: `components/command-palette.tsx`, mounted once in
+  `app/layout.tsx`. ⌘K, Ctrl+K or `/` opens it; the header's `⌘K` button
+  fires the `palette:open` window event. Its sections and socials come from
+  `data/sections.ts` and `data/socials.ts`, so new ones appear on their own.
+- Share images are static PNGs (`app/opengraph-image.png`,
+  `app/twitter-image.png` and the same pair under `app/work/`), each with an
+  `.alt.txt`. They are screenshots of the hero at 1200 × 630; if the name,
+  role or art changes they have to be re-made by hand.
 
 Rules:
 - **No accent colour.** Emphasis is weight or ink-vs-muted, never hue.
 - **No boxes, shadows, gradients, icons or radii.** The only lines are the
   section hairlines; surfaces differ by a tone step (`--surface`).
-- **No motion** beyond colour/opacity transitions on hover and the caret's
-  blink (which stops under `prefers-reduced-motion`).
+- **Motion lives in the hero only**: the hands print in row by row on load,
+  the copy fades in, the caret blinks, characters scramble under the
+  pointer and the hands close on scroll. All of it is off under
+  `prefers-reduced-motion`. Everywhere else: colour/opacity transitions on
+  hover, nothing more. No scroll-reveal on sections.
 - **No second typeface, no uppercase tracked labels, no section numbers, no
   terminal costume** (fake prompts, window chrome). The one shell command
   shown, `curl yashvanth.com`, is there because it really works.
@@ -94,7 +114,8 @@ anything appearing in two places belongs there.
 desktop header links (`inNav`), the phone menu and the footer links. Adding a section means adding
 one row there plus its component in `app/page.tsx`.
 
-Adding a project: append to `data/projects.ts`.
+Adding a project: append to `data/projects.ts`. An optional `image` is a
+1200 × 750 screenshot in `public/work/`; it is shown in greyscale.
 
 ### Constraints
 

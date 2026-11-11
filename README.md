@@ -88,7 +88,14 @@ is remembered.
 - One typeface, Geist Mono, everywhere. Three type sizes.
 - No accent colour. Emphasis is weight, or ink against muted.
 - No shadows, gradients, icons or rounded corners.
-- No motion beyond colour on hover and the cursor's blink.
+- Motion is kept to the hero: the hands print in on load, scramble under
+  the pointer and drift together as you scroll. Nothing else animates, and
+  none of it runs under reduced motion.
+- A command menu on ⌘K, Ctrl+K or `/`: jump to a section, copy the email,
+  open a profile, switch theme.
+- An Activity section: the last 30 days of public GitHub events, one
+  character a day, refreshed hourly (set `GITHUB_TOKEN` on the host to
+  avoid the anonymous rate limit).
 - One 60rem column; each section's heading sits in a left rail.
 
 ## Résumé
