@@ -60,6 +60,9 @@ Everything lives in `app/globals.css` — there is no `tailwind.config.ts`
   reads the wallpaper's own 400-column character grid back glyph for glyph;
   its `LABELS` constant names the glyph clusters and needs re-checking
   against the debug `templates.png` if the source image ever changes.
+  Rows rely on Geist Mono's exact 0.6em advance to sit on the grid; do not
+  add `textLength` (a browser re-measuring a row after the scramble
+  rewrites it stretched that row across the page).
   `.caret` is the blinking cursor between the fingertips; the script finds
   its cell (`HANDS_CARET`). The art is split there into `.hand-l` and
   `.hand-r`. `components/hands-fx.tsx` (client, renders nothing) scrambles

@@ -164,6 +164,12 @@ body {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 10px;
   fill: currentColor;
+  /* Every character must stay one cell wide and be drawn as itself. */
+  letter-spacing: 0;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+  white-space: pre;
 }
 /* The hands drift together as the page scrolls: hands-fx.tsx moves
    --close from 0 to 1, --reach is how far each hand travels. */

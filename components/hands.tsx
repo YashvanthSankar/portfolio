@@ -1,9 +1,11 @@
 import { hands, HANDS_CARET, HANDS_CELL_RATIO, HANDS_COLS, HANDS_ROWS } from "@/data/hands";
 import { HandsFx } from "@/components/hands-fx";
 
-/* One character cell in SVG units. The glyphs are drawn at 10px, so a 6-wide
-   cell matches a monospace advance of 0.6em; the height keeps the cell
-   proportions of the wallpaper the art was read from. */
+/* One character cell in SVG units. The glyphs are drawn at 10px and Geist
+   Mono advances exactly 0.6em, so a character is 6 wide and a row lands on
+   the grid by itself. (No textLength: a browser that re-measures a row
+   after hands-fx.tsx rewrites it can stretch that row across the page.)
+   The height keeps the cell proportions of the wallpaper. */
 const CW = 6;
 const CH = CW * HANDS_CELL_RATIO;
 
@@ -31,8 +33,6 @@ function Row({ text, col, row }: { text: string; col: number; row: number }) {
       data-c={col + lead}
       x={(col + lead) * CW}
       y={(row + 0.78) * CH}
-      textLength={(trimmed.length - lead) * CW}
-      lengthAdjust="spacing"
       style={{ animationDelay: `${row * ROW_DELAY_MS}ms` }}
     >
       {trimmed.slice(lead).replaceAll(" ", " ")}
@@ -43,10 +43,9 @@ function Row({ text, col, row }: { text: string; col: number; row: number }) {
 /**
  * The hero's background: the two hands from The Creation of Adam, as text —
  * the same characters as the wallpaper it came from, one for one. Each row
- * of data/hands.ts becomes a <text> per hand, pinned to the grid with
- * textLength so the picture holds whatever monospace font loads. An SVG
- * rather than a <pre> because it scales with the viewport and can crop
- * itself on narrow screens.
+ * of data/hands.ts becomes a <text> per hand. An SVG rather than a <pre>
+ * because it scales with the viewport and can crop itself on narrow
+ * screens.
  *
  * The markup is static; components/hands-fx.tsx adds the pointer scramble
  * and moves the hands together on scroll.
